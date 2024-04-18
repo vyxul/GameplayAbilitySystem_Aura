@@ -8,11 +8,11 @@ UAuraAttributeSet::UAuraAttributeSet()
 {
 	InitHealth(50.f);
 	InitMaxHealth(100.f);
-	InitMana(100.f);
+	InitMana(50.f);
 	InitMaxMana(100.f);
 }
 
-// Used to setup property replication
+// Used to set up property replication
 void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
