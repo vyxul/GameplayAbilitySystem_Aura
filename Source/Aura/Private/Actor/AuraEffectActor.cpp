@@ -31,14 +31,6 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	EffectContextHandle.AddSourceObject(this);
 	const FGameplayEffectSpecHandle EffectSpecHandle = TargetASC->MakeOutgoingSpec(GameplayEffectClass, 1.0f, EffectContextHandle);
 	const FActiveGameplayEffectHandle ActiveEffectHandle = TargetASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
-
-	/* Add infinite effect handles to map if planning to remove the effect eventually */
-	const bool bIsInfinite = EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy == EGameplayEffectDurationType::Infinite;
-	if (bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
-	{
-		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
-	}
-	
 }
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
@@ -77,24 +69,7 @@ void AAuraEffectActor::EndOverlap(AActor* TargetActor)
 		if (!IsValid(TargetASC))
 			return;
 
-		// Create temp list of GameplayEffectHandles
-		TArray<FActiveGameplayEffectHandle> HandlesToRemove;
-
-		// check if TargetASC is in this map of values
-		for (auto HandlePair : ActiveEffectHandles)
-		{
-			if (TargetASC == HandlePair.Value)
-			{
-				TargetASC->RemoveActiveGameplayEffect(HandlePair.Key, 1);
-				HandlesToRemove.Add(HandlePair.Key);
-			}
-		}
-
-		// remove Key/Value pair from map if TargetASC was in map
-		for (auto& Handle : HandlesToRemove)
-		{
-			ActiveEffectHandles.FindAndRemoveChecked(Handle);
-		}
+		TargetASC->RemoveActiveGameplayEffectBySourceEffect(InfiniteGameplayEffectClass, TargetASC, 1);
 	}
 	/* End Infinite Effect */
 }
