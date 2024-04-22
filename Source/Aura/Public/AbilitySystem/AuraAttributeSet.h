@@ -14,6 +14,59 @@
 	GAMEPLAYATTRIBUTE_VALUE_SETTER(PropertyName) \
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
+USTRUCT()
+struct FEffectProperties
+{
+	GENERATED_BODY()
+
+	/* Constructors */
+	FEffectProperties();
+	FEffectProperties(FGameplayEffectContextHandle EffectContextHandle, UAbilitySystemComponent* SourceAsc,
+		AActor* SourceAvatarActor, AController* SourceController, ACharacter* SourceCharacter,
+		UAbilitySystemComponent* TargetAsc, AActor* TargetAvatarActor, AController* TargetController,
+		ACharacter* TargetCharacter)
+		: EffectContextHandle(EffectContextHandle),
+		  SourceASC(SourceAsc),
+		  SourceAvatarActor(SourceAvatarActor),
+		  SourceController(SourceController),
+		  SourceCharacter(SourceCharacter),
+		  TargetASC(TargetAsc),
+		  TargetAvatarActor(TargetAvatarActor),
+		  TargetController(TargetController),
+		  TargetCharacter(TargetCharacter)
+	{}
+
+	/* Effect Context */
+	FGameplayEffectContextHandle EffectContextHandle;
+	
+	/* Source Info */
+	UPROPERTY()
+	UAbilitySystemComponent* SourceASC = nullptr;
+	
+	UPROPERTY()
+	AActor* SourceAvatarActor = nullptr;
+	
+	UPROPERTY()
+	AController* SourceController = nullptr;
+	
+	UPROPERTY()
+	ACharacter* SourceCharacter = nullptr;
+
+	/* Target Info */
+	UPROPERTY()
+	UAbilitySystemComponent* TargetASC = nullptr;
+	
+	UPROPERTY()
+	AActor* TargetAvatarActor = nullptr;
+	
+	UPROPERTY()
+	AController* TargetController = nullptr;
+	
+	UPROPERTY()
+	ACharacter* TargetCharacter = nullptr;
+	
+};
+
 /**
  * 
  */
@@ -24,11 +77,10 @@ class AURA_API UAuraAttributeSet : public UAttributeSet
 
 public:
 	UAuraAttributeSet();
-
-	// Setup property replication
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
 	//~ Begin Attribute properties
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = "OnRep_Health", Category = "Vital Attributes")
@@ -62,4 +114,7 @@ public:
 	UFUNCTION()
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 	//~ End Attribute OnRep functions
+
+private:
+	static void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties);
 };

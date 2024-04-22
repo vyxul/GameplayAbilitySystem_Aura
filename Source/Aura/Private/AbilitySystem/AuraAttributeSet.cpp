@@ -2,7 +2,11 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "GameplayEffectExtension.h"
+#include "GameFramework/Character.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -24,6 +28,10 @@ void UAuraAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UAuraAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 }
 
+/*
+ * Function called before attributes are changed, recommended to be only for clamping and not logic.
+ * Does not fully change the value, look at PostGameplayEffectExecute
+ */
 void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
@@ -37,6 +45,58 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 	{
 		NewValue = FMath::Clamp(NewValue, 0, GetMaxMana());
 	}
+}
+
+void UAuraAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties)
+{
+	// Source = causer of the effect, Target = target of the effect (owner of this AttributeSet)
+
+	/* Effect Context */
+	EffectProperties.EffectContextHandle = Data.EffectSpec.GetContext();
+
+	/* Source Information */
+	EffectProperties.SourceASC = EffectProperties.EffectContextHandle.GetOriginalInstigatorAbilitySystemComponent();
+	if (IsValid(EffectProperties.SourceASC) &&
+		EffectProperties.SourceASC->AbilityActorInfo.IsValid() &&
+		EffectProperties.SourceASC->AbilityActorInfo->AvatarActor.IsValid())
+	{
+		EffectProperties.SourceAvatarActor = EffectProperties.SourceASC->AbilityActorInfo->AvatarActor.Get();
+		EffectProperties.SourceController = EffectProperties.SourceASC->AbilityActorInfo->PlayerController.Get();
+
+		// If SourceController isn't valid from SourceASC->AbilityActorInfo, set it up from the Source Pawn if available
+		if (EffectProperties.SourceController == nullptr &&
+			EffectProperties.SourceAvatarActor != nullptr)
+		{
+			if (const APawn* Pawn = Cast<APawn>(EffectProperties.SourceAvatarActor))
+			{
+				EffectProperties.SourceController = Pawn->GetController();
+			}
+		}
+		if (EffectProperties.SourceController)
+		{
+			EffectProperties.SourceCharacter = Cast<ACharacter>(EffectProperties.SourceController->GetPawn());
+		}
+	}
+
+	/* Target Information */
+	if (Data.Target.AbilityActorInfo.IsValid() && Data.Target.AbilityActorInfo->AvatarActor.IsValid())
+	{
+		EffectProperties.TargetAvatarActor = Data.Target.AbilityActorInfo->AvatarActor.Get();
+		EffectProperties.TargetController = Data.Target.AbilityActorInfo->PlayerController.Get();
+		EffectProperties.TargetCharacter = Cast<ACharacter>(EffectProperties.TargetAvatarActor);
+		EffectProperties.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(EffectProperties.TargetAvatarActor);
+	}
+}
+
+// Function called after Gameplay Effects are executed.
+void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+{
+	Super::PostGameplayEffectExecute(Data);
+
+	FEffectProperties EffectProperties;
+	SetEffectProperties(Data, EffectProperties);
+
+	
 }
 
 void UAuraAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
