@@ -35,6 +35,7 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 {
+	/*
 	// Instant Effect
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
@@ -46,10 +47,20 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 	// Infinite Effect
 	if (InfiniteEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
+	*/
+
+	for (const auto GameplayEffectStruct : GameplayEffects)
+	{
+		if (GameplayEffectStruct.EffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
+		{
+			ApplyEffectToTarget(TargetActor, GameplayEffectStruct.GameplayEffect);
+		}
+	}
 }
 
 void AAuraEffectActor::EndOverlap(AActor* TargetActor)
 {
+	/*
 	// Instant Effect
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 		ApplyEffectToTarget(TargetActor, InstantGameplayEffectClass);
@@ -58,7 +69,7 @@ void AAuraEffectActor::EndOverlap(AActor* TargetActor)
 	if (DurationEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 		ApplyEffectToTarget(TargetActor, DurationGameplayEffectClass);
 
-	/* Infinite Effect */
+	// Infinite Effect
 	if (InfiniteEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 		ApplyEffectToTarget(TargetActor, InfiniteGameplayEffectClass);
 
@@ -71,7 +82,22 @@ void AAuraEffectActor::EndOverlap(AActor* TargetActor)
 
 		TargetASC->RemoveActiveGameplayEffectBySourceEffect(InfiniteGameplayEffectClass, TargetASC, 1);
 	}
-	/* End Infinite Effect */
+	*/
+	for (const auto GameplayEffectStruct : GameplayEffects)
+	{
+		if (GameplayEffectStruct.EffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
+			ApplyEffectToTarget(TargetActor, GameplayEffectStruct.GameplayEffect);
+
+		if (GameplayEffectStruct.EffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
+		{
+			// make sure that TargetActor has ASC
+			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+			if (!IsValid(TargetASC))
+				continue;
+
+			TargetASC->RemoveActiveGameplayEffectBySourceEffect(GameplayEffectStruct.GameplayEffect, TargetASC, 1);
+		}
+	}
 }
 
 

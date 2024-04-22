@@ -25,6 +25,25 @@ enum class EEffectRemovalPolicy
 	DoNotRemove
 };
 
+USTRUCT(BlueprintType)
+struct FGameplayEffectStruct
+{
+	GENERATED_BODY()
+
+	FGameplayEffectStruct() {}
+	FGameplayEffectStruct(TSubclassOf<UGameplayEffect> GE, EEffectApplicationPolicy EAP, EEffectRemovalPolicy ERP)
+		: GameplayEffect(GE), EffectApplicationPolicy(EAP), EffectRemovalPolicy(ERP) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UGameplayEffect> GameplayEffect;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEffectApplicationPolicy EffectApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEffectRemovalPolicy EffectRemovalPolicy = EEffectRemovalPolicy::DoNotRemove;
+};
+
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
 {
@@ -73,4 +92,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	EEffectRemovalPolicy InfiniteEffectRemovalPolicy = EEffectRemovalPolicy::RemoveOnEndOverlap;
+
+	/* Gameplay Effect Array */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
+	TArray<FGameplayEffectStruct> GameplayEffects;
 };
