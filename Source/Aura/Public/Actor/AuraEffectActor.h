@@ -68,22 +68,23 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	bool bDestroyOnEffectRemoval = false;
-	
-	/* Instant Effect */
+
+	/* Not needed since putting all gameplay effects in array GameplayEffects
+	// Instant Effect
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	EEffectApplicationPolicy InstantEffectApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
 
-	/* Duration Effect */
+	// Duration Effec
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	EEffectApplicationPolicy DurationEffectApplicationPolicy = EEffectApplicationPolicy::DoNotApply;
 
-	/* Infinite Effect */
+	// Infinite Effect
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	TSubclassOf<UGameplayEffect> InfiniteGameplayEffectClass;
 
@@ -92,8 +93,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	EEffectRemovalPolicy InfiniteEffectRemovalPolicy = EEffectRemovalPolicy::RemoveOnEndOverlap;
+	*/
 
 	/* Gameplay Effect Array */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	TArray<FGameplayEffectStruct> GameplayEffects;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
+	float ActorLevel = 1.f;
 };
