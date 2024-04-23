@@ -20,11 +20,11 @@ struct FEffectProperties
 	GENERATED_BODY()
 
 	/* Constructors */
-	FEffectProperties();
-	FEffectProperties(FGameplayEffectContextHandle EffectContextHandle, UAbilitySystemComponent* SourceAsc,
-		AActor* SourceAvatarActor, AController* SourceController, ACharacter* SourceCharacter,
-		UAbilitySystemComponent* TargetAsc, AActor* TargetAvatarActor, AController* TargetController,
-		ACharacter* TargetCharacter)
+	FEffectProperties(){}
+	FEffectProperties(const FGameplayEffectContextHandle& EffectContextHandle, UAbilitySystemComponent* SourceAsc,
+	                  AActor* SourceAvatarActor, AController* SourceController, ACharacter* SourceCharacter,
+	                  UAbilitySystemComponent* TargetAsc, AActor* TargetAvatarActor, AController* TargetController,
+	                  ACharacter* TargetCharacter)
 		: EffectContextHandle(EffectContextHandle),
 		  SourceASC(SourceAsc),
 		  SourceAvatarActor(SourceAvatarActor),
@@ -116,5 +116,5 @@ public:
 	//~ End Attribute OnRep functions
 
 private:
-	static void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties);
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties) const;
 };
