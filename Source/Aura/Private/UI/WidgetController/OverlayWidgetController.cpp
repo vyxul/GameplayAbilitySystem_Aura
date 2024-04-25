@@ -2,9 +2,17 @@
 
 
 #include "UI/WidgetController/OverlayWidgetController.h"
-
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+
+/* Macro to easily bind attributes to a lambda function */
+#define BIND_CALLBACK(AttributeName) AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->Get##AttributeName##Attribute())\
+	.AddLambda( \
+		[this](const FOnAttributeChangeData& Data) \
+		{ \
+			On##AttributeName##Changed.Broadcast(Data.NewValue); \
+		} \
+	);
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -18,8 +26,23 @@ void UOverlayWidgetController::BroadcastInitialValues()
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-
+	
 	/* Bind Attribute Changes */
+	/**
+	 * There are two ways I know to bind delegates to functions. Callback and Lambda.
+	 * Its mostly just a design choice at this point, I think callback is more readable and understandable,
+	 * but that also leads to needing to declare callback functions in the header file and allows others parts
+	 * of the class to call those callback functions, which is not good practice.
+	 */
+	
+	/* Lambda function version of binding attributes */
+	BIND_CALLBACK(Health);
+	BIND_CALLBACK(MaxHealth);
+	BIND_CALLBACK(Mana);
+	BIND_CALLBACK(MaxMana);
+	
+	/* Normal version of binding attributes to callback functions */
+	/*
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute())
 		.AddUObject(this, &UOverlayWidgetController::HealthChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute())
@@ -28,6 +51,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		.AddUObject(this, &UOverlayWidgetController::ManaChanged);
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute())
 		.AddUObject(this, &UOverlayWidgetController::MaxManaChanged);
+	*/
 
 	/* Bind GE Asset Tag Applied */
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
@@ -50,6 +74,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	);
 }
 
+/* These functions only necessary if we are binding attribute change delegates to callback functions */
+/*
 void UOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
 {
 	OnHealthChanged.Broadcast(Data.NewValue);
@@ -69,3 +95,4 @@ void UOverlayWidgetController::MaxManaChanged(const FOnAttributeChangeData& Data
 {
 	OnMaxManaChanged.Broadcast(Data.NewValue);
 }
+*/
