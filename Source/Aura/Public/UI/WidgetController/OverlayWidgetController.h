@@ -10,7 +10,7 @@
 class UAuraUserWidget;
 
 /* Message Data Table Struct */
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, Blueprintable)
 struct FUIWidgetRow : public FTableRowBase
 {
 	GENERATED_BODY()
