@@ -7,10 +7,24 @@
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "AuraGameplayTags.h"
+#include "UI/WidgetController/AttributeMenuWidgetController.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+
+	// mapping attribute tags to the attribute accessor functions
+	// used for other components that need to get attribute info
+	// (ie AttributeMenuWidgetController can get tags from singleton AuraGameplayTags and can get the corresponding attribute accessor function
+	/* Primary Attributes */
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Strength, GetStrengthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Resilience, GetResilienceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Vigor, GetVigorAttribute);
+
+	/* Secondary Attributes */
+	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_Armor, GetArmorAttribute);
 }
 
 // Used to set up property replication
