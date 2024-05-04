@@ -32,9 +32,9 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	}
 }
 
-void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& Tag) const
+void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag) const
 {
-	FAuraAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(Tag);
+	FAuraAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(AttributeTag);
 	Info.AttributeValue = Info.AttributeGetter.GetNumericValue(AttributeSet);
 	AttributeInfoDelegate.Broadcast(Info);
 }
