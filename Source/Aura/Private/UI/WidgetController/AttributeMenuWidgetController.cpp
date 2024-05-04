@@ -9,8 +9,6 @@
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
-	
 	check(AttributeInfo);
 	
 	for (auto& Tag : AttributeInfo.Get()->AttributeInformation)
@@ -26,8 +24,6 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
-
 	check(AttributeInfo);
 
 	for (auto& Tag : AttributeInfo.Get()->AttributeInformation)
