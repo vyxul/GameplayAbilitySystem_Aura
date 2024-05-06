@@ -50,4 +50,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_ManaRegeneration, Attributes.Secondary.ManaRegeneration, "Amount of mana regenerated every second");
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_MaxHealth, Attributes.Secondary.MaxHealth, "Maximum amount of health obtainable");
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_MaxMana, Attributes.Secondary.MaxMana, "Maximum amount of mana obtainable")
+
+	/* Input Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_LMB, InputTag.LMB, "Input tag for Left Mouse Button")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_RMB, InputTag.RMB, "Input tag for Right Mouse Button")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_1, InputTag.1, "Input tag for 1 key")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_2, InputTag.2, "Input tag for 2 key")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_3, InputTag.3, "Input tag for 3 key")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_4, InputTag.4, "Input tag for 4 key")
 }
