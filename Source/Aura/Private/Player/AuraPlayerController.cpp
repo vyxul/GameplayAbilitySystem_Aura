@@ -16,7 +16,6 @@
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
-
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
 }
 
@@ -104,63 +103,21 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 */
 void AAuraPlayerController::CursorTrace()
 {
-	FHitResult CursorHit;
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	// if no hit, return
-	if (!CursorHit.bBlockingHit) return;
+	if (!CursorHit.bBlockingHit)
+		return;
 
 	LastActor = CurrentActor;
 	CurrentActor = Cast<IEnemyInterface>(CursorHit.GetActor());
 
-	/**
-	* Line trace from cursor. There are several scenarios:
-	*  A. LastActor is null && CurrentActor is null
-	*		- Do nothing
-	*  B. LastActor is null && CurrentActor is valid
-	*		- Call Highlight function on CurrentActor
-	*  C. LastActor is valid && CurrentActor is null
-	*		- Call UnHighlight function on LastActor
-	*  D. Both actors are valid, but LastActor != CurrentActor
-	*		- UnHighlight LastActor, Highlight CurrentActor
-	*  E. Both actors are valid, LastActor == CurrentActor
-	*		- Do nothing
-	*/
-
-	// Scenarios A and B
-	if (LastActor == nullptr)
+	if (LastActor != CurrentActor)
 	{
-		// A
-		// dont need any code for this scenario
-
-		// B
-		if (CurrentActor != nullptr)
-		{
-			CurrentActor->HighlightActor();
-		}
-	}
-
-	// Scenarios C, D, E
-	else // LastActor is valid
-	{
-		// C
-		if (CurrentActor == nullptr)
-		{
+		if (LastActor)
 			LastActor->UnHighlightActor();
-		}
 
-		// D and E
-		else // CurrentActor is valid
-		{
-			// D
-			if (LastActor != CurrentActor)
-			{
-				LastActor->UnHighlightActor();
-				CurrentActor->HighlightActor();
-			}
-
-			// E
-			// dont need any code for this scenario
-		}
+		if (CurrentActor)
+			CurrentActor->HighlightActor();
 	}
 }
 
@@ -195,7 +152,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	// If LMB NOT on enemy
 	else
 	{
-		APawn* ControlledPawn = GetPawn();
+		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
@@ -204,7 +161,6 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 				for (const FVector& PointLoc : NavPath->PathPoints)
 				{
 					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
 				}
 				
 				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
@@ -240,11 +196,9 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
 
-		FHitResult Hit;
-		if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
-		{
-			CachedDestination = Hit.ImpactPoint;
-		}
+		if (CursorHit.bBlockingHit)
+			CachedDestination = CursorHit.ImpactPoint;
+		
 
 		if (APawn* ControlledPawn = GetPawn())
 		{
@@ -258,10 +212,8 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 {
 	if (AuraAbilitySystemComponent == nullptr)
-	{
 		AuraAbilitySystemComponent = Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
-	}
-
+	
 	return AuraAbilitySystemComponent;
 }
 
