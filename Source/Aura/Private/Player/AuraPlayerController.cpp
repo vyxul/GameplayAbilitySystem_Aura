@@ -7,6 +7,8 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
@@ -141,6 +143,7 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	// If input was LMB
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		bTargeting = CurrentActor ? true : false;
@@ -150,14 +153,49 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (GetASC() == nullptr)
+	// If input was anything besides LMB
+	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC())        
+			GetASC()->AbilityInputTagReleased(InputTag);
+
 		return;
-	
-	GetASC()->AbilityInputTagReleased(InputTag);
+	}
+
+	// If input was LMB
+	// If LMB on enemy
+	if (bTargeting)
+	{
+		if (GetASC())        
+			GetASC()->AbilityInputTagReleased(InputTag);
+	}
+	// If LMB NOT on enemy
+	else
+	{
+		APawn* ControlledPawn = GetPawn();
+		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+		{
+			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+			{
+				Spline->ClearSplinePoints();
+				for (const FVector& PointLoc : NavPath->PathPoints)
+				{
+					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+					DrawDebugSphere(GetWorld(), PointLoc, 8.f, 8, FColor::Green, false, 5.f);
+				}
+			}
+			
+			bAutoRunning = true;
+		}
+
+		FollowTime = 0.f;
+		bTargeting = false;
+	}
 }
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	// If input was anything besides LMB
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		if (GetASC())        
@@ -166,11 +204,14 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
+	// If input was LMB
+	// If LMB on enemy
 	if (bTargeting)
 	{
 		if (GetASC())        
 			GetASC()->AbilityInputTagHeld(InputTag);
 	}
+	// If LMB NOT on enemy
 	else
 	{
 		FollowTime += GetWorld()->GetDeltaSeconds();
