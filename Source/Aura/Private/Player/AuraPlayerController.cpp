@@ -76,8 +76,14 @@ void AAuraPlayerController::SetupInputComponent()
 
 	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 
+	// bind movement keys to Move function
 	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	// bind shift keys to 2 functions handling the modifier key
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &AAuraPlayerController::ShiftPressed);
+	AuraInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &AAuraPlayerController::ShiftReleased);
+	// bind all the keys inside InputConfig (set up in the editor) to the 3 functions specified
 	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
+	
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -143,33 +149,31 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	}
 
 	// If input was LMB
-	// If LMB on enemy
-	if (bTargeting)
-	{
-		if (GetASC())        
-			GetASC()->AbilityInputTagReleased(InputTag);
-	}
-	// If LMB NOT on enemy
-	else
+	// does not activate ability on release for our implementation, just sets a tag for that ability that it is released
+	if (GetASC())        
+		GetASC()->AbilityInputTagReleased(InputTag);
+	
+	// If initial LMB click NOT on enemy and NOT holding shift
+	if (!bTargeting && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
-		if (FollowTime <= ShortPressThreshold && ControlledPawn)
-		{
-			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
-			{
-				Spline->ClearSplinePoints();
-				for (const FVector& PointLoc : NavPath->PathPoints)
-				{
-					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-				}
-				
-				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
-				bAutoRunning = true;
-			}
-		}
-
-		FollowTime = 0.f;
-		bTargeting = false;
+        		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+        		{
+        			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+        			{
+        				Spline->ClearSplinePoints();
+        				for (const FVector& PointLoc : NavPath->PathPoints)
+        				{
+        					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
+        				}
+        				
+        				CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
+        				bAutoRunning = true;
+        			}
+        		}
+        
+        		FollowTime = 0.f;
+        		bTargeting = false;
 	}
 }
 
@@ -186,7 +190,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 
 	// If input was LMB
 	// If LMB on enemy
-	if (bTargeting)
+	if (bTargeting || bShiftKeyDown)
 	{
 		if (GetASC())        
 			GetASC()->AbilityInputTagHeld(InputTag);
