@@ -25,6 +25,8 @@ public:
 
 private:
 	virtual void Activate() override;
-
 	void SendMouseCursorData();
+
+	// Not called on client, called only on server
+	void OnTargetDataReplicatedCallback(const FGameplayAbilityTargetDataHandle& DataHandle, FGameplayTag ActivationTag);
 };
