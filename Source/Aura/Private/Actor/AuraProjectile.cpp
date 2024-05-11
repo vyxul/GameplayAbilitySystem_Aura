@@ -3,8 +3,11 @@
 
 #include "Actor/AuraProjectile.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -28,12 +31,46 @@ AAuraProjectile::AAuraProjectile()
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+	SetLifeSpan(LifeSpan);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
+
+	if (LoopingSound)
+	{
+		// Only arguments I actually needed to provide are Sound, AttachToComponent, and bStopWhenAttachedToDestroyed
+		// Location, Rotation, and LocationType are just using defaults, had to explicitly declare them to reach bStopWhenAttachedToDestroyed
+		LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(
+			LoopingSound,
+			GetRootComponent(),
+			NAME_None,
+			FVector(ForceInit),
+			FRotator::ZeroRotator,
+			EAttachLocation::KeepRelativeOffset,
+			true);
+	}
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ProjectileImpactEffects();
+
+	if (HasAuthority())
+		Destroy();
+	else
+		bHit = true;
+}
+
+void AAuraProjectile::Destroyed()
+{
+	if (!bHit && !HasAuthority())
+		ProjectileImpactEffects();
 	
+	Super::Destroyed();
+}
+
+void AAuraProjectile::ProjectileImpactEffects()
+{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 }
 
