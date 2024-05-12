@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameFramework/Actor.h"
 #include "AuraProjectile.generated.h"
 
@@ -21,6 +22,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
+	UPROPERTY(BlueprintReadWrite, meta = (ExposeOnSpawn = true))
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -34,10 +38,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 15.f;
-	
+
+	/* Technical Members */
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> Sphere;
 
+	/* FX */
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;
 

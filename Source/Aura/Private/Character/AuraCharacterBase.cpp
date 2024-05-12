@@ -14,8 +14,12 @@ AAuraCharacterBase::AAuraCharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	// Set up collisions for capsule and character mesh to ignore camera
+	// Set up capsule component to ignore camera and not generate OnOverlapEvents (to prevent overlap events from duplicating)
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+
+	// Set up mesh component to ignore camera, overlap with custom projectile type, and to generate overlap events
+	// Just a design decision to generate overlap events here instead of capsule component
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
