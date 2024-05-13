@@ -83,6 +83,18 @@ public:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	
 	/* Attribute Properties */
+	/*
+	 * When creating new attributes, need to do these to fully add them into the attribute set
+	 * - Declare the property
+	 * - Create getters and setters for it (ATTRIBUTE_ACCESSORS makes it fast)
+	 * - Declare a OnRep_Notify function callback
+	 * - Tag that OnRep_Notify function in the UPROPERTY specifiers
+	 * - Explicitly set that attribute to replicate in GetLifetimeReplicatedProps()
+	 * - Implement the Callback function with GAMEPLAYATTRIBUTE_REPNOTIFY()
+	 *
+	 * Meta attributes don't need the steps dealing with replication
+	 */
+	
 	/* Vital Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
@@ -91,6 +103,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
+
+	/* Meta Attributes */
+	UPROPERTY(BlueprintReadOnly, Category= "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
 	
 	/* Primary Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Primary Attributes")
