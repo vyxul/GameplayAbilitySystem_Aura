@@ -47,6 +47,13 @@ int32 AAuraCharacter::GetPlayerLevel()
 	return AuraPlayerState->GetPlayerLevel();
 }
 
+void AAuraCharacter::InitializeDefaultAttributes() const
+{
+	ApplyEffectToSelf(DefaultPrimaryAttributes, 1);
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1);
+	ApplyEffectToSelf(DefaultVitalAttributes, 1);
+}
+
 void AAuraCharacter::InitAbilityActorInfo()
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();

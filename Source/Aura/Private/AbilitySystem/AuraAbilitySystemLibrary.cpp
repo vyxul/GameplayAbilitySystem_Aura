@@ -64,21 +64,19 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	FCharacterClassDefaultInfo ClassDefaultInfo = ClassInfo->GetClassDefaultInfo(CharacterClass);
 
 	/* Apply Attributes to ASC */
+	// Get EffectContextHandle Ready
+	FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(AvatarActor);
+	
 	// Apply Primary Attributes
-	FGameplayEffectContextHandle PrimaryAttributesContextHandle = ASC->MakeEffectContext();
-	PrimaryAttributesContextHandle.AddSourceObject(AvatarActor);
-	FGameplayEffectSpecHandle PrimaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassDefaultInfo.PrimaryAttributes, Level, PrimaryAttributesContextHandle);
+	FGameplayEffectSpecHandle PrimaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassDefaultInfo.PrimaryAttributes, Level, EffectContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*PrimaryAttributesSpecHandle.Data.Get());
 
 	// Apply Secondary Attributes
-	FGameplayEffectContextHandle SecondaryAttributesContextHandle = ASC->MakeEffectContext();
-	SecondaryAttributesContextHandle.AddSourceObject(AvatarActor);
-	FGameplayEffectSpecHandle SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->SecondaryAttributes, Level, SecondaryAttributesContextHandle);
+	FGameplayEffectSpecHandle SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->SecondaryAttributes, Level, EffectContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributesSpecHandle.Data.Get());
 	
 	// Apply Vital Attributes
-	FGameplayEffectContextHandle VitalAttributesContextHandle = ASC->MakeEffectContext();
-	VitalAttributesContextHandle.AddSourceObject(AvatarActor);
-	FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->VitalAttributes, Level, VitalAttributesContextHandle);
+	FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->VitalAttributes, Level, EffectContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }

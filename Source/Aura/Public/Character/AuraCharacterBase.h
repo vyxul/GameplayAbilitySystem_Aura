@@ -44,16 +44,9 @@ protected:
 	
 	virtual void InitAbilityActorInfo();
 
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category= "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category= "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category= "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
-
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect> GameplayEffectClass, const float Level) const;
+	
+	// Implemented in child classes (AuraCharacter and AuraEnemy)
 	virtual void InitializeDefaultAttributes() const;
 
 	void AddCharacterAbilities();
