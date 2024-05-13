@@ -43,6 +43,9 @@ public:
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
+
+	/* Used for Set By Caller modifier calculation type in GE */
+	FGameplayTag Damage;
 	
 private:
 	static FAuraGameplayTags GameplayTags;
