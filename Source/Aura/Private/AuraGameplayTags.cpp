@@ -15,32 +15,13 @@ FAuraGameplayTags FAuraGameplayTags::GameplayTags;
 void FAuraGameplayTags::InitializeNativeGameplayTags()
 {
 	/* Primary Attributes */
-	GameplayTags.Attributes_Primary_Strength = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Primary.Strength"),
-		FString("Increases physical damage")
-		);
-	
-	GameplayTags.Attributes_Primary_Intelligence = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Primary.Intelligence"),
-		FString("Increases magical damage")
-		);
-	
-	GameplayTags.Attributes_Primary_Resilience = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Primary.Resilience"),
-		FString("Increases Armor and Armor Penetration")
-		);
-	
-	GameplayTags.Attributes_Primary_Vigor = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Primary.Vigor"),
-		FString("Increases health")
-		);
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Primary_Strength, Attributes.Primary.Strength, "Increases physical damage")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Primary_Intelligence, Attributes.Primary.Intelligence, "Increases magical damage")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Primary_Resilience, Attributes.Primary.Resilience, "Increases Armor and Armor Penetration")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Primary_Vigor, Attributes.Primary.Vigor, "Increases health")
 
 	/* Secondary Attributes */
-	GameplayTags.Attributes_Secondary_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Attributes.Secondary.Armor"),
-		FString("Reduces damage taken, improves block chance")
-		);
-
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_Armor, Attributes.Secondary.Armor, "Reduces damage taken, improves block chance")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_ArmorPenetration, Attributes.Secondary.ArmorPenetration, "Ignored percentage of enemy armor, increases critical hit chance");
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_BlockChance, Attributes.Secondary.BlockChance, "Chance to cut incoming damage by half");
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_CriticalHitChance, Attributes.Secondary.CriticalHitChance, "Chance to double damage lus critical hit bonus");
@@ -59,5 +40,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_3, InputTag.3, "Input tag for 3 key")
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_4, InputTag.4, "Input tag for 4 key")
 
+	/* Tag used for damage */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Damage, Damage, "Damage")
+
+	/* Tag to apply to targets */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Effects_HitReact, Effect.HitReact, "Tag granted when Hit Reacting")
 }

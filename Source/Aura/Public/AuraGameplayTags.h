@@ -46,6 +46,9 @@ public:
 
 	/* Used for Set By Caller modifier calculation type in GE */
 	FGameplayTag Damage;
+
+	/* Used for Applying to Target */
+	FGameplayTag Effects_HitReact;
 	
 private:
 	static FAuraGameplayTags GameplayTags;
