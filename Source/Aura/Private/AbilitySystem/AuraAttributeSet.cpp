@@ -136,6 +136,13 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			UE_LOG(LogTemp, Warning, TEXT("UAuraAttributeSet::PostGameplayEffectExecute(): Changed Health on %s, Health: %f"), *EffectProperties.TargetAvatarActor->GetName(), GetHealth());
 
 			const bool bFatal = NewHealth <= 0;
+
+			if (!bFatal)
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				EffectProperties.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 		}
 	}
 }
