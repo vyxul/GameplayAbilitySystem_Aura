@@ -49,6 +49,7 @@ void AAuraCharacterBase::Die()
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
+	/* Handle Collision and Weight Settings */
 	// Weapon
 	Weapon->SetSimulatePhysics(true);
 	Weapon->SetEnableGravity(true);
@@ -62,6 +63,9 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 
 	// Capsule
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	/* Death FX */
+	Dissolve();
 }
 
 // Called when the game starts or when spawned
@@ -104,4 +108,25 @@ void AAuraCharacterBase::AddCharacterAbilities()
 		return;
 
 	AuraASC->AddCharacterAbilities(StartUpAbilities);
+}
+
+void AAuraCharacterBase::Dissolve()
+{
+	// Character Mesh
+	if (IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this);
+		GetMesh()->SetMaterial(0, DynamicMatInst);
+
+		StartDissolveTimeline(DynamicMatInst);
+	}
+
+	// Weapon Mesh
+	if (IsValid(WeaponDissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* DynamicMatInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this);
+		Weapon->SetMaterial(0, DynamicMatInst);
+
+		StartWeaponDissolveTimeline(DynamicMatInst);
+	}
 }
