@@ -13,11 +13,13 @@ struct AuraDamageStatics
 	// using macros to easily declare and define AttributeCaptureDef variables, look at MMC classes for long form versions
 	// if needing same attribute from both target and source, maybe need to do it long form or make own macro
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 	
 	AuraDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArmorPenetration, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
 	}
 };
@@ -32,6 +34,7 @@ static const AuraDamageStatics& DamageStatics()
 UExecCalc_Damage::UExecCalc_Damage()
 {
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
+	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
 	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
 }
 
@@ -60,27 +63,42 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float Damage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Damage);
 	
 	/* Getting attribute info */
-	// set up variables to capture attribute magnitudes
-	//float Armor = 0.f;
-	// Capture BlockChance on Target, and determine if there was a successful block
-	// If Block, halve the damage.
-	float BlockChance = 0.f;
+	/* 1. Set up variable to capture attribute magnitudes
+	 * 2. Call function to get attribute info
+	 * 3. Clamp any attribute magnitudes as needed
+	 */
+	// Target Armor
+	float TargetArmor = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluateParameters, TargetArmor);
+	TargetArmor = FMath::Max<float>(0.f, TargetArmor);
+
+	// Source Armor Penetration
+	float SourceArmorPenetration = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorPenetrationDef, EvaluateParameters, SourceArmorPenetration);
+	SourceArmorPenetration = FMath::Max<float>(0.f, SourceArmorPenetration);
 	
-	// Call function to get attribute info
-	//ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluateParameters, Armor);
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluateParameters, BlockChance);
-
-	// clamp any attribute magnitudes as needed
-	// this is to clamp armor to be > 0, doing simple modifier for now for demo
-	//Armor = FMath::Max<float>(0.f, Armor);
-	//++Armor;
-	BlockChance = FMath::Max<float>(0.f, BlockChance);
-
-	// Perform any calculations needed with the attribute magnitudes retrieved
+	// Target Block Chance
+	float TargetBlockChance = 0.f;
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluateParameters, TargetBlockChance);
+	TargetBlockChance = FMath::Max<float>(0.f, TargetBlockChance);
+	/* End Attribute Info */
+	
+	/* Perform the actual calculations needed with previously retrieved info */
+	/* 1. 
+	 * Check to see if the target blocked the source's attack
+	 * If blocked, halve the damage.
+	 */
 	float RandomNumber = FMath::FRand() * 100;
-	bool bAttackBlocked = RandomNumber <= BlockChance ? true : false;
+	bool bAttackBlocked = RandomNumber <= TargetBlockChance ? true : false;
 	if (bAttackBlocked)
 		Damage = Damage / 2;
+
+	/* 2.
+	 * ArmorPenetration ignores a percentage of the Target's Armor.
+	 * Armor will reduce a percent of the incoming Damage.
+	 */
+	const float EffectiveArmor = (TargetArmor * ((100.f - (SourceArmorPenetration * .25f)) / 100.f));
+	Damage *= ((100 - (EffectiveArmor * .333f)) / 100.f);
 
 	/* Modify Attributes */
 	//const FGameplayModifierEvaluatedData EvaluatedData(DamageStatics().ArmorProperty, EGameplayModOp::Additive, Armor);
