@@ -4,6 +4,7 @@
 #include "AbilitySystem/ExecCalc/ExecCalc_Damage.h"
 
 #include "AbilitySystemComponent.h"
+#include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -70,6 +71,9 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Get GE Spec
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+
+	// Get GE Context Handle
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 	
 	// create EvaluateParams needed for AttemptCalculateCapturedAttributeMagnitude()
 	FAggregatorEvaluateParameters EvaluateParameters;
@@ -136,6 +140,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	bool bAttackBlocked = RandomNumber <= TargetBlockChance ? true : false;
 	if (bAttackBlocked)
 		Damage = Damage / 2;
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bAttackBlocked);
 
 	/* 2.
 	 * ArmorPenetration ignores a percentage of the Target's Armor.
@@ -184,6 +189,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		CritMultiplier = FMath::Max(1.f, CritMultiplier);
 		Damage *= CritMultiplier;
 	}
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bAttackCrit);
 	
 	/* Modify Attributes */
 	//const FGameplayModifierEvaluatedData EvaluatedData(DamageStatics().ArmorProperty, EGameplayModOp::Additive, Armor);

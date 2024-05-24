@@ -8,6 +8,7 @@
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
@@ -169,6 +170,9 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 		
 		if (PC)
 			PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter);
+
+		const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
+		const bool bCrit  = UAuraAbilitySystemLibrary::IsCriticalHit(EffectProperties.EffectContextHandle);
 	}
 }
 
