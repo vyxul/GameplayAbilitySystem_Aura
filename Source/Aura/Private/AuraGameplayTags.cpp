@@ -42,6 +42,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	/* Tag used for damage */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Damage, Damage, "Damage")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Damage_Fire, Damage.Fire, "Fire Damage Type")
+	
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Fire);
 
 	/* Tag to apply to targets */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Effects_HitReact, Effect.HitReact, "Tag granted when Hit Reacting")

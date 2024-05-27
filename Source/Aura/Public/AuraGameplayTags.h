@@ -46,6 +46,8 @@ public:
 
 	/* Used for Set By Caller modifier calculation type in GE */
 	FGameplayTag Damage;
+	FGameplayTag Damage_Fire;
+	TArray<FGameplayTag> DamageTypes;
 
 	/* Used for Applying to Target */
 	FGameplayTag Effects_HitReact;
