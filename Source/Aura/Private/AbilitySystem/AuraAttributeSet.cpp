@@ -168,11 +168,11 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 	{
 		AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(EffectProperties.SourceCharacter, 0));
 		
+		const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
+		const bool bCriticalHit  = UAuraAbilitySystemLibrary::IsCriticalHit(EffectProperties.EffectContextHandle);
+		
 		if (PC)
-			PC->ShowDamageNumber(Damage, EffectProperties.TargetCharacter);
-
-		const bool bBlock = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
-		const bool bCrit  = UAuraAbilitySystemLibrary::IsCriticalHit(EffectProperties.EffectContextHandle);
+			PC->ShowDamageNumber(EffectProperties.TargetCharacter, Damage, bBlockedHit, bCriticalHit);
 	}
 }
 

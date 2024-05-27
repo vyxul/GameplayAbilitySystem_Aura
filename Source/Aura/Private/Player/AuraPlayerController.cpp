@@ -30,7 +30,7 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	AutoRun();
 }
 
-void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AAuraPlayerController::ShowDamageNumber_Implementation(ACharacter* TargetCharacter, float DamageAmount, bool bBlockedHit, bool bCriticalHit)
 {
 	if (IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
@@ -43,7 +43,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 		// Can detach right away so that the text doesn't follow enemy as anim plays
 		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		// Set the text on the damage text
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
 	}
 }
 
