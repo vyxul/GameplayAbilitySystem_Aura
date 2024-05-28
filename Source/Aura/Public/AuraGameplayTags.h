@@ -36,6 +36,13 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
+	/* Resistances */
+	// Technically same as secondary attributes, just categorizing differently to be easier
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Physical;
+
 	/* Input Tags */
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -44,10 +51,14 @@ public:
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
 
-	/* Used for Set By Caller modifier calculation type in GE */
+	/* Damage Types */
+	// dont think the damage tag by itself is needed
 	FGameplayTag Damage;
+	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Fire;
-	TArray<FGameplayTag> DamageTypes;
+	FGameplayTag Damage_Lightning;
+	FGameplayTag Damage_Physical;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
 	/* Used for Applying to Target */
 	FGameplayTag Effects_HitReact;

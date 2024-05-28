@@ -14,6 +14,7 @@ FAuraGameplayTags FAuraGameplayTags::GameplayTags;
 
 void FAuraGameplayTags::InitializeNativeGameplayTags()
 {
+	/* DEFINE_NATIVE_GAMEPLAY_TAG(CppTagName, BpTagName, Description) */
 	/* Primary Attributes */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Primary_Strength, Attributes.Primary.Strength, "Increases physical damage")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Primary_Intelligence, Attributes.Primary.Intelligence, "Increases magical damage")
@@ -32,6 +33,12 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_MaxHealth, Attributes.Secondary.MaxHealth, "Maximum amount of health obtainable");
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Secondary_MaxMana, Attributes.Secondary.MaxMana, "Maximum amount of mana obtainable")
 
+	/* Resistances */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Arcane, Attributes.Resistance.Arcane, "Arcane Damage Type Resistance")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Fire, Attributes.Resistance.Fire, "Fire Damage Type Resistance")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Lightning, Attributes.Resistance.Lightning, "Lightning Damage Type Resistance")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Physical, Attributes.Resistance.Physical, "Physical Damage Type Resistance")
+	
 	/* Input Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_LMB, InputTag.LMB, "Input tag for Left Mouse Button")
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_RMB, InputTag.RMB, "Input tag for Right Mouse Button")
@@ -40,11 +47,18 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_3, InputTag.3, "Input tag for 3 key")
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_4, InputTag.4, "Input tag for 4 key")
 
-	/* Tag used for damage */
+	/* Damage Types */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Damage, Damage, "Damage")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Damage_Arcane, Damage.Arcane, "Arcane Damage Type")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Damage_Fire, Damage.Fire, "Fire Damage Type")
-	
-	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Fire);
+	DEFINE_NATIVE_GAMEPLAY_TAG(Damage_Lightning, Damage.Lightning, "Lightning Damage Type")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Damage_Physical, Damage.Physical, "Physical Damage Type")
+
+	/* Map of Damage Types to Resistances */
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Arcane, GameplayTags.Attributes_Resistance_Arcane);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Fire, GameplayTags.Attributes_Resistance_Fire);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lightning, GameplayTags.Attributes_Resistance_Lightning);
+	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
 
 	/* Tag to apply to targets */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Effects_HitReact, Effect.HitReact, "Tag granted when Hit Reacting")
