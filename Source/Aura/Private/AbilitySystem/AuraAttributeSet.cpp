@@ -172,7 +172,7 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 	// Show damage number as long as it's not self damage
 	if (EffectProperties.SourceCharacter != EffectProperties.TargetCharacter)
 	{
-		AAuraPlayerController* PC = Cast<AAuraPlayerController>(UGameplayStatics::GetPlayerController(EffectProperties.SourceCharacter, 0));
+		AAuraPlayerController* PC = Cast<AAuraPlayerController>(EffectProperties.SourceCharacter->Controller);
 		
 		const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(EffectProperties.EffectContextHandle);
 		const bool bCriticalHit  = UAuraAbilitySystemLibrary::IsCriticalHit(EffectProperties.EffectContextHandle);
