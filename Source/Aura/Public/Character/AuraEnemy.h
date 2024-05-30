@@ -11,6 +11,8 @@
 
 
 class UWidgetComponent;
+class UBehaviorTree;
+class AAuraAIController;
 /**
  * 
  */
@@ -21,6 +23,7 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
 	
 public:
 	AAuraEnemy();
+	virtual void PossessedBy(AController* NewController) override;
 
 	/** Enemy Interface */
 	virtual void HighlightActor() override;
@@ -46,6 +49,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Combat")
 	float LifeSpan = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, Category= "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> AuraAIController;
 
 protected:
 	virtual void BeginPlay() override;
