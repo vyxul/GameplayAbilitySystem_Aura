@@ -62,4 +62,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	/* Tag to apply to targets */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Effects_HitReact, Effect.HitReact, "Tag granted when Hit Reacting")
+	
+	/* Ability Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
 }

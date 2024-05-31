@@ -62,6 +62,9 @@ public:
 
 	/* Used for Applying to Target */
 	FGameplayTag Effects_HitReact;
+
+	/* Ability Tags */
+	FGameplayTag Abilities_Attack;
 	
 private:
 	static FAuraGameplayTags GameplayTags;
