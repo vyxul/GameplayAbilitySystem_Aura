@@ -11,6 +11,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -31,7 +32,6 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovement->MaxSpeed = 550.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 }
-
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -56,7 +56,13 @@ void AAuraProjectile::BeginPlay()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+	bool bHasAuthority = HasAuthority();
+	bool bIsValid = DamageEffectSpecHandle.IsValid();
+	bool bDataIsValid = DamageEffectSpecHandle.Data.IsValid();
+	if (!DamageEffectSpecHandle.IsValid())
+		return;
+	
+	if (DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
 		return;
 	
 	ProjectileImpactEffects();

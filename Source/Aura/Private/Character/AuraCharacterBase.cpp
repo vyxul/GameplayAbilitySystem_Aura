@@ -23,6 +23,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
 
 	// Set up weapon component
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
@@ -33,6 +34,12 @@ AAuraCharacterBase::AAuraCharacterBase()
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation()
+{
+	check(Weapon);
+	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
 UAnimMontage* AAuraCharacterBase::GetHitReactMontage_Implementation()
@@ -73,12 +80,6 @@ void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-FVector AAuraCharacterBase::GetCombatSocketLocation()
-{
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
 void AAuraCharacterBase::InitAbilityActorInfo()
