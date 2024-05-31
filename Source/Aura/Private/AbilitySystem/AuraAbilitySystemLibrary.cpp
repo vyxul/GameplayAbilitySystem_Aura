@@ -149,3 +149,39 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	if (AuraEffectContext)
 		AuraEffectContext->SetIsCriticalHit(bInIsCriticalHit);
 }
+
+void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject,
+	TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius,
+	const FVector& SphereOrigin)
+{
+	// Set up collision params
+	FCollisionQueryParams SphereParams;
+	SphereParams.AddIgnoredActors(ActorsToIgnore);
+
+	// Set up the array holding results of query
+	TArray<FOverlapResult> Overlaps;
+	UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull);
+
+	if (World)
+	{
+		World->OverlapMultiByObjectType(
+			Overlaps,
+			SphereOrigin,
+			FQuat::Identity,
+			FCollisionObjectQueryParams(FCollisionObjectQueryParams::InitType::AllDynamicObjects),
+			FCollisionShape::MakeSphere(Radius),
+			SphereParams
+		);
+
+		for (FOverlapResult& Overlap : Overlaps)
+		{
+			const bool ImplementsCombatInterface = Overlap.GetActor()->Implements<UCombatInterface>();
+			if (ImplementsCombatInterface)
+			{
+				const bool IsAlive = !ICombatInterface::Execute_IsDead(Overlap.GetActor());
+				if (IsAlive)
+					OutOverlappingActors.AddUnique(ICombatInterface::Execute_GetAvatar(Overlap.GetActor()));
+			}
+		}
+	}
+}

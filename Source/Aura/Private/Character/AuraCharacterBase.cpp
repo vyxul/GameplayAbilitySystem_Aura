@@ -54,6 +54,16 @@ void AAuraCharacterBase::Die()
 	MulticastHandleDeath();
 }
 
+bool AAuraCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AAuraCharacterBase::GetAvatar_Implementation()
+{
+	return this;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	/* Handle Collision and Weight Settings */
@@ -73,6 +83,9 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 
 	/* Death FX */
 	Dissolve();
+
+	// Death State
+	bDead = true;
 }
 
 // Called when the game starts or when spawned
