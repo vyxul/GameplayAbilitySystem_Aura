@@ -74,6 +74,10 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	// Set the GE Spec Handle for the Projectile
 	Projectile->DamageEffectSpecHandle = SpecHandle;
 
+	// Add faction tag to the projectile
+	FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
+	Projectile->Tags.Add(FactionTag);
+
 	// Spawn projectile
 	Projectile->FinishSpawning(SpawnTransform);
 	
