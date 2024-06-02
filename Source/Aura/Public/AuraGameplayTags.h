@@ -65,6 +65,11 @@ public:
 
 	/* Ability Tags */
 	FGameplayTag Abilities_Attack;
+
+	/* Montage Tags */
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_RightHand;
+	FGameplayTag Montage_Attack_LeftHand;
 	
 private:
 	static FAuraGameplayTags GameplayTags;

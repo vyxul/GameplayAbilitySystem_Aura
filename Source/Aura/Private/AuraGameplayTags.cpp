@@ -65,4 +65,9 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	
 	/* Ability Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
+
+	/* Montage Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_Weapon,    Montage.Attack.Weapon,    "Weapon")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_RightHand, Montage.Attack.RightHand, "Right Hand")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_LeftHand,  Montage.Attack.LeftHand,  "Left Hand")
 }
