@@ -6,7 +6,9 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
+#include "Character/AuraCharacterBase.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -59,40 +61,67 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	bool bHasAuthority = HasAuthority();
 	bool bIsValid = DamageEffectSpecHandle.IsValid();
 	bool bDataIsValid = DamageEffectSpecHandle.Data.IsValid();
+	AActor* TempInstigator;
 	if (!DamageEffectSpecHandle.IsValid())
 		return;
 	
-	if (DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
+	if (DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor)
+	{
+		TempInstigator = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator();
+		AAuraCharacterBase* TempCharacterBase = Cast<AAuraCharacterBase>(TempInstigator); 
 		return;
-	
+	}
+
+	/*
 	ProjectileImpactEffects();
 
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-			if (DamageEffectSpecHandle != nullptr)
+		{
+			AActor* TargetActor = TargetASC->GetAvatarActor();
+			if (UAuraAbilitySystemLibrary::AreOpposingFactions(this, TargetActor))
+			{
 				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
-		
-		Destroy();
+			
+				Destroy();
+			}
+		}
 	}
 	else
 		bHit = true;
+	*/
+
+
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	{
+		AActor* TargetActor = TargetASC->GetAvatarActor();
+		if (UAuraAbilitySystemLibrary::AreOpposingFactions(this, TargetActor))
+		{
+			ProjectileImpactEffects();
+			bHit = true;
+			if (HasAuthority())
+			{
+				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			
+				Destroy();
+			}
+		}
+	}
 }
 
 void AAuraProjectile::Destroyed()
 {
+	/*
 	if (!bHit && !HasAuthority())
+	*/
 		ProjectileImpactEffects();
 	
 	Super::Destroyed();
 }
 
-void AAuraProjectile::ProjectileImpactEffects()
+void AAuraProjectile::ProjectileImpactEffects_Implementation()
 {
-	if (!bHit)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	}
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 }
-

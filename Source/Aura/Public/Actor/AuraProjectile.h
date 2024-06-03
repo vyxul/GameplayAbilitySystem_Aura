@@ -50,6 +50,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> LoopingSound;
 
+	UFUNCTION(NetMulticast, Reliable)
 	void ProjectileImpactEffects();
 
 	UPROPERTY(EditAnywhere)

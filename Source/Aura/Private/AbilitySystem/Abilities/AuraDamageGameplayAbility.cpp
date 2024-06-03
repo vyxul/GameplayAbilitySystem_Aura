@@ -19,3 +19,16 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	if (TargetActor)
 		SourceASC->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), TargetASC);
 }
+
+FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const
+{
+	if (TaggedMontages.Num() > 0)
+	{
+		bMontageFound = true;
+		const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
+		return TaggedMontages[Selection];
+	}
+
+	bMontageFound = false;
+	return FTaggedMontage();
+}
