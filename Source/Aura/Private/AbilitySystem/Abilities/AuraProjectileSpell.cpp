@@ -67,7 +67,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	for (auto& Pair : DamageTypes)
 	{
 		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("FireBolt Damage: %f"), ScaledDamage));
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, FString::Printf(TEXT("Projectile Spell Damage: %f"), ScaledDamage));
 		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Pair.Key, ScaledDamage);
 	}
 
