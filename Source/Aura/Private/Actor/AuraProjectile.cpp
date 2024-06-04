@@ -61,16 +61,11 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	bool bHasAuthority = HasAuthority();
 	bool bIsValid = DamageEffectSpecHandle.IsValid();
 	bool bDataIsValid = DamageEffectSpecHandle.Data.IsValid();
-	AActor* TempInstigator;
 	if (!DamageEffectSpecHandle.IsValid())
 		return;
 	
 	if (DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor)
-	{
-		TempInstigator = DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator();
-		AAuraCharacterBase* TempCharacterBase = Cast<AAuraCharacterBase>(TempInstigator); 
 		return;
-	}
 
 	/*
 	ProjectileImpactEffects();
