@@ -31,6 +31,7 @@ public:
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 
 	/* ICombatInterface */
+	virtual FVector GetCombatInterfaceLocation_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
