@@ -11,6 +11,7 @@
 #include "Character/AuraCharacterBase.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
+#include "Engine/StaticMeshActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -58,15 +59,23 @@ void AAuraProjectile::BeginPlay()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	bool bHasAuthority = HasAuthority();
-	bool bIsValid = DamageEffectSpecHandle.IsValid();
-	bool bDataIsValid = DamageEffectSpecHandle.Data.IsValid();
+	
 	if (!DamageEffectSpecHandle.IsValid())
 		return;
 	
 	if (DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor)
 		return;
 
+	if (AStaticMeshActor* StaticMeshActor = Cast<AStaticMeshActor>(OtherActor))
+	{
+		ECollisionChannel ActorCollisionObjectType = StaticMeshActor->GetStaticMeshComponent()->GetCollisionObjectType();
+		if (ActorCollisionObjectType == ECC_WorldStatic)
+		{
+			ProjectileImpactEffects();
+			Destroy();
+		}
+	}
+	
 	/*
 	ProjectileImpactEffects();
 
@@ -94,7 +103,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		if (UAuraAbilitySystemLibrary::AreOpposingFactions(this, TargetActor))
 		{
 			ProjectileImpactEffects();
-			bHit = true;
 			if (HasAuthority())
 			{
 				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
@@ -110,13 +118,17 @@ void AAuraProjectile::Destroyed()
 	/*
 	if (!bHit && !HasAuthority())
 	*/
-		ProjectileImpactEffects();
+	//ProjectileImpactEffects();
 	
 	Super::Destroyed();
 }
 
 void AAuraProjectile::ProjectileImpactEffects_Implementation()
 {
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if (!bHit)
+	{
+		bHit = true;
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	}
 }
