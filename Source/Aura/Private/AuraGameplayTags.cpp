@@ -66,8 +66,14 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/* Ability Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
 
+	/* Combat Socket Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_Weapon,    Combat.Socket.Weapon,    "Weapon")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_RightHand, Combat.Socket.RightHand, "Right Hand")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_LeftHand,  Combat.Socket.LeftHand,  "Left Hand")
+
 	/* Montage Tags */
-	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_Weapon,    Montage.Attack.Weapon,    "Weapon")
-	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_RightHand, Montage.Attack.RightHand, "Right Hand")
-	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_LeftHand,  Montage.Attack.LeftHand,  "Left Hand")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_1, Montage.Attack.1, "Attack 1")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_2, Montage.Attack.2, "Attack 2")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_3, Montage.Attack.3, "Attack 3")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_4, Montage.Attack.4, "Attack 4")
 }

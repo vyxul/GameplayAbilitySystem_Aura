@@ -25,7 +25,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
 		GetAvatarActorFromActorInfo(), 
-		FAuraGameplayTags::Get().Montage_Attack_Weapon);
+		FAuraGameplayTags::Get().Combat_Socket_Weapon);
 	// Get the rotation to the target
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 	// Design Decision of Teacher: Make projectile move parallel to the ground
