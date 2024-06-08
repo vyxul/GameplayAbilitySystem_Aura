@@ -18,24 +18,24 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocation, const FVector& ProjectileTargetLocation)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer)
 		return;
 
-	AAuraCharacterBase* OwnerActor = Cast<AAuraCharacterBase>(GetAvatarActorFromActorInfo());
-	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
-		OwnerActor,
-		FAuraGameplayTags::Get().Combat_Socket_Weapon);
+	// AAuraCharacterBase* OwnerActor = Cast<AAuraCharacterBase>(GetAvatarActorFromActorInfo());
+	// const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
+	// 	OwnerActor,
+	// 	FAuraGameplayTags::Get().Combat_Socket_Weapon);
 	// Get the rotation to the target
-	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	FRotator Rotation = (ProjectileTargetLocation - ProjectileSpawnLocation).Rotation();
 	// Design Decision of Teacher: Make projectile move parallel to the ground
 	// if we decide to have gravity on spell, can make pitch higher if we want
 	//Rotation.Pitch = 0.f;
 	
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(SocketLocation);
+	SpawnTransform.SetLocation(ProjectileSpawnLocation);
 	SpawnTransform.SetRotation(Rotation.Quaternion());
 
 	// Get the projectile ready
