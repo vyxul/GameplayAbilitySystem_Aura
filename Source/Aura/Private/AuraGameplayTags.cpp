@@ -70,6 +70,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_Weapon,    Combat.Socket.Weapon,    "Weapon")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_RightHand, Combat.Socket.RightHand, "Right Hand")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_LeftHand,  Combat.Socket.LeftHand,  "Left Hand")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_Tail,	    Combat.Socket.Tail,      "Tail")
 
 	/* Montage Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_1, Montage.Attack.1, "Attack 1")

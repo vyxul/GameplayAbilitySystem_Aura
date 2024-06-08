@@ -32,6 +32,8 @@ public:
 
 	/* ICombatInterface */
 	virtual FVector GetCombatInterfaceLocation_Implementation() override;
+	virtual USkeletalMeshComponent* GetMeshComponent_Implementation() override;
+	virtual USkeletalMeshComponent* GetWeaponMeshComponent_Implementation() override;
 	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& SocketTag) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
@@ -63,6 +65,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	FName RightHandSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	FName TailSocketName;
 
 	bool bDead = false;
 	

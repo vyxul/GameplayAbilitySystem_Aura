@@ -43,6 +43,16 @@ FVector AAuraCharacterBase::GetCombatInterfaceLocation_Implementation()
 	return GetActorLocation();
 }
 
+USkeletalMeshComponent* AAuraCharacterBase::GetMeshComponent_Implementation()
+{
+	return GetMesh();
+}
+
+USkeletalMeshComponent* AAuraCharacterBase::GetWeaponMeshComponent_Implementation()
+{
+	return Weapon;
+}
+
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& SocketTag)
 {
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
@@ -54,6 +64,9 @@ FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGamepl
 	
 	if (SocketTag.MatchesTagExact(GameplayTags.Combat_Socket_RightHand))
 		return GetMesh()->GetSocketLocation(RightHandSocketName);
+
+	if (SocketTag.MatchesTagExact(GameplayTags.Combat_Socket_Tail))
+		return GetMesh()->GetSocketLocation(TailSocketName);
 
 	return FVector();
 }

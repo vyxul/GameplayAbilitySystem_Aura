@@ -8,6 +8,7 @@
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
 #include "Aura/Public/AuraGameplayTags.h"
+#include "Character/AuraCharacterBase.h"
 
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -23,8 +24,9 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	if (!bIsServer)
 		return;
 
+	AAuraCharacterBase* OwnerActor = Cast<AAuraCharacterBase>(GetAvatarActorFromActorInfo());
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
-		GetAvatarActorFromActorInfo(), 
+		OwnerActor,
 		FAuraGameplayTags::Get().Combat_Socket_Weapon);
 	// Get the rotation to the target
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
