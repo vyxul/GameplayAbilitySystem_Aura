@@ -41,13 +41,19 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 		FVector ChosenSpawnLocation = OwnerLocation + (Direction * (FMath::RandRange(MinSpawnDistance, MaxSpawnDistance)));
 
 		FHitResult Hit;
-		GetWorld()->LineTraceSingleByChannel(Hit, ChosenSpawnLocation + FVector(0.f, 0.f, 400.f), ChosenSpawnLocation - FVector(0.f, 0.f, 400.f), ECC_Visibility);
+		// GetWorld()->LineTraceSingleByChannel(Hit, ChosenSpawnLocation + FVector(0.f, 0.f, 400.f), ChosenSpawnLocation - FVector(0.f, 0.f, 400.f), ECC_Visibility);
 		if (Hit.bBlockingHit)
 			ChosenSpawnLocation = Hit.ImpactPoint;
 		
-		DrawDebugSphere(GetWorld(), ChosenSpawnLocation, 15.f, 12, FColor::Blue, false, DebugShapeDuration);
+		// DrawDebugSphere(GetWorld(), ChosenSpawnLocation, 15.f, 12, FColor::Blue, false, DebugShapeDuration);
 		SpawnLocations.Add(ChosenSpawnLocation);
 	}
 	
 	return SpawnLocations;
+}
+
+TSubclassOf<APawn> UAuraSummonAbility::GetRandomMinionClass()
+{
+	const int32 Selection = FMath::RandRange(0, MinionClasses.Num() - 1);
+	return MinionClasses[Selection];
 }
