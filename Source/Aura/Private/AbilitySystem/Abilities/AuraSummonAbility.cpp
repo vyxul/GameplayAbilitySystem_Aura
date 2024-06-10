@@ -37,7 +37,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 		if (NumMinions == 1)
 			Direction = Direction.RotateAngleAxis(DeltaSpread, FVector::UpVector);
 				
-		UKismetSystemLibrary::DrawDebugArrow(Owner, OwnerLocation + (Direction * MinSpawnDistance), OwnerLocation + (Direction * MaxSpawnDistance), 4.f, FLinearColor::Blue, DebugShapeDuration);
+		// UKismetSystemLibrary::DrawDebugArrow(Owner, OwnerLocation + (Direction * MinSpawnDistance), OwnerLocation + (Direction * MaxSpawnDistance), 4.f, FLinearColor::Blue, DebugShapeDuration);
 		FVector ChosenSpawnLocation = OwnerLocation + (Direction * (FMath::RandRange(MinSpawnDistance, MaxSpawnDistance)));
 
 		FHitResult Hit;
