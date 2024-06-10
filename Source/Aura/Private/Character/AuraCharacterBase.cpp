@@ -121,7 +121,7 @@ int32 AAuraCharacterBase::GetMinionCount_Implementation()
 
 void AAuraCharacterBase::SetMinionCount_Implementation(const int32 Amount)
 {
-	MinionCount += Amount;
+	MinionCount = Amount;
 }
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()

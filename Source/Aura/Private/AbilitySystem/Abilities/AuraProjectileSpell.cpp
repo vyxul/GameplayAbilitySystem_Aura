@@ -18,7 +18,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
-void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocation, const FVector& ProjectileTargetLocation)
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocation, const FVector& ProjectileTargetLocation, bool bOverridePitch, float PitchOverride)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer)
@@ -33,6 +33,9 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocatio
 	// Design Decision of Teacher: Make projectile move parallel to the ground
 	// if we decide to have gravity on spell, can make pitch higher if we want
 	//Rotation.Pitch = 0.f;
+	
+	if (bOverridePitch)
+		Rotation.Pitch = PitchOverride;
 	
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(ProjectileSpawnLocation);
