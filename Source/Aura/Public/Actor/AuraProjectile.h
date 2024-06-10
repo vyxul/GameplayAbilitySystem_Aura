@@ -33,15 +33,15 @@ protected:
 
 	virtual void Destroyed() override;
 
+	/* Technical Members */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USphereComponent> Sphere;
+
 private:
 	bool bHit = false;
 
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 15.f;
-
-	/* Technical Members */
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USphereComponent> Sphere;
 
 	/* FX */
 	UPROPERTY()
