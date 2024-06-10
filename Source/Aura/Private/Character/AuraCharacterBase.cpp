@@ -114,9 +114,14 @@ FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 	return FTaggedMontage();
 }
 
-int32 AAuraCharacterBase::GetMinionCount_Implementation(const FGameplayTag& MontageTag)
+int32 AAuraCharacterBase::GetMinionCount_Implementation()
 {
 	return MinionCount;
+}
+
+void AAuraCharacterBase::SetMinionCount_Implementation(const int32 Amount)
+{
+	MinionCount += Amount;
 }
 
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
