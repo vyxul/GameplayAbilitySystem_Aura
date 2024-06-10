@@ -38,7 +38,13 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 			Direction = Direction.RotateAngleAxis(DeltaSpread, FVector::UpVector);
 				
 		UKismetSystemLibrary::DrawDebugArrow(Owner, OwnerLocation + (Direction * MinSpawnDistance), OwnerLocation + (Direction * MaxSpawnDistance), 4.f, FLinearColor::Blue, DebugShapeDuration);
-		const FVector ChosenSpawnLocation = OwnerLocation + (Direction * (FMath::RandRange(MinSpawnDistance, MaxSpawnDistance)));
+		FVector ChosenSpawnLocation = OwnerLocation + (Direction * (FMath::RandRange(MinSpawnDistance, MaxSpawnDistance)));
+
+		FHitResult Hit;
+		GetWorld()->LineTraceSingleByChannel(Hit, ChosenSpawnLocation + FVector(0.f, 0.f, 400.f), ChosenSpawnLocation - FVector(0.f, 0.f, 400.f), ECC_Visibility);
+		if (Hit.bBlockingHit)
+			ChosenSpawnLocation = Hit.ImpactPoint;
+		
 		DrawDebugSphere(GetWorld(), ChosenSpawnLocation, 15.f, 12, FColor::Blue, false, DebugShapeDuration);
 		SpawnLocations.Add(ChosenSpawnLocation);
 	}
