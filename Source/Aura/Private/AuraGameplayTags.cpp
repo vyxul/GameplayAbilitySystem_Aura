@@ -65,6 +65,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	
 	/* Ability Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Summon, Abilities.Summon, "Summon Ability Tag")
 
 	/* Combat Socket Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_Weapon,    Combat.Socket.Weapon,    "Weapon")

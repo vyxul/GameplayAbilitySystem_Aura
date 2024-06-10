@@ -114,6 +114,11 @@ FTaggedMontage AAuraCharacterBase::GetTaggedMontageByTag_Implementation(const FG
 	return FTaggedMontage();
 }
 
+int32 AAuraCharacterBase::GetMinionCount_Implementation(const FGameplayTag& MontageTag)
+{
+	return MinionCount;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	/* Handle Collision and Weight Settings */
