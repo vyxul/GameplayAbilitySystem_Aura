@@ -77,10 +77,13 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		}
 	}
 
-	// If collides with bp mesh
-	if (UStaticMeshComponent* ActorStaticMesh = Cast<UStaticMeshComponent>(OtherActor->GetRootComponent()))
+	// If collides with bp actor mesh
+	TArray<UStaticMeshComponent*> StaticMeshComponents;
+	OtherActor->GetComponents<UStaticMeshComponent>(StaticMeshComponents);
+	if (!StaticMeshComponents.IsEmpty())
 	{
-		ECollisionChannel ActorCollisionObjectType = ActorStaticMesh->GetCollisionObjectType();
+		UStaticMeshComponent* StaticMeshComponent = StaticMeshComponents.Top();
+		ECollisionChannel ActorCollisionObjectType = StaticMeshComponent->GetCollisionObjectType();
 		if (ActorCollisionObjectType == ECC_WorldStatic || ActorCollisionObjectType == ECC_WorldDynamic)
 		{
 			ProjectileImpactEffects();
