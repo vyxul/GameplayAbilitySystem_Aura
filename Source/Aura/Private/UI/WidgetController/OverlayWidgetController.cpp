@@ -26,6 +26,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	
 	/* Bind Attribute Changes */
 	/**
@@ -54,7 +55,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	*/
 
 	/* Bind GE Asset Tag Applied */
-	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->EffectAssetTags.AddLambda(
+	AuraASC->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
 		{
 			for (const FGameplayTag& Tag : AssetTags)
@@ -72,6 +73,22 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 			}
 		}
 	);
+
+	/* Binding Abilities Given */
+	if (AuraASC->bStartupAbilitiesGiven)
+		OnInitializeStartupAbilities(AuraASC);
+	
+	else
+		AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+}
+
+void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC)
+{
+	//TODO: Get information about all given ablitilies, look up their ability info, and broadcast it to widgets.
+	if (!AuraASC->bStartupAbilitiesGiven)
+		return;
+
+	
 }
 
 /* These functions only necessary if we are binding attribute change delegates to callback functions */
