@@ -7,6 +7,7 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+class UAbilityInfo;
 class UAuraUserWidget;
 
 /* Message Data Table Struct */
@@ -68,6 +69,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	/* Callback functions for binding to delegates */
 	/* Not needed since we are binding attribute delegates to lambda functions */
