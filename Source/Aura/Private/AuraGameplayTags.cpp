@@ -66,9 +66,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/* Ability Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Summon, Abilities.Summon, "Summon Ability Tag")
-
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire_FireBolt, Abilities.Fire.FireBolt, "FireBolt Ability Tag")
 
+	/* Cooldown Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Fire_FireBolt, Cooldown.Fire.FireBolt, "FireBolt Cooldown Tag")
+	
 	/* Combat Socket Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_Weapon,    Combat.Socket.Weapon,    "Weapon")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_RightHand, Combat.Socket.RightHand, "Right Hand")
