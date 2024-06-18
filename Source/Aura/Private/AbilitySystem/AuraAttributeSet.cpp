@@ -11,6 +11,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/AuraLogChannels.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
@@ -173,6 +174,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetIncomingXP(0.f);
 		
 		UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP)
+
+		//TODO: See if we should level up
+		if (EffectProperties.SourceCharacter->Implements<UPlayerInterface>())
+			IPlayerInterface::Execute_AddToXP(EffectProperties.SourceCharacter, LocalIncomingXP);
 	}
 }
 
