@@ -61,6 +61,10 @@ void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 	AuraPlayerState->AddToXP(InXP);
 }
 
+void AAuraCharacter::LevelUp_Implementation()
+{
+}
+
 void AAuraCharacter::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1);

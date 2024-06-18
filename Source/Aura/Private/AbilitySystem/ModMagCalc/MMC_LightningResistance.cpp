@@ -36,8 +36,8 @@ float UMMC_LightningResistance::CalculateBaseMagnitude_Implementation(const FGam
 	Vigor = FMath::Max(1.f, Vigor);
 
 	// level value
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const float CharacterLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());;
+	UObject* SourceObject = Spec.GetContext().GetSourceObject();
+	const int32 CharacterLevel = SourceObject->Implements<UCombatInterface>() ? ICombatInterface::Execute_GetPlayerLevel(SourceObject) : 1;
 
 	// get final value
 	const float LightningResistance = (0.1f * CharacterLevel) + (0.08f * Resilience) + (0.12f * Vigor);

@@ -111,6 +111,10 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
 
+	/* Get Levels of Source and Target */
+	int32 SourceLevel = SourceAvatar->Implements<UCombatInterface>() ? ICombatInterface::Execute_GetPlayerLevel(SourceAvatar) : 1;
+	int32 TargetLevel = TargetAvatar->Implements<UCombatInterface>() ? ICombatInterface::Execute_GetPlayerLevel(TargetAvatar) : 1;
+
 	// Get GE Spec
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 
@@ -136,7 +140,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		
 		const FGameplayEffectAttributeCaptureDefinition CaptureDef = GetDamageStatics().GetTagsToCaptureDef()[DamageTypeResistanceTag];
 
-		//TODO: Can decide to either skip current loop if the EffectSpec not using the current DamageTypeTag or to not warn console 
+		// Turned off warning if tag not found
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
 		
 		float Resistance = 0.f;
@@ -146,12 +150,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
 		Damage += DamageTypeValue;
 	}
-
-	/* Get Levels of Source and Target */
-	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
-	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
-	int32 SourceLevel = ICombatInterface::Execute_GetPlayerLevel(SourceAvatar);
-	int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(TargetAvatar);
 	
 	/* Getting attribute info */
 	/* 1. Set up variable to capture attribute magnitudes

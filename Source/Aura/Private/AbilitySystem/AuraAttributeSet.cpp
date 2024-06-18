@@ -177,7 +177,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 		//TODO: See if we should level up
 		if (EffectProperties.SourceCharacter->Implements<UPlayerInterface>())
+		{
 			IPlayerInterface::Execute_AddToXP(EffectProperties.SourceCharacter, LocalIncomingXP);
+		}
 	}
 }
 
@@ -207,8 +209,7 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& EffectProperti
 void UAuraAttributeSet::SendXPEvent(const FEffectProperties& EffectProperties)
 {
 	AActor* TargetCharacter = EffectProperties.TargetCharacter;
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetCharacter);
-	if (CombatInterface)
+	if (TargetCharacter->Implements<UCombatInterface>())
 	{
 		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(TargetCharacter);
 		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(TargetCharacter);
