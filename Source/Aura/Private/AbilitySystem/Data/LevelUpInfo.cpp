@@ -37,6 +37,26 @@ int32 ULevelUpInfo::FindLevelXPCeiling(UDataTable* LevelInfoTable, int32 Level)
 	return GetLevelUpRequirementForLevel(LevelInfoTable, Level);
 }
 
+int32 ULevelUpInfo::GetAttributePointsForLevel(UDataTable* LevelInfoTable, int32 Level)
+{
+	TArray<FName> RowNames = LevelInfoTable->GetRowNames();
+	if (Level > RowNames.Num())
+		return 0;
+
+	FAuraLevelUpInfo* LevelUpInfo = LevelInfoTable->FindRow<FAuraLevelUpInfo>(RowNames[Level - 1], TEXT(""));
+	return LevelUpInfo->AttributePointReward;
+}
+
+int32 ULevelUpInfo::GetSpellPointsForLevel(UDataTable* LevelInfoTable, int32 Level)
+{
+	TArray<FName> RowNames = LevelInfoTable->GetRowNames();
+	if (Level > RowNames.Num())
+		return 0;
+
+	FAuraLevelUpInfo* LevelUpInfo = LevelInfoTable->FindRow<FAuraLevelUpInfo>(RowNames[Level - 1], TEXT(""));
+	return LevelUpInfo->SpellPointReward;
+}
+
 int32 ULevelUpInfo::GetLevelUpRequirementForLevel(const UDataTable* LevelInfoTable, int32 Level)
 {
 	FString LevelString = FString::FromInt(Level);

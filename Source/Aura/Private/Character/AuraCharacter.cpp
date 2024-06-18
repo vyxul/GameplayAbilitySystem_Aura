@@ -8,6 +8,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Player/AuraPlayerController.h"
 #include "UI/HUD/AuraHUD.h"
 
@@ -59,6 +60,71 @@ void AAuraCharacter::AddToXP_Implementation(int32 InXP)
 	check(AuraPlayerState);
 
 	AuraPlayerState->AddToXP(InXP);
+}
+
+int32 AAuraCharacter::GetXP_Implementation() const
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+	
+	return AuraPlayerState->GetXP();
+}
+
+int32 AAuraCharacter::GetAttributePointsReward_Implementation(int32 InLevel)
+{
+	UDataTable* LevelUpInfo = Execute_GetLevelUpInfo(this);
+	if (LevelUpInfo == nullptr)
+			return 0;
+
+	return ULevelUpInfo::GetAttributePointsForLevel(LevelUpInfo, InLevel);
+}
+
+int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 InLevel)
+{
+	UDataTable* LevelUpInfo = Execute_GetLevelUpInfo(this);
+	if (LevelUpInfo == nullptr)
+		return 0;
+
+	return ULevelUpInfo::GetSpellPointsForLevel(LevelUpInfo, InLevel);
+}
+
+AAuraPlayerState* AAuraCharacter::GetAuraPlayerState_Implementation()
+{
+	AAuraPlayerState* AuraPS = Cast<AAuraPlayerState>(GetPlayerState());
+	return AuraPS;
+}
+
+UDataTable* AAuraCharacter::GetLevelUpInfo_Implementation()
+{
+	AAuraPlayerState* AuraPS = Cast<AAuraPlayerState>(GetPlayerState());
+	if (AuraPS == nullptr)
+		return nullptr;
+
+	return AuraPS->LevelUpInfo;
+}
+
+void AAuraCharacter::AddToPlayerLevel_Implementation(int32 InPlayerLevel)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	AuraPlayerState->AddToLevel(InPlayerLevel);
+}
+
+void AAuraCharacter::AddToAttributePoints_Implementation(int32 InAttributePoints)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	//TODO: Add property to PS and finish this implementation
+}
+
+void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	check(AuraPlayerState);
+
+	//TODO: Add property to PS and finish this implementation
 }
 
 void AAuraCharacter::LevelUp_Implementation()

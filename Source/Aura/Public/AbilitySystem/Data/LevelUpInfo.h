@@ -40,6 +40,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static int32 FindLevelXPCeiling(UDataTable* LevelInfoTable, int32 Level);
 
+	UFUNCTION(BlueprintCallable)
+	static int32 GetAttributePointsForLevel(UDataTable* LevelInfoTable, int32 Level);
+	
+	UFUNCTION(BlueprintCallable)
+	static int32 GetSpellPointsForLevel(UDataTable* LevelInfoTable, int32 Level);
+
 private:
 	/* Helper function for finding xp info for a level */
 	static int32 GetLevelUpRequirementForLevel(const UDataTable* LevelInfoTable, int32 Level);

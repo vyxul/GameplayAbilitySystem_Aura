@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
+class AAuraPlayerState;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UPlayerInterface : public UInterface
@@ -24,6 +25,30 @@ class AURA_API IPlayerInterface
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	void AddToXP(int32 InXP);
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetXP() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetAttributePointsReward(int32 InLevel);
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetSpellPointsReward(int32 InLevel);
+
+	UFUNCTION(BlueprintNativeEvent)
+	AAuraPlayerState* GetAuraPlayerState();
+
+	UFUNCTION(BlueprintNativeEvent)
+	UDataTable* GetLevelUpInfo();
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void AddToPlayerLevel(int32 InPlayerLevel);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void AddToAttributePoints(int32 InAttributePoints);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void AddToSpellPoints(int32 InSpellPoints);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp();
