@@ -32,7 +32,7 @@ float UMMC_ArcaneResistance::CalculateBaseMagnitude_Implementation(const FGamepl
 
 	// get level info
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const float CharacterLevel = CombatInterface->GetPlayerLevel();
+	const float CharacterLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());;
 
 	const float ArcaneResistance = (0.1f * CharacterLevel) + (0.2f * Intelligence);
 	

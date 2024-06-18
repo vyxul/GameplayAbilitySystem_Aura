@@ -150,8 +150,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	/* Get Levels of Source and Target */
 	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
 	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
-	int32 SourceLevel = SourceCombatInterface->GetPlayerLevel();
-	int32 TargetLevel = TargetCombatInterface->GetPlayerLevel();
+	int32 SourceLevel = ICombatInterface::Execute_GetPlayerLevel(SourceAvatar);
+	int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(TargetAvatar);
 	
 	/* Getting attribute info */
 	/* 1. Set up variable to capture attribute magnitudes

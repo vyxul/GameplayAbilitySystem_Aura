@@ -31,7 +31,7 @@ float UMMC_PhysicalResistance::CalculateBaseMagnitude_Implementation(const FGame
 
 	// level value
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Spec.GetContext().GetSourceObject());
-	const float CharacterLevel = CombatInterface->GetPlayerLevel();
+	const float CharacterLevel = ICombatInterface::Execute_GetPlayerLevel(Spec.GetContext().GetSourceObject());;
 
 	// get final value
 	const float PhysicalResistance = (0.1f * CharacterLevel) + (0.2f * Strength);

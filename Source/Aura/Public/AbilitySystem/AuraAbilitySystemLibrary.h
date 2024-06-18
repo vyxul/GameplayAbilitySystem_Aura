@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics", meta = (DisplayName = "Get XP for Class and Level"))
+	static int32 GetXPForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);
+
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
 

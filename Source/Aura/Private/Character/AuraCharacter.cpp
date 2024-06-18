@@ -7,6 +7,7 @@
 #include <Player/AuraPlayerState.h>
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Player/AuraPlayerController.h"
 #include "UI/HUD/AuraHUD.h"
 
@@ -39,12 +40,17 @@ void AAuraCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
-int32 AAuraCharacter::GetPlayerLevel()
+int32 AAuraCharacter::GetPlayerLevel_Implementation()
 {
 	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 
 	return AuraPlayerState->GetPlayerLevel();
+}
+
+ECharacterClass AAuraCharacter::GetCharacterClass_Implementation()
+{
+	return ECharacterClass::DefaultClass;
 }
 
 void AAuraCharacter::InitializeDefaultAttributes() const

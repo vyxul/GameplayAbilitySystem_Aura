@@ -5,6 +5,8 @@
 
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
+#include "PropertyPathHelpers.h"
+#include "Aura/AuraLogChannels.h"
 #include "Game/AuraGameModeBase.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -101,11 +103,27 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 		ICombatInterface* CombatInterface = Cast<ICombatInterface>(ASC->GetAvatarActor());
 		if (CombatInterface)
 		{
-			int32 CharacterLevel = CombatInterface->GetPlayerLevel();
+			int32 CharacterLevel = ICombatInterface::Execute_GetPlayerLevel(ASC->GetAvatarActor());;
 			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, CharacterLevel);
 			ASC->GiveAbility(AbilitySpec);
 		}
 	}
+}
+
+int32 UAuraAbilitySystemLibrary::GetXPForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
+{
+	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (CharacterClassInfo == nullptr)
+		return 0;
+
+	FCharacterClassDefaultInfo* ClassDefaultInfo = CharacterClassInfo->CharacterClassInformation.Find(CharacterClass);
+	if (ClassDefaultInfo == nullptr)
+	{
+		UE_LOG(LogAura, Error, TEXT("Can't find class default info for class [%s]"), *UEnum::GetValueAsString(CharacterClass))
+		return 0;
+	}
+
+	return static_cast<int32>(ClassDefaultInfo->XPReward.GetValueAtLevel(Level));
 }
 
 UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
