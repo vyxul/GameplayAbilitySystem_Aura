@@ -38,6 +38,13 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Fire, Attributes.Resistance.Fire, "Fire Damage Type Resistance")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Lightning, Attributes.Resistance.Lightning, "Lightning Damage Type Resistance")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Resistance_Physical, Attributes.Resistance.Physical, "Physical Damage Type Resistance")
+
+	/* Vital Attributes */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Vital_Health, Attributes.Vital.Health, "Current HP")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Vital_Mana, Attributes.Vital.Mana, "Current MP")
+	
+	/* Meta Attributes */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Attributes_Meta_IncomingXP, Attributes.Meta.IncomingXP, "Current XP")
 	
 	/* Input Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_LMB, InputTag.LMB, "Input tag for Left Mouse Button")
