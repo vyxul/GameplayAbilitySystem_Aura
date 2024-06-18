@@ -24,16 +24,23 @@ struct FAuraLevelUpInfo : public FTableRowBase
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class AURA_API ULevelUpInfo : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Level Up Info")
-	TObjectPtr<UDataTable> LevelUpInformation;
-	
 	/* This is assuming that all the level up info in the LevelUpInformation array is sorted in order based on LevelUpRequirements */
 	UFUNCTION(BlueprintCallable)
-	int32 FindLevelForXP(int32 CurrentXP);
+	static int32 FindLevelForXP(UDataTable* LevelInfoTable, int32 CurrentXP);
+
+	UFUNCTION(BlueprintCallable)
+	static int32 FindLevelXPFloor(UDataTable* LevelInfoTable, int32 Level);
+
+	UFUNCTION(BlueprintCallable)
+	static int32 FindLevelXPCeiling(UDataTable* LevelInfoTable, int32 Level);
+
+private:
+	/* Helper function for finding xp info for a level */
+	static int32 GetLevelUpRequirementForLevel(const UDataTable* LevelInfoTable, int32 Level);
 };

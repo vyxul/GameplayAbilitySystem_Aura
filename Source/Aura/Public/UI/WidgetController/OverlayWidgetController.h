@@ -7,6 +7,7 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+class ULevelUpInfo;
 struct FAuraAbilityInfo;
 class UAuraAbilitySystemComponent;
 class UAbilityInfo;
@@ -33,6 +34,10 @@ struct FUIWidgetRow : public FTableRowBase
 
 struct FOnAttributeChangeData;
 
+/* Player State Delegates */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChanged, int32, Value);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerXPPercentageChanged, float, Value);
+
 /* Attribute Set Delegates */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
@@ -54,6 +59,22 @@ public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
 
+	/* Player State Delegate Properties */
+	UPROPERTY(BlueprintAssignable, Category= "Player Level")
+	FPlayerStatsChanged OnPlayerLevelChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category= "Player XP")
+	FPlayerStatsChanged OnPlayerXPChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category= "Player XP")
+	FPlayerStatsChanged OnPlayerLevelXPFloorChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category= "Player XP")
+	FPlayerStatsChanged OnPlayerLevelXPCeilingChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category= "Player XP")
+	FPlayerXPPercentageChanged OnPlayerXPPercentageChangedDelegate;
+	
 	/* Attribute Set Delegate Properties */
 	UPROPERTY(BlueprintAssignable, Category= "GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
@@ -95,6 +116,10 @@ protected:
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 
 	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
+
+private:
+	void OnPlayerLevelChanged(int32 Level);
+	void OnPlayerXPChanged(int32 XP);
 };
 
 template <typename T>

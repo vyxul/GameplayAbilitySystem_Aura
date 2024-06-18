@@ -5,9 +5,10 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/PlayerState.h"
+#include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraPlayerState.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /* Stat Value */);
+DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedSignature, int32);
 
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -26,9 +27,13 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; };
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Level")
+	TObjectPtr<UDataTable> LevelUpInfo;
+
+	FPlayerStatsChangedSignature OnPlayerLevelChanged;
+	FPlayerStatsChangedSignature OnPlayerXPChanged;
+
 	/* Level */
-	FOnPlayerStatChanged OnLevelChangedDelegate;
-	
 	UFUNCTION(BlueprintCallable, Category= "Level")
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
 	
@@ -39,8 +44,6 @@ public:
 	void AddToLevel(int32 InLevel);
 
 	/* XP */
-	FOnPlayerStatChanged OnXPChangedDelegate;
-	
 	UFUNCTION(BlueprintCallable, Category= "XP")
 	FORCEINLINE int32 GetXP() const { return XP; }
 
@@ -69,4 +72,8 @@ private:
 
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP);
+
+	// Helper function to broadcast delegate in multiple areas
+	void BroadcastPlayerLevel();
+	void BroadcastPlayerXP();
 };

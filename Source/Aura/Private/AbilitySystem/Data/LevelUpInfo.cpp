@@ -3,14 +3,14 @@
 
 #include "AbilitySystem/Data/LevelUpInfo.h"
 
-int32 ULevelUpInfo::FindLevelForXP(int32 CurrentXP)
+int32 ULevelUpInfo::FindLevelForXP(UDataTable* LevelInfoTable, int32 CurrentXP)
 {
 	int32 CurrentLevel = 1;
-	TArray<FName> RowNames = LevelUpInformation->GetRowNames();
+	TArray<FName> RowNames = LevelInfoTable->GetRowNames();
 
 	while (CurrentLevel <= RowNames.Num())
 	{
-		FAuraLevelUpInfo* LevelUpInfo = LevelUpInformation.Get()->FindRow<FAuraLevelUpInfo>(RowNames[CurrentLevel - 1], TEXT(""));
+		FAuraLevelUpInfo* LevelUpInfo = LevelInfoTable->FindRow<FAuraLevelUpInfo>(RowNames[CurrentLevel - 1], TEXT(""));
 		if (LevelUpInfo->LevelUpRequirement <= CurrentXP)
 			CurrentLevel++;
 
@@ -19,4 +19,31 @@ int32 ULevelUpInfo::FindLevelForXP(int32 CurrentXP)
 	}
 	
 	return CurrentLevel;
+}
+
+int32 ULevelUpInfo::FindLevelXPFloor(UDataTable* LevelInfoTable, int32 Level)
+{
+	if (Level <= 1)
+		return 0;
+
+	return GetLevelUpRequirementForLevel(LevelInfoTable, Level - 1);
+}
+
+int32 ULevelUpInfo::FindLevelXPCeiling(UDataTable* LevelInfoTable, int32 Level)
+{
+	if (Level <= 0)
+		return 0;
+	
+	return GetLevelUpRequirementForLevel(LevelInfoTable, Level);
+}
+
+int32 ULevelUpInfo::GetLevelUpRequirementForLevel(const UDataTable* LevelInfoTable, int32 Level)
+{
+	FString LevelString = FString::FromInt(Level);
+	FAuraLevelUpInfo* LevelUpInfo = LevelInfoTable->FindRow<FAuraLevelUpInfo>(FName(LevelString), TEXT(""));
+	
+	if (LevelUpInfo == nullptr)
+		return 0;
+
+	return LevelUpInfo->LevelUpRequirement;
 }

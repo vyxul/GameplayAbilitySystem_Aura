@@ -5,6 +5,8 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
+#include "Player/AuraPlayerState.h"
 
 /* Macro to easily bind attributes to a lambda function */
 #define BIND_CALLBACK(AttributeName) AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->Get##AttributeName##Attribute())\
@@ -26,8 +28,13 @@ void UOverlayWidgetController::BroadcastInitialValues()
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+
+	/* PS */
+	AuraPS->OnPlayerLevelChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerLevelChanged);
+	AuraPS->OnPlayerXPChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerXPChanged);
 	
 	/* Bind Attribute Changes */
 	/**
@@ -55,6 +62,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 		.AddUObject(this, &UOverlayWidgetController::MaxManaChanged);
 	*/
 
+	/* ASC */
 	/* Bind GE Asset Tag Applied */
 	AuraASC->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
@@ -100,6 +108,32 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 		}
 	);
 	AuraASC->ForEachAbility(BroadcastDelegate);
+}
+
+void UOverlayWidgetController::OnPlayerLevelChanged(int32 Level)
+{
+	OnPlayerLevelChangedDelegate.Broadcast(Level);
+}
+
+void UOverlayWidgetController::OnPlayerXPChanged(int32 XP)
+{
+	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	int32 Level = ULevelUpInfo::FindLevelForXP(AuraPS->LevelUpInfo, XP);
+	
+	// Get the min and max xp for the current level
+	int32 LevelXPFloor = ULevelUpInfo::FindLevelXPFloor(AuraPS->LevelUpInfo, Level);
+	int32 LevelXPCeiling = ULevelUpInfo::FindLevelXPCeiling(AuraPS->LevelUpInfo, Level);
+
+	int32 RelativeXPFloor = 0;
+	int32 RelativeXPCeiling = LevelXPCeiling - LevelXPFloor;
+	int32 RelativeCurrentXP = XP - LevelXPFloor;
+	float XPBarPercentage = static_cast<float>(RelativeCurrentXP) / static_cast<float>(RelativeXPCeiling);
+
+	/* Broadcast Delegates */
+	OnPlayerXPChangedDelegate.Broadcast(RelativeCurrentXP);
+	OnPlayerLevelXPFloorChangedDelegate.Broadcast(RelativeXPFloor);
+	OnPlayerLevelXPCeilingChangedDelegate.Broadcast(RelativeXPCeiling);
+	OnPlayerXPPercentageChangedDelegate.Broadcast(XPBarPercentage);
 }
 
 /* These functions only necessary if we are binding attribute change delegates to callback functions */
