@@ -74,6 +74,12 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player XP")
 	FPlayerXPPercentageChanged OnPlayerXPPercentageChangedDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category= "Player Attribute Points")
+	FPlayerStatsChanged OnPlayerAttributePointsChangedDelegate;
+	
+	UPROPERTY(BlueprintAssignable, Category= "Player Spell Points")
+	FPlayerStatsChanged OnPlayerSpellPointsChangedDelegate;
 	
 	/* Attribute Set Delegate Properties */
 	UPROPERTY(BlueprintAssignable, Category= "GAS|Attributes")

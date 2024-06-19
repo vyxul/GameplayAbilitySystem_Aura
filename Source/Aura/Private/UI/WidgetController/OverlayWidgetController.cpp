@@ -35,6 +35,16 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	/* PS */
 	AuraPS->OnPlayerLevelChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerLevelChanged);
 	AuraPS->OnPlayerXPChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerXPChanged);
+	AuraPS->OnPlayerAttributePointsChanged.AddLambda(
+		[this](int32 AttributePoints)
+		{
+			OnPlayerAttributePointsChangedDelegate.Broadcast(AttributePoints);
+		});
+	AuraPS->OnPlayerSpellPointsChanged.AddLambda(
+		[this](int32 SpellPoints)
+		{
+			OnPlayerSpellPointsChangedDelegate.Broadcast(SpellPoints);
+		});
 	
 	/* Bind Attribute Changes */
 	/**

@@ -30,28 +30,52 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Level")
 	TObjectPtr<UDataTable> LevelUpInfo;
 
+	/* Delegates */
 	FPlayerStatsChangedSignature OnPlayerLevelChanged;
 	FPlayerStatsChangedSignature OnPlayerXPChanged;
+	FPlayerStatsChangedSignature OnPlayerAttributePointsChanged;
+	FPlayerStatsChangedSignature OnPlayerSpellPointsChanged;
 
-	/* Level */
-	UFUNCTION(BlueprintCallable, Category= "Level")
-	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+	/* Getters and Setters */
+	// Level
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Level")
+	int32 GetPlayerLevel() const;
 	
-	UFUNCTION(BlueprintCallable, Category= "Level")
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Level")
 	void SetLevel(int32 InLevel);
 	
-	UFUNCTION(BlueprintCallable, Category= "Level")
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Level")
 	void AddToLevel(int32 InLevel);
 
-	/* XP */
-	UFUNCTION(BlueprintCallable, Category= "XP")
-	FORCEINLINE int32 GetXP() const { return XP; }
+	// XP
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | XP")
+	int32 GetXP() const;
 
-	UFUNCTION(BlueprintCallable, Category= "XP")
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | XP")
 	void SetXP(int32 InXP);
 
-	UFUNCTION(BlueprintCallable, Category= "XP")
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | XP")
 	void AddToXP(int32 InXP);
+
+	// Attribute Points
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Attribute Points")
+	int32 GetAttributePoints() const;
+
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Attribute Points")
+	void SetAttributePoints(int32 InAttributePoints);
+
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Attribute Points")
+	void AddToAttributePoints(int32 InAttributePoints);
+	
+	// Spell Points
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Spell Points")
+	int32 GetSpellPoints() const;
+
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Spell Points")
+	void SetSpellPoints(int32 InSpellPoints);
+
+	UFUNCTION(BlueprintCallable, Category= "Player Properties | Spell Points")
+	void AddToSpellPoints(int32 InSpellPoints);
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -73,7 +97,21 @@ private:
 	UFUNCTION()
 	void OnRep_XP(int32 OldXP);
 
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_AttributePoints)
+	int32 AttributePoints = 0;
+
+	UFUNCTION()
+	void OnRep_AttributePoints(int32 OldAttributePoints);
+	
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_SpellPoints)
+	int32 SpellPoints = 0;
+
+	UFUNCTION()
+	void OnRep_SpellPoints(int32 OldSpellPoints);
+
 	// Helper function to broadcast delegate in multiple areas
 	void BroadcastPlayerLevel();
 	void BroadcastPlayerXP();
+	void BroadcastAttributePoints();
+	void BroadcastSpellPoints();
 };
