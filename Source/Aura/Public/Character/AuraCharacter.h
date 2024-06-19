@@ -56,6 +56,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "FX | VFX")
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "FX | SFX")
+	TObjectPtr<USoundBase> LevelUpSound;
 	
 private:
 	UPROPERTY(VisibleAnywhere)

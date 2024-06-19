@@ -12,6 +12,7 @@
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
 #include "UI/HUD/AuraHUD.h"
 
@@ -186,5 +187,10 @@ void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
 
 		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
 		LevelUpNiagaraComponent->Activate(true);
+
+		if (IsValid(LevelUpSound))
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, LevelUpSound, GetActorLocation(), FRotator::ZeroRotator);
+		}
 	}
 }
