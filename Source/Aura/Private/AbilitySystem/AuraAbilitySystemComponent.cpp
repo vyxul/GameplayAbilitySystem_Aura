@@ -3,9 +3,11 @@
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Aura/AuraLogChannels.h"
+#include "Interaction/PlayerInterface.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
 {
@@ -108,6 +110,37 @@ FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 		}
 	}
 	return FGameplayTag();
+}
+
+void UAuraAbilitySystemComponent::UpgradeAttribute(const FGameplayTag& AttributeTag)
+{
+	/* Perform checks before upgrading attribute */
+	// avatar actor is a player
+	if (!GetAvatarActor()->Implements<UPlayerInterface>())
+		return;
+
+	// avatar actor has attribute points to spend
+	if (IPlayerInterface::Execute_GetAttributePoints(GetAvatarActor()) <= 0)
+		return;
+
+	// Passed all the checks, let server handle the upgrade
+	ServerUpgradeAttribute(AttributeTag);
+}
+
+void UAuraAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)
+{
+	/* Perform Attribute Upgrade */
+	// 1. Upgrade Attribute based on AttributeTag
+	FGameplayEventData Payload = FGameplayEventData();
+	Payload.EventTag = AttributeTag;
+	Payload.EventMagnitude = 1;
+	
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActor(), AttributeTag, Payload);
+	
+	// 2. Decrement Attribute Points Count on Player State
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+		IPlayerInterface::Execute_AddToAttributePoints(GetAvatarActor(), -1);
+	
 }
 
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
