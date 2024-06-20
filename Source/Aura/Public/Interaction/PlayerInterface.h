@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "GameplayEffectTypes.h"
 #include "PlayerInterface.generated.h"
 
 class AAuraPlayerState;
@@ -58,4 +59,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp();
+	
+	virtual FOnExternalGameplayModifierDependencyChange* GetNeedRefreshAttributesDelegate();
+
+private:
+	FOnExternalGameplayModifierDependencyChange NeedRefreshAttributesDelegate;
 };

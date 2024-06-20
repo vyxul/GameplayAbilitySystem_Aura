@@ -172,7 +172,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
 		
-		UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP)
+		// UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP)
 		
 		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
 		ACharacter* SourceCharacter = EffectProperties.SourceCharacter;
@@ -208,8 +208,9 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 				IPlayerInterface::Execute_AddToSpellPoints(SourceCharacter, SpellPointsReward);
 
 				// 3. Fill up Health and Mana
-				SetHealth(GetMaxHealth());
-				SetMana(GetMaxMana());
+				bTopOffHealth = true;
+				bTopOffMana = true;
+				Cast<IPlayerInterface>(SourceCharacter)->GetNeedRefreshAttributesDelegate()->Broadcast();
 				
 				// 4. Visual FX
 				IPlayerInterface::Execute_LevelUp(SourceCharacter);
@@ -217,6 +218,23 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			
 			IPlayerInterface::Execute_AddToXP(SourceCharacter, LocalIncomingXP);
 		}
+	}
+}
+
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	if (Attribute == GetMaxHealthAttribute() && bTopOffHealth)
+	{
+		SetHealth(GetMaxHealth());
+		bTopOffHealth = false;
+	}
+
+	if (Attribute == GetMaxManaAttribute() && bTopOffMana)
+	{
+		SetMana(GetMaxMana());
+		bTopOffMana = false;
 	}
 }
 

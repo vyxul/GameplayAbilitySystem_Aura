@@ -165,6 +165,11 @@ void AAuraCharacter::LevelUp_Implementation()
 	MulticastLevelUpParticles();
 }
 
+FOnExternalGameplayModifierDependencyChange* AAuraCharacter::GetNeedRefreshAttributesDelegate()
+{
+	return IPlayerInterface::GetNeedRefreshAttributesDelegate();
+}
+
 void AAuraCharacter::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1);

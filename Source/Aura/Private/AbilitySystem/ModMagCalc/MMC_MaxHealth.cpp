@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 
 UMMC_MaxHealth::UMMC_MaxHealth()
 {
@@ -45,4 +46,12 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 	/* Calculate the final value of MaxHealth */
 	const float MaxHealth = 80.f + (2.5f * Vigor) + (10.f * CharacterLevel);
 	return MaxHealth;
+}
+
+FOnExternalGameplayModifierDependencyChange* UMMC_MaxHealth::GetExternalModifierDependencyMulticast(const FGameplayEffectSpec& Spec, UWorld* World) const
+{
+	if (IPlayerInterface* PlayerInterface = Cast<IPlayerInterface>(Spec.GetContext().GetSourceObject()))
+		return PlayerInterface->GetNeedRefreshAttributesDelegate();
+	
+	return Super::GetExternalModifierDependencyMulticast(Spec, World);
 }
