@@ -45,6 +45,11 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	{
 		BroadcastAttributeInfo(Tag.AttributeTag);
 	}
+
+	/* PS */
+	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	OnPlayerAttributePointsChanged.Broadcast(AuraPS->GetAttributePoints());
+	OnPlayerSpellPointsChanged.Broadcast(AuraPS->GetSpellPoints());
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag) const
