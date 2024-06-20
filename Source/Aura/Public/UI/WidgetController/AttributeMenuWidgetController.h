@@ -26,6 +26,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category= "GAS|Attributes")
 	FAttributeInfoSignature AttributeInfoDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category= "Player Stats")
+	FPlayerStatsChangedWCSignature OnPlayerAttributePointsChanged;
+
+	UPROPERTY(BlueprintAssignable, Category= "Player Stats")
+	FPlayerStatsChangedWCSignature OnPlayerSpellPointsChanged;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAttributeInfo> AttributeInfo;

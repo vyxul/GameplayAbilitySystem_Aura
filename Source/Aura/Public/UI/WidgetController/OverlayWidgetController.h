@@ -34,10 +34,6 @@ struct FUIWidgetRow : public FTableRowBase
 
 struct FOnAttributeChangeData;
 
-/* Player State Delegates */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChanged, int32, Value);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerXPPercentageChanged, float, Value);
-
 /* Attribute Set Delegates */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
@@ -61,25 +57,25 @@ public:
 
 	/* Player State Delegate Properties */
 	UPROPERTY(BlueprintAssignable, Category= "Player Level")
-	FPlayerStatsChanged OnPlayerLevelChangedDelegate;
+	FPlayerStatsChangedWCSignature OnPlayerLevelChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player XP")
-	FPlayerStatsChanged OnPlayerXPChangedDelegate;
+	FPlayerStatsChangedWCSignature OnPlayerXPChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player XP")
-	FPlayerStatsChanged OnPlayerLevelXPFloorChangedDelegate;
+	FPlayerStatsChangedWCSignature OnPlayerLevelXPFloorChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player XP")
-	FPlayerStatsChanged OnPlayerLevelXPCeilingChangedDelegate;
+	FPlayerStatsChangedWCSignature OnPlayerLevelXPCeilingChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player XP")
-	FPlayerXPPercentageChanged OnPlayerXPPercentageChangedDelegate;
+	FPlayerStatsChangedFloatWCSignature OnPlayerXPPercentageChanged;
 
 	UPROPERTY(BlueprintAssignable, Category= "Player Attribute Points")
-	FPlayerStatsChanged OnPlayerAttributePointsChangedDelegate;
+	FPlayerStatsChangedWCSignature OnPlayerAttributePointsChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player Spell Points")
-	FPlayerStatsChanged OnPlayerSpellPointsChangedDelegate;
+	FPlayerStatsChangedWCSignature OnPlayerSpellPointsChanged;
 	
 	/* Attribute Set Delegate Properties */
 	UPROPERTY(BlueprintAssignable, Category= "GAS|Attributes")
@@ -124,8 +120,7 @@ protected:
 	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
 
 private:
-	void OnPlayerLevelChanged(int32 Level);
-	void OnPlayerXPChanged(int32 XP);
+	void OnPlayerXPChangedReceived(int32 XP);
 };
 
 template <typename T>

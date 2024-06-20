@@ -32,6 +32,10 @@ struct FWidgetControllerParams
 	TObjectPtr<UAttributeSet> AttributeSet = nullptr;
 };
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedWCSignature, int32, Value);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedFloatWCSignature, float, Value);
+
 /**
  * 
  */

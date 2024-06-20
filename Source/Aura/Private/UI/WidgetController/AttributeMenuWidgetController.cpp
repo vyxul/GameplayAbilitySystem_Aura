@@ -3,9 +3,9 @@
 
 #include "UI/WidgetController/AttributeMenuWidgetController.h"
 
-#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AttributeInfo.h"
+#include "Player/AuraPlayerState.h"
 
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
@@ -20,6 +20,21 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
         			BroadcastAttributeInfo(Tag.AttributeTag);
         		});
 	}
+
+	/* Bind PS */
+	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
+	// Attribute Points
+	AuraPS->OnPlayerAttributePointsChanged.AddLambda(
+		[this](int32 AttributePoints)
+		{
+			OnPlayerAttributePointsChanged.Broadcast(AttributePoints);
+		});
+	// Spell Points
+	AuraPS->OnPlayerSpellPointsChanged.AddLambda(
+		[this](int32 SpellPoints)
+		{
+			OnPlayerSpellPointsChanged.Broadcast(SpellPoints);
+		});
 }
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()

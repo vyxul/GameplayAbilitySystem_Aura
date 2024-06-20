@@ -33,17 +33,21 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 
 	/* PS */
-	AuraPS->OnPlayerLevelChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerLevelChanged);
-	AuraPS->OnPlayerXPChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerXPChanged);
+	AuraPS->OnPlayerLevelChanged.AddLambda(
+		[this](int32 Level)
+		{
+			OnPlayerLevelChanged.Broadcast(Level);
+		});
+	AuraPS->OnPlayerXPChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerXPChangedReceived);
 	AuraPS->OnPlayerAttributePointsChanged.AddLambda(
 		[this](int32 AttributePoints)
 		{
-			OnPlayerAttributePointsChangedDelegate.Broadcast(AttributePoints);
+			OnPlayerAttributePointsChanged.Broadcast(AttributePoints);
 		});
 	AuraPS->OnPlayerSpellPointsChanged.AddLambda(
 		[this](int32 SpellPoints)
 		{
-			OnPlayerSpellPointsChangedDelegate.Broadcast(SpellPoints);
+			OnPlayerSpellPointsChanged.Broadcast(SpellPoints);
 		});
 	
 	/* Bind Attribute Changes */
@@ -120,12 +124,7 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 	AuraASC->ForEachAbility(BroadcastDelegate);
 }
 
-void UOverlayWidgetController::OnPlayerLevelChanged(int32 Level)
-{
-	OnPlayerLevelChangedDelegate.Broadcast(Level);
-}
-
-void UOverlayWidgetController::OnPlayerXPChanged(int32 XP)
+void UOverlayWidgetController::OnPlayerXPChangedReceived(int32 XP)
 {
 	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
 	int32 Level = ULevelUpInfo::FindLevelForXP(AuraPS->LevelUpInfo, XP);
@@ -140,10 +139,10 @@ void UOverlayWidgetController::OnPlayerXPChanged(int32 XP)
 	float XPBarPercentage = static_cast<float>(RelativeCurrentXP) / static_cast<float>(RelativeXPCeiling);
 
 	/* Broadcast Delegates */
-	OnPlayerXPChangedDelegate.Broadcast(RelativeCurrentXP);
-	OnPlayerLevelXPFloorChangedDelegate.Broadcast(RelativeXPFloor);
-	OnPlayerLevelXPCeilingChangedDelegate.Broadcast(RelativeXPCeiling);
-	OnPlayerXPPercentageChangedDelegate.Broadcast(XPBarPercentage);
+	OnPlayerXPChanged.Broadcast(RelativeCurrentXP);
+	OnPlayerLevelXPFloorChanged.Broadcast(RelativeXPFloor);
+	OnPlayerLevelXPCeilingChanged.Broadcast(RelativeXPCeiling);
+	OnPlayerXPPercentageChanged.Broadcast(XPBarPercentage);
 }
 
 /* These functions only necessary if we are binding attribute change delegates to callback functions */
