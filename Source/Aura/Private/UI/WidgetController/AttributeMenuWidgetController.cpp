@@ -23,15 +23,14 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 	}
 
 	/* Bind PS */
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
 	// Attribute Points
-	AuraPS->OnPlayerAttributePointsChanged.AddLambda(
+	GetAuraPS()->OnPlayerAttributePointsChanged.AddLambda(
 		[this](int32 AttributePoints)
 		{
 			OnPlayerAttributePointsChanged.Broadcast(AttributePoints);
 		});
 	// Spell Points
-	AuraPS->OnPlayerSpellPointsChanged.AddLambda(
+	GetAuraPS()->OnPlayerSpellPointsChanged.AddLambda(
 		[this](int32 SpellPoints)
 		{
 			OnPlayerSpellPointsChanged.Broadcast(SpellPoints);
@@ -48,15 +47,13 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 	}
 
 	/* PS */
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-	OnPlayerAttributePointsChanged.Broadcast(AuraPS->GetAttributePoints());
-	OnPlayerSpellPointsChanged.Broadcast(AuraPS->GetSpellPoints());
+	OnPlayerAttributePointsChanged.Broadcast(GetAuraPS()->GetAttributePoints());
+	OnPlayerSpellPointsChanged.Broadcast(GetAuraPS()->GetSpellPoints());
 }
 
 void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	AuraASC->UpgradeAttribute(AttributeTag);
+	GetAuraASC()->UpgradeAttribute(AttributeTag);
 }
 
 void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag) const

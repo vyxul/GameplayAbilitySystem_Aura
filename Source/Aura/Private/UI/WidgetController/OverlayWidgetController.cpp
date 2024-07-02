@@ -19,32 +19,27 @@
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-	OnHealthChanged.Broadcast(AuraAttributeSet->GetHealth());
-	OnMaxHealthChanged.Broadcast(AuraAttributeSet->GetMaxHealth());
-	OnManaChanged.Broadcast(AuraAttributeSet->GetMana());
-	OnMaxManaChanged.Broadcast(AuraAttributeSet->GetMaxMana());
+	OnHealthChanged.Broadcast(GetAuraAS()->GetHealth());
+	OnMaxHealthChanged.Broadcast(GetAuraAS()->GetMaxHealth());
+	OnManaChanged.Broadcast(GetAuraAS()->GetMana());
+	OnMaxManaChanged.Broadcast(GetAuraAS()->GetMaxMana());
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
 {
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
-	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
-
 	/* PS */
-	AuraPS->OnPlayerLevelChanged.AddLambda(
+	GetAuraPS()->OnPlayerLevelChanged.AddLambda(
 		[this](int32 Level)
 		{
 			OnPlayerLevelChanged.Broadcast(Level);
 		});
-	AuraPS->OnPlayerXPChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerXPChangedReceived);
-	AuraPS->OnPlayerAttributePointsChanged.AddLambda(
+	GetAuraPS()->OnPlayerXPChanged.AddUObject(this, &UOverlayWidgetController::OnPlayerXPChangedReceived);
+	GetAuraPS()->OnPlayerAttributePointsChanged.AddLambda(
 		[this](int32 AttributePoints)
 		{
 			OnPlayerAttributePointsChanged.Broadcast(AttributePoints);
 		});
-	AuraPS->OnPlayerSpellPointsChanged.AddLambda(
+	GetAuraPS()->OnPlayerSpellPointsChanged.AddLambda(
 		[this](int32 SpellPoints)
 		{
 			OnPlayerSpellPointsChanged.Broadcast(SpellPoints);
@@ -55,7 +50,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	 * There are two ways I know to bind delegates to functions. Callback and Lambda.
 	 * Its mostly just a design choice at this point, I think callback is more readable and understandable,
 	 * but that also leads to needing to declare callback functions in the header file and allows others parts
-	 * of the class to call those callback functions, which is not good practice.
+	 * of the class to call those callback functions, which is not always needed.
 	 */
 	
 	/* Lambda function version of binding attributes */
@@ -78,7 +73,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 
 	/* ASC */
 	/* Bind GE Asset Tag Applied */
-	AuraASC->EffectAssetTags.AddLambda(
+	GetAuraASC()->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)
 		{
 			for (const FGameplayTag& Tag : AssetTags)
@@ -98,40 +93,20 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	);
 
 	/* Binding Abilities Given */
-	if (AuraASC->bStartupAbilitiesGiven)
-		OnInitializeStartupAbilities(AuraASC);
+	if (GetAuraASC()->bStartupAbilitiesGiven)
+		BroadcastAbilityInfo();
 	
 	else
-		AuraASC->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
-}
-
-void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC)
-{
-	//TODO: Get information about all given ablitilies, look up their ability info, and broadcast it to widgets.
-	if (!AuraASC->bStartupAbilitiesGiven)
-		return;
-
-	FForEachAbility BroadcastDelegate;
-	BroadcastDelegate.BindLambda(
-		[this, AuraASC](const FGameplayAbilitySpec& AbilitySpec)
-		{
-			//TODO: Need a way to figure out the ability tag for a given ability spec
-			FAuraAbilityInfo Info = AbilityInfo->FindAbilityForTag(AuraASC->GetAbilityTagFromSpec(AbilitySpec));
-			Info.InputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
-			AbilityInfoDelegate.Broadcast(Info);
-		}
-	);
-	AuraASC->ForEachAbility(BroadcastDelegate);
+		GetAuraASC()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 }
 
 void UOverlayWidgetController::OnPlayerXPChangedReceived(int32 XP)
 {
-	AAuraPlayerState* AuraPS = CastChecked<AAuraPlayerState>(PlayerState);
-	int32 Level = ULevelUpInfo::FindLevelForXP(AuraPS->LevelUpInfo, XP);
+	int32 Level = ULevelUpInfo::FindLevelForXP(GetAuraPS()->LevelUpInfo, XP);
 	
 	// Get the min and max xp for the current level
-	int32 LevelXPFloor = ULevelUpInfo::FindLevelXPFloor(AuraPS->LevelUpInfo, Level);
-	int32 LevelXPCeiling = ULevelUpInfo::FindLevelXPCeiling(AuraPS->LevelUpInfo, Level);
+	int32 LevelXPFloor = ULevelUpInfo::FindLevelXPFloor(GetAuraPS()->LevelUpInfo, Level);
+	int32 LevelXPCeiling = ULevelUpInfo::FindLevelXPCeiling(GetAuraPS()->LevelUpInfo, Level);
 
 	int32 RelativeXPFloor = 0;
 	int32 RelativeXPCeiling = LevelXPCeiling - LevelXPFloor;

@@ -6,6 +6,11 @@
 #include "AttributeSet.h"
 #include "AuraWidgetController.generated.h"
 
+class UAbilityInfo;
+class UAuraAttributeSet;
+class UAuraAbilitySystemComponent;
+class AAuraPlayerState;
+class AAuraPlayerController;
 class UAttributeSet;
 class UAbilitySystemComponent;
 
@@ -36,6 +41,9 @@ struct FWidgetControllerParams
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedWCSignature, int32, Value);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedFloatWCSignature, float, Value);
 
+/* Ability Info Delegate */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, AbilityInfo);
+
 /**
  * 
  */
@@ -45,6 +53,10 @@ class AURA_API UAuraWidgetController : public UObject
 	GENERATED_BODY()
 
 public:
+	/* Ability Info Delegate */
+	UPROPERTY(BlueprintAssignable, Category= "GAS|Messages")
+	FAbilityInfoSignature AbilityInfoDelegate;
+	
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 	
@@ -52,8 +64,14 @@ public:
 	virtual void BroadcastInitialValues();
 	
 	virtual void BindCallbacksToDependencies();
+
+	void BroadcastAbilityInfo();
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+	
+	/* Engine Default Objects */
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
 
@@ -65,4 +83,24 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	/* Custom Objects */
+	// Lazy Casted
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	TObjectPtr<AAuraPlayerController> AuraPlayerController;
+
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	TObjectPtr<AAuraPlayerState> AuraPlayerState;
+
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")
+	TObjectPtr<UAuraAttributeSet> AuraAttributeSet;
+
+	/* Getters */
+	AAuraPlayerController* GetAuraPC();
+	AAuraPlayerState* GetAuraPS();
+	UAuraAbilitySystemComponent* GetAuraASC();
+	UAuraAttributeSet* GetAuraAS();
 };

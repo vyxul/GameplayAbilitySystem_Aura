@@ -40,9 +40,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float,
 /* Message Delegates */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
-/* Ability Info Delegate */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, AbilityInfo);
-
 /**
  * 
  */
@@ -94,16 +91,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category= "GAS|Messages")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 
-	/* Ability Info Delegate */
-	UPROPERTY(BlueprintAssignable, Category= "GAS|Messages")
-	FAbilityInfoSignature AbilityInfoDelegate;
-
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Widget Data")
-	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 	/* Callback functions for binding to delegates */
 	/* Not needed since we are binding attribute delegates to lambda functions */
@@ -116,8 +106,6 @@ protected:
 
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
-
-	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
 
 private:
 	void OnPlayerXPChangedReceived(int32 XP);
