@@ -27,7 +27,7 @@ void UAuraWidgetController::BindCallbacksToDependencies()
 void UAuraWidgetController::BroadcastAbilityInfo()
 {
 	if (!GetAuraASC()->bStartupAbilitiesGiven)
-	return;
+		return;
 
 	FForEachAbility BroadcastDelegate;
 	BroadcastDelegate.BindLambda(

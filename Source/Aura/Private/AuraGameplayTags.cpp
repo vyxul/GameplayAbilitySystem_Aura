@@ -53,6 +53,8 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_2, InputTag.2, "Input tag for 2 key")
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_3, InputTag.3, "Input tag for 3 key")
 	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_4, InputTag.4, "Input tag for 4 key")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_Passive_1, InputTag.Passive.1, "Input tag for Passive 1")
+	DEFINE_NATIVE_GAMEPLAY_TAG(InputTag_Passive_2, InputTag.Passive.2, "Input tag for Passive 2")
 
 	/* Damage Types */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Damage, Damage, "Damage")

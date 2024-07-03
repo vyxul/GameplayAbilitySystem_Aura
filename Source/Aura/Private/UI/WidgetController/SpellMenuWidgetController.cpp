@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Player/AuraPlayerState.h"
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
@@ -13,10 +14,20 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 		{
 			PlayerSpellPointsChanged.Broadcast(SpellPoints);
 		});
+
+	/* Binding Abilities Given */
+	if (GetAuraASC()->bStartupAbilitiesGiven)
+		BroadcastAbilityInfo();
+	
+	else
+		GetAuraASC()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
 }
 
 void USpellMenuWidgetController::BroadcastInitialValues()
 {
 	/* PS */
 	PlayerSpellPointsChanged.Broadcast(GetAuraPS()->GetSpellPoints());
+
+	/* ASC */
+	BroadcastAbilityInfo();
 }
