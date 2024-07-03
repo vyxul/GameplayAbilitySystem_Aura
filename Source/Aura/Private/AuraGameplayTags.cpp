@@ -82,7 +82,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Locked, Abilities.Status.Locked, "Locked Abilities")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Eligible, Abilities.Status.Eligible, "Eligible Abilities")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Unlocked, Abilities.Status.Unlocked, "Unlocked Abilities")
-	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Equipped, Abilities.Status.Locked, "Equipped Abilities")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Equipped, Abilities.Status.Equipped, "Equipped Abilities")
 	
 	/* Ability Type */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Type_Offensive, Abilities.Type.Offensive, "Offensive Abilities")
