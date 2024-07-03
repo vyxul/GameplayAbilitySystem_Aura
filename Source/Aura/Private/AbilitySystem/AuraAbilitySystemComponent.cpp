@@ -23,6 +23,7 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 		if (const UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability))
 		{
 			AbilitySpec.DynamicAbilityTags.AddTag(AuraAbility->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(FAuraGameplayTags::Get().Abilities_Status_Equipped);
 			
 			GiveAbility(AbilitySpec);
 			//GiveAbilityAndActivateOnce(AbilitySpec);
@@ -109,6 +110,16 @@ FGameplayTag UAuraAbilitySystemComponent::GetInputTagFromSpec(const FGameplayAbi
 			return Tag;
 		}
 	}
+	return FGameplayTag();
+}
+
+FGameplayTag UAuraAbilitySystemComponent::GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	// an ability should only have 1 Ability.Status.___ tag at a time
+	for (FGameplayTag AbilityTag : AbilitySpec.DynamicAbilityTags)
+		if (AbilityTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities.Status"))))
+			return AbilityTag;
+
 	return FGameplayTag();
 }
 

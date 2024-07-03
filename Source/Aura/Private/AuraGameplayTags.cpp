@@ -75,7 +75,19 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/* Ability Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Summon, Abilities.Summon, "Summon Ability Tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_HitReact, Abilities.HitReact, "HitReact Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire_FireBolt, Abilities.Fire.FireBolt, "FireBolt Ability Tag")
+
+	/* Ability Status */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Locked, Abilities.Status.Locked, "Locked Abilities")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Eligible, Abilities.Status.Eligible, "Eligible Abilities")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Unlocked, Abilities.Status.Unlocked, "Unlocked Abilities")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Equipped, Abilities.Status.Locked, "Equipped Abilities")
+	
+	/* Ability Type */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Type_Offensive, Abilities.Type.Offensive, "Offensive Abilities")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Type_Passive, Abilities.Type.Passive, "Passive Abilities")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Type_None, Abilities.Type.None, "Non-Typed Abilities")
 
 	/* Cooldown Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Fire_FireBolt, Cooldown.Fire.FireBolt, "FireBolt Cooldown Tag")
