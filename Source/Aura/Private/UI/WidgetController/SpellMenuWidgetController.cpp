@@ -4,6 +4,7 @@
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "Player/AuraPlayerState.h"
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
@@ -15,6 +16,18 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 			PlayerSpellPointsChanged.Broadcast(SpellPoints);
 		});
 
+	/* ASC */
+	GetAuraASC()->AbilityStatusChanged.AddLambda(
+		[this](const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+		{
+			if (AbilityInfo)
+			{
+				FAuraAbilityInfo AuraAbilityInfo = AbilityInfo->FindAbilityForTag(AbilityTag);
+				AuraAbilityInfo.StatusTag = StatusTag;
+				AbilityInfoDelegate.Broadcast(AuraAbilityInfo);
+			}
+		});
+	
 	/* Binding Abilities Given */
 	if (GetAuraASC()->bStartupAbilitiesGiven)
 		BroadcastAbilityInfo();
