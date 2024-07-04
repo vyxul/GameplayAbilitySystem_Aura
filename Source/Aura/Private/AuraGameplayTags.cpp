@@ -77,6 +77,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Summon, Abilities.Summon, "Summon Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_HitReact, Abilities.HitReact, "HitReact Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire_FireBolt, Abilities.Fire.FireBolt, "FireBolt Ability Tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Lightning_Electrocute, Abilities.Lightning.Electrocute, "Electrocute Ability Tag")
 
 	/* Ability Status */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Locked, Abilities.Status.Locked, "Locked Abilities")
