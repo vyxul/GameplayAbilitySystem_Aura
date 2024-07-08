@@ -73,6 +73,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Effects_HitReact, Effect.HitReact, "Tag granted when Hit Reacting")
 	
 	/* Ability Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_None, Abilities.None, "Default/No Ability Tag - used similar as nullptr")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Attack, Abilities.Attack, "Attack Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Summon, Abilities.Summon, "Summon Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_HitReact, Abilities.HitReact, "HitReact Ability Tag")
