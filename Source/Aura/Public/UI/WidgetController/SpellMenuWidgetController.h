@@ -6,6 +6,7 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "SpellMenuWidgetController.generated.h"
 
+struct FGameplayTag;
 /**
  * 
  */
@@ -20,4 +21,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category= "Player Stats")
 	FPlayerStatsChangedWCSignature PlayerSpellPointsChanged;
+
+	UFUNCTION(BlueprintCallable)
+	void SpendPointButtonPressed(const FGameplayTag& AbilityTag);
 };

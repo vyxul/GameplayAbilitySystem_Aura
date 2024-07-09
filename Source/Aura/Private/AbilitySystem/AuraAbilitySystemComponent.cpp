@@ -187,9 +187,50 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec);
 
-			ClientUpdateAbilityStatus(AuraAbilityInfo.AbilityTag, AuraGameplayTags.Abilities_Status_Eligible);
+			ClientUpdateAbilityStatus(AuraAbilityInfo.AbilityTag, AuraGameplayTags.Abilities_Status_Eligible, 1);
 		}
 	}
+}
+
+void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
+{
+	FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag);
+	if (AbilitySpec == nullptr)
+		return;
+
+	// Decrement spell points in PS
+	if (GetAvatarActor()->Implements<UPlayerInterface>())
+		IPlayerInterface::Execute_AddToSpellPoints(GetAvatarActor(), -1);
+	
+	/* At this point, we know that the given AbilityTag is tagged to an ability that is contained in the ASC
+	 * StatusTag can be one of 3 options: Eligible, Unlocked, and Equipped
+	 * Locked is not possible since that is only given to abilities that the player is not able to unlock yet
+	 * and so it would not be in the ASC
+	 */
+	FGameplayTag StatusTag = GetStatusFromSpec(*AbilitySpec);
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	
+	// 1. Eligible - Change to Unlocked status, level stays at 1
+	if (StatusTag.MatchesTagExact(GameplayTags.Abilities_Status_Eligible))
+	{
+		AbilitySpec->DynamicAbilityTags.RemoveTag(GameplayTags.Abilities_Status_Eligible);
+		AbilitySpec->DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Unlocked);
+		StatusTag = GameplayTags.Abilities_Status_Unlocked;
+	}
+
+	// 2 & 3. Unlocked/Equipped - Upgrade the level
+	else if (StatusTag.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked) || StatusTag.MatchesTagExact(GameplayTags.Abilities_Status_Equipped))
+	{
+		// 2 Ways of leveling an ability
+		// 1. Simply add one to the level property in ability spec, does not cancel the ability
+		AbilitySpec->Level += 1;
+		
+		// 2. Remove the ability then give it back with higher level, cancels the ability
+		// ... To lazy to add example code, not going with canceling ability anyways
+	}
+
+	ClientUpdateAbilityStatus(AbilityTag, StatusTag, AbilitySpec->Level);
+	MarkAbilitySpecDirty(*AbilitySpec);
 }
 
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
@@ -212,7 +253,7 @@ void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySys
 }
 
 void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag,
-	const FGameplayTag& StatusTag)
+	const FGameplayTag& StatusTag, int32 AbilityLevel)
 {
-	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag);
+	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag, AbilityLevel);
 }
