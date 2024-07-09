@@ -50,3 +50,23 @@ void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& Abi
 	if (GetAuraASC())
 		GetAuraASC()->ServerSpendSpellPoint(AbilityTag);
 }
+
+bool USpellMenuWidgetController::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
+	FString& OutNextLevelDescription)
+{
+	FString Description = FString();
+	FString NextLevelDescription = FString();
+	
+	if (GetAuraASC())
+	{
+		bool bSuccess = GetAuraASC()->GetDescriptionsByAbilityTag(AbilityTag, Description, NextLevelDescription);
+
+		OutDescription = Description;
+		OutNextLevelDescription = NextLevelDescription;
+		return bSuccess;
+	}
+
+	OutDescription = FString();
+	OutNextLevelDescription = FString();
+	return false;
+}
