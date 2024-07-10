@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbility.h"
 #include "AuraGameplayAbility.generated.h"
 
+class UAbilityInfo;
 /**
  * 
  */
@@ -18,7 +19,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category= "Input")
 	FGameplayTag StartupInputTag;
 
-	virtual FString GetDescription(int32 Level);
-	virtual FString GetNextLevelDescription(int32 Level);
+	FStringFormatNamedArguments GetAbilityDescriptionFormatter(UGameplayAbility* GameplayAbility, int32 Level);
+	
+	UFUNCTION(BlueprintCallable)
+	FString GetFormattedDescription(UGameplayAbility* GameplayAbility, int32 Level, FString LiteralDescription);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	FString GetDescription(UAbilityInfo* AbilityInfo, int32 Level);
+	
 	static FString GetLockedDescription(int32 Level);
+
+protected:
+	float GetManaCost(float InLevel = 1.f);
+	float GetCooldown(float InLevel = 1.f);
 };

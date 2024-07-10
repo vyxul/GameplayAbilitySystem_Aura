@@ -56,17 +56,25 @@ bool USpellMenuWidgetController::GetDescriptionsByAbilityTag(const FGameplayTag&
 {
 	FString Description = FString();
 	FString NextLevelDescription = FString();
-	
-	if (GetAuraASC())
-	{
-		bool bSuccess = GetAuraASC()->GetDescriptionsByAbilityTag(AbilityTag, Description, NextLevelDescription);
 
-		OutDescription = Description;
-		OutNextLevelDescription = NextLevelDescription;
-		return bSuccess;
+	const FAuraAbilityInfo AuraAbilityInfo = AbilityInfo->FindAbilityForTag(AbilityTag);
+	// If Ability not in AbilityInfo
+	if (!AuraAbilityInfo.AbilityTag.IsValid())
+	{
+		OutDescription = FString("AbilityTag not found in AbilityInfo");
+		return false;
 	}
 
-	OutDescription = FString();
-	OutNextLevelDescription = FString();
-	return false;
+	// If AuraASC not assigned yet
+	if (!GetAuraASC())
+	{
+		OutDescription = FString();
+		OutNextLevelDescription = FString();
+		return false;
+	}
+
+	const bool bSuccess = GetAuraASC()->GetDescriptionsByAbilityTag(AuraAbilityInfo, Description, NextLevelDescription);
+	OutDescription = Description;
+	OutNextLevelDescription = NextLevelDescription;
+	return bSuccess;
 }

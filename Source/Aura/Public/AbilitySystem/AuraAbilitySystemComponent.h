@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "AuraAbilitySystemComponent.generated.h"
 
+struct FAuraAbilityInfo;
+class UAbilityInfo;
 /* Gameplay Effect Delegates */
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /* AssetTags */)
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven)
@@ -52,7 +54,7 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
 
-	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
+	bool GetDescriptionsByAbilityTag(const FAuraAbilityInfo& AuraAbilityInfo, FString& OutDescription, FString& OutNextLevelDescription);
 	
 protected:
 	virtual void OnRep_ActivateAbilities() override;

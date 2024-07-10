@@ -233,22 +233,20 @@ void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGa
 	MarkAbilitySpecDirty(*AbilitySpec);
 }
 
-bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
-	FString& OutNextLevelDescription)
+bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FAuraAbilityInfo& AuraAbilityInfo, FString& OutDescription, FString& OutNextLevelDescription)
 {
-	if (const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	if (const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AuraAbilityInfo.AbilityTag))
 	{
 		if (UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec->Ability))
 		{
-			OutDescription = AuraAbility->GetDescription(AbilitySpec->Level);
-			OutNextLevelDescription = AuraAbility->GetNextLevelDescription(AbilitySpec->Level + 1);
+			OutDescription = AuraAbility->GetFormattedDescription(AuraAbility, AbilitySpec->Level, AuraAbilityInfo.Description);
+			OutNextLevelDescription = AuraAbility->GetFormattedDescription(AuraAbility, AbilitySpec->Level + 1, AuraAbilityInfo.Description);
 			return true;
 		}
 	}
 
 	// If Ability not found in ASC, it is still in Locked status
-	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityForTag(AbilityTag).LevelRequirement);
+	OutDescription = UAuraGameplayAbility::GetLockedDescription(AuraAbilityInfo.LevelRequirement);
 	OutNextLevelDescription = FString();
 	return false;
 }

@@ -20,6 +20,14 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 		SourceASC->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data.Get(), TargetASC);
 }
 
+float UAuraDamageGameplayAbility::GetDamageAtLevel(int32 Level, FGameplayTag DamageTypeTag)
+{
+	if (DamageTypes.Contains(DamageTypeTag))
+		return DamageTypes.Find(DamageTypeTag)->GetValueAtLevel(Level);
+
+	return 0;
+}
+
 FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const
 {
 	if (TaggedMontages.Num() > 0)

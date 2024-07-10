@@ -18,6 +18,9 @@ class AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 public:
 	UFUNCTION(BlueprintCallable)
 	void CauseDamage(AActor* TargetActor);
+
+	UFUNCTION(BlueprintPure)
+	float GetDamageAtLevel(int32 Level, FGameplayTag DamageTypeTag);
 	
 protected:	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
