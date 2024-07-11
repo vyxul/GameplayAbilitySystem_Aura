@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AuraGameplayTags.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 
@@ -17,11 +18,20 @@ FStringFormatNamedArguments UAuraGameplayAbility::GetAbilityDescriptionFormatter
 	 * Using convention of {Name} for the names to be replaced in string to format
 	 * Can use just Name as the String key but must be surrounded by {} in the AbilityInfo Description
 	 */
-	
+
+	// Level
 	NamesToValues.Add(TEXT("Level"), FStringFormatArg(Level));
 
 	// Cost and CD
-
+	if (UAuraGameplayAbility* AuraGA = Cast<UAuraGameplayAbility>(GameplayAbility))
+	{
+		NamesToValues.Add("ManaCost",
+			FStringFormatArg(FMath::RoundToInt32(AuraGA->GetManaCost(Level))));
+		NamesToValues.Add("Cooldown",
+			FStringFormatArg(FString::SanitizeFloat(AuraGA->GetCooldown(Level))));
+	}
+	
+	// Damage
 	if (UAuraDamageGameplayAbility* AuraDGA = Cast<UAuraDamageGameplayAbility>(GameplayAbility))
 	{
 		NamesToValues.Add("ArcaneDmg",
@@ -55,12 +65,31 @@ FString UAuraGameplayAbility::GetLockedDescription(int32 Level)
 	return FString::Printf(TEXT("<Default>Spell locked until level %d</>"), Level);
 }
 
-float UAuraGameplayAbility::GetManaCost(float InLevel)
+float UAuraGameplayAbility::GetManaCost(float InLevel) const
 {
-	return 0;
+	float ManaCost = 0.f;
+	if (const UGameplayEffect* CostEffect = GetCostGameplayEffect())
+	{
+		for (FGameplayModifierInfo ModifierInfo : CostEffect->Modifiers)
+		{
+			if (ModifierInfo.Attribute == UAuraAttributeSet::GetManaAttribute())
+			{
+				ModifierInfo.ModifierMagnitude.GetStaticMagnitudeIfPossible(InLevel, ManaCost);
+				break;
+			}
+		}	
+	}
+	
+	return FMath::Abs(ManaCost);
 }
 
-float UAuraGameplayAbility::GetCooldown(float InLevel)
+float UAuraGameplayAbility::GetCooldown(float InLevel) const
 {
-	return 0;
+	float Cooldown = 0.f;
+	if (const UGameplayEffect* CooldownEffect = GetCooldownGameplayEffect())
+	{
+		CooldownEffect->DurationMagnitude.GetStaticMagnitudeIfPossible(InLevel, Cooldown);
+	}
+	
+	return Cooldown;
 }
