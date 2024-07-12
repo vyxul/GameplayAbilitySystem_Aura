@@ -3,11 +3,9 @@
 
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 
-#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
-#include "AbilitySystem/Data/AbilityInfo.h"
 
 FStringFormatNamedArguments UAuraGameplayAbility::GetAbilityDescriptionFormatter(UGameplayAbility* GameplayAbility, int32 Level)
 {
