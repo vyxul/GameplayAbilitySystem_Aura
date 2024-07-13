@@ -45,6 +45,14 @@ void USpellMenuWidgetController::BroadcastInitialValues()
 	BroadcastAbilityInfo();
 }
 
+FAuraAbilityInfo USpellMenuWidgetController::GetAbilityInfoByTag(const FGameplayTag& AbilityTag)
+{
+	if (AbilityInfo)
+		return AbilityInfo->FindAbilityForTag(AbilityTag);
+
+	return FAuraAbilityInfo();
+}
+
 void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& AbilityTag)
 {
 	if (GetAuraASC())
@@ -52,7 +60,7 @@ void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& Abi
 }
 
 bool USpellMenuWidgetController::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,
-	FString& OutNextLevelDescription)
+                                                             FString& OutNextLevelDescription)
 {
 	FString Description = FString();
 	FString NextLevelDescription = FString();

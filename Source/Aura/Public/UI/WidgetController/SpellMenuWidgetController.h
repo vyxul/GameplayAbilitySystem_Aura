@@ -23,6 +23,9 @@ public:
 	FPlayerStatsChangedWCSignature PlayerSpellPointsChanged;
 
 	UFUNCTION(BlueprintCallable)
+	FAuraAbilityInfo GetAbilityInfoByTag(const FGameplayTag& AbilityTag);
+
+	UFUNCTION(BlueprintCallable)
 	void SpendPointButtonPressed(const FGameplayTag& AbilityTag);
 
 	UFUNCTION(BlueprintCallable)
