@@ -262,6 +262,29 @@ void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
 	}
 }
 
+void UAuraAbilitySystemComponent::OnGiveAbility(FGameplayAbilitySpec& AbilitySpec)
+{
+	Super::OnGiveAbility(AbilitySpec);
+
+	// Get AbilityTag, StatusTag, and AbilityLevel to broadcast
+	// AbilityTag
+	FGameplayTag AbilityTag = FGameplayTag();
+	for (FGameplayTag Tag : AbilitySpec.Ability->AbilityTags)
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
+			AbilityTag = Tag;
+
+	// StatusTag
+	FGameplayTag StatusTag = FGameplayTag();
+	for (FGameplayTag Tag : AbilitySpec.DynamicAbilityTags)
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities.Status"))))
+			StatusTag = Tag;
+
+	// AbilityLevel
+	const int32 AbilityLevel = AbilitySpec.Level;
+	
+	AbilityStatusChanged.Broadcast(AbilityTag, StatusTag, AbilityLevel);
+}
+
 void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySystemComponent* AbilitySystemComponent,
                                                                      const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
 {
