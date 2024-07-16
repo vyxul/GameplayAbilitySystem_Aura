@@ -372,6 +372,7 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 			}
 		}
 
+		StatusTag = AuraGameplayTags.Abilities_Status_Equipped;
 		MarkAbilitySpecDirty(*AbilitySpec);
 		ClientEquipAbility(AbilityTag, StatusTag, NewInputTag, OldInputTag);
 
