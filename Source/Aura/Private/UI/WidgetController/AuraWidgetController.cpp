@@ -73,3 +73,15 @@ UAuraAttributeSet* UAuraWidgetController::GetAuraAS()
 
 	return AuraAttributeSet;
 }
+
+void UAuraWidgetController::OnAbilitySlotInfoReceived(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag,
+	const FGameplayTag& InputTag)
+{
+	if (InputTag == FGameplayTag::EmptyTag)
+		return;
+
+	FAuraAbilityInfo AuraAbilityInfo = AbilityInfo->FindAbilityForTag(AbilityTag);
+	AuraAbilityInfo.InputTag = InputTag;
+	AuraAbilityInfo.StatusTag = StatusTag;
+	AbilityInfoDelegate.Broadcast(AuraAbilityInfo);
+}

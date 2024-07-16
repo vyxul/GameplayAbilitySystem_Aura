@@ -3,6 +3,7 @@
 
 #include "UI/WidgetController/SpellMenuWidgetController.h"
 
+#include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Player/AuraPlayerState.h"
@@ -27,13 +28,14 @@ void USpellMenuWidgetController::BindCallbacksToDependencies()
 				AbilityInfoDelegate.Broadcast(AuraAbilityInfo);
 			}
 		});
+	GetAuraASC()->AbilitySlotInfo.AddUObject(this, &USpellMenuWidgetController::OnAbilitySlotInfoReceived);
 	
 	/* Binding Abilities Given */
 	if (GetAuraASC()->bStartupAbilitiesGiven)
 		BroadcastAbilityInfo();
 	
 	else
-		GetAuraASC()->AbilitiesGivenDelegate.AddUObject(this, &UOverlayWidgetController::BroadcastAbilityInfo);
+		GetAuraASC()->AbilitiesGivenDelegate.AddUObject(this, &USpellMenuWidgetController::BroadcastAbilityInfo);
 }
 
 void USpellMenuWidgetController::BroadcastInitialValues()
@@ -57,6 +59,13 @@ void USpellMenuWidgetController::SpendPointButtonPressed(const FGameplayTag& Abi
 {
 	if (GetAuraASC())
 		GetAuraASC()->ServerSpendSpellPoint(AbilityTag);
+}
+
+void USpellMenuWidgetController::EquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& InputTag, const FGameplayTag& AbilityType)
+{
+	FAuraAbilityInfo AuraAbilityInfo = AbilityInfo->FindAbilityForTag(AbilityTag);
+	if (AuraAbilityInfo.AbilityType.MatchesTagExact(AbilityType))
+		GetAuraASC()->ServerEquipAbility(AbilityTag, InputTag);
 }
 
 bool USpellMenuWidgetController::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription,

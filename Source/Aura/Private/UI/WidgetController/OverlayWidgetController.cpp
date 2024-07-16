@@ -72,6 +72,8 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	*/
 
 	/* ASC */
+	GetAuraASC()->AbilitySlotInfo.AddUObject(this, &UOverlayWidgetController::OnAbilitySlotInfoReceived);
+	
 	/* Bind GE Asset Tag Applied */
 	GetAuraASC()->EffectAssetTags.AddLambda(
 		[this](const FGameplayTagContainer& AssetTags)

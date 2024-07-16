@@ -13,6 +13,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContaine
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven)
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&)
 DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilityStatusChanged, const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */, int32 /* AbilityLevel */)
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FAbilitySlotInfo, const FGameplayTag& /* AbilityTag */, const FGameplayTag& /* StatusTag */, const FGameplayTag& /* InputTag */);
 
 /**
  * 
@@ -29,6 +30,7 @@ public:
 	FEffectAssetTags EffectAssetTags;
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	FAbilityStatusChanged AbilityStatusChanged;
+	FAbilitySlotInfo AbilitySlotInfo;
 
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartUpAbilities);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartUpPassiveAbilities);
@@ -41,8 +43,16 @@ public:
 	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 	static FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	
 	/* Returns ability spec that has matching ability tag with passed in AbilityTag within the ASC*/
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
+	FGameplayTag GetInputTagFromSpec(const FGameplayTag& AbilityTag);
+	FGameplayTag GetStatusFromAbilityTag(const FGameplayTag& AbilityTag);
+
+	static bool AbilityHasInputTag(FGameplayAbilitySpec* AbilitySpec, const FGameplayTag& InputTag);
+	FGameplayAbilitySpec* GetSpecForInputTag(const FGameplayTag& InputTag);
+	void ClearInputTag(FGameplayAbilitySpec* AbilitySpec);
+	void ClearAbilitiesOfInputTag(const FGameplayTag& InputTag);
 
 	void UpgradeAttribute(const FGameplayTag& AttributeTag);
 
@@ -53,6 +63,12 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSpendSpellPoint(const FGameplayTag& AbilityTag);
+
+	UFUNCTION(Server, Reliable)
+	void ServerEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& InputTag);
+
+	UFUNCTION(Client, Reliable)
+	void ClientEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& NewInputTag, const FGameplayTag& OldInputTag);
 
 	bool GetDescriptionsByAbilityTag(const FAuraAbilityInfo& AuraAbilityInfo, FString& OutDescription, FString& OutNextLevelDescription);
 	

@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "SpellMenuWidgetController.generated.h"
+
 
 struct FGameplayTag;
 /**
@@ -27,6 +29,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpendPointButtonPressed(const FGameplayTag& AbilityTag);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& InputTag, const FGameplayTag& AbilityType);
 
 	UFUNCTION(BlueprintCallable)
 	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);

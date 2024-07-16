@@ -6,6 +6,7 @@
 #include "AttributeSet.h"
 #include "AuraWidgetController.generated.h"
 
+struct FGameplayTag;
 class UAbilityInfo;
 class UAuraAttributeSet;
 class UAuraAbilitySystemComponent;
@@ -103,4 +104,6 @@ protected:
 	AAuraPlayerState* GetAuraPS();
 	UAuraAbilitySystemComponent* GetAuraASC();
 	UAuraAttributeSet* GetAuraAS();
+	
+	void OnAbilitySlotInfoReceived(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag , const FGameplayTag& InputTag);
 };
