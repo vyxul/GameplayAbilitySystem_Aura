@@ -69,6 +69,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lightning, GameplayTags.Attributes_Resistance_Lightning);
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
 
+	/* Debuffs */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Fire, Debuff.Fire, "General tag for Fire type debuffs")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Fire_Burn, Debuff.Fire.Burn, "Burn debuff tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Lightning, Debuff.Lightning, "General tag for Lightning type debuffs")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Lightning_Stun, Debuff.Lightning.Stun, "Stun debuff tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Arcane, Debuff.Arcane, "General tag for Arcane type debuffs")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Physical, Debuff.Physical, "General tag for Physical type debuffs")
+	
+	
 	/* Tag to apply to targets */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Effects_HitReact, Effect.HitReact, "Tag granted when Hit Reacting")
 	

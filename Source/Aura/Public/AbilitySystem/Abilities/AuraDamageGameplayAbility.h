@@ -7,6 +7,30 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraDamageGameplayAbility.generated.h"
 
+USTRUCT(BlueprintType)
+struct FAbilityDebuffStruct
+{
+	GENERATED_BODY()
+
+	FAbilityDebuffStruct() = default;
+	FAbilityDebuffStruct(const FScalableFloat& DebuffChance, const FScalableFloat& DebuffLevel,
+	                     const TSubclassOf<UGameplayEffect>& DebuffGameplayEffect)
+		: DebuffChance(DebuffChance),
+		  DebuffLevel(DebuffLevel),
+		  DebuffGameplayEffect(DebuffGameplayEffect)
+	{
+	}
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat DebuffChance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat DebuffLevel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> DebuffGameplayEffect;
+};
+
 /**
  * 
  */
@@ -31,4 +55,7 @@ protected:
 
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FAbilityDebuffStruct> AbilityDebuffEffects;
 };
