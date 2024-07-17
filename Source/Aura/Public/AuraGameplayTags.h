@@ -70,11 +70,21 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 
 	/* Debuffs */
+	// Meta
+	FGameplayTag Debuff_Meta_Chance;
+	FGameplayTag Debuff_Meta_Damage;
+	FGameplayTag Debuff_Meta_Frequency;
+	FGameplayTag Debuff_Meta_Duration;
+	// Effects
+	// Fire
 	FGameplayTag Debuff_Fire;
 	FGameplayTag Debuff_Fire_Burn;
+	// Lightning
 	FGameplayTag Debuff_Lightning;
 	FGameplayTag Debuff_Lightning_Stun;
+	// Arcane
 	FGameplayTag Debuff_Arcane;
+	// Physical
 	FGameplayTag Debuff_Physical;
 	
 	/* Used for Applying to Target */

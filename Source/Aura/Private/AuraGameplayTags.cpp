@@ -70,11 +70,21 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Physical, GameplayTags.Attributes_Resistance_Physical);
 
 	/* Debuffs */
+	// Meta
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Meta_Chance, Debuff.Meta.Chance, "Chance to apply debuff")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Meta_Damage, Debuff.Meta.Damage, "Damage of the applied debuff")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Meta_Frequency, Debuff.Meta.Frequency, "Frequency that the debuff applies effect")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Meta_Duration, Debuff.Meta.Duration, "Duration that the debuff is applied to the target")
+	// Effects
+	// Fire
 	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Fire, Debuff.Fire, "General tag for Fire type debuffs")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Fire_Burn, Debuff.Fire.Burn, "Burn debuff tag")
+	// Lightning
 	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Lightning, Debuff.Lightning, "General tag for Lightning type debuffs")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Lightning_Stun, Debuff.Lightning.Stun, "Stun debuff tag")
+	// Arcane
 	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Arcane, Debuff.Arcane, "General tag for Arcane type debuffs")
+	// Physical
 	DEFINE_NATIVE_GAMEPLAY_TAG(Debuff_Physical, Debuff.Physical, "General tag for Physical type debuffs")
 	
 	
