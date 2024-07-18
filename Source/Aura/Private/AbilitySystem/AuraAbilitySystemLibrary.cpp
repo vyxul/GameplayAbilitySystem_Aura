@@ -237,7 +237,7 @@ bool UAuraAbilitySystemLibrary::AreOpposingFactions(AActor* FirstActor, AActor* 
 	return (FirstIsPlayer != SecondIsPlayer);
 }
 
-TArray<FGameplayEffectContextHandle> UAuraAbilitySystemLibrary::ApplyDamageEffect(FDamageEffectParams DamageEffectParams)
+TArray<FGameplayEffectContextHandle> UAuraAbilitySystemLibrary::ApplyAbilityEffect(FDamageEffectParams DamageEffectParams)
 {
 	TArray<FGameplayEffectContextHandle> EffectContextHandles;
 	const AActor* SourceAvatar = DamageEffectParams.SourceASC->GetAvatarActor();
@@ -265,7 +265,12 @@ TArray<FGameplayEffectContextHandle> UAuraAbilitySystemLibrary::ApplyDamageEffec
 	float RandomFloat = FMath::FRandRange(0.f, 100.f);
 	for (FAbilityDebuffStruct& Debuff : DamageEffectParams.AbilityDebuffEffects)
 	{
-		if (RandomFloat >= Debuff.DebuffChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
+		if (Debuff.DebuffGameplayEffect == nullptr ||
+			Debuff.DebuffChance == FScalableFloat() ||
+			Debuff.DebuffLevel == FScalableFloat())
+			continue;
+		
+		if (RandomFloat <= Debuff.DebuffChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
 		{
 			FGameplayEffectContextHandle DebuffContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
 			DebuffContextHandle.AddSourceObject(SourceAvatar);

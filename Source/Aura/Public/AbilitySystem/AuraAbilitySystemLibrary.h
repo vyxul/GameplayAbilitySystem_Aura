@@ -69,5 +69,5 @@ public:
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
 	static bool AreOpposingFactions(AActor* FirstActor, AActor* SecondActor);
 
-	static TArray<FGameplayEffectContextHandle> ApplyDamageEffect(FDamageEffectParams DamageEffectParams);
+	static TArray<FGameplayEffectContextHandle> ApplyAbilityEffect(FDamageEffectParams DamageEffectParams);
 };

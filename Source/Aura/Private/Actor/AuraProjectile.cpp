@@ -60,10 +60,17 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
-	if (!DamageEffectSpecHandle.IsValid())
+	if (DamageEffectParams.WorldContextObject == nullptr ||
+		DamageEffectParams.DamageGameplayEffectClass == nullptr ||
+		DamageEffectParams.SourceASC == nullptr)
 		return;
-	
+
+	/*
 	if (DamageEffectSpecHandle.Data.Get()->GetContext().GetInstigator() == OtherActor)
+		return;
+	*/
+
+	if (DamageEffectParams.SourceASC->GetAvatarActor() == OtherActor)
 		return;
 
 	// If collides with basic mesh
@@ -117,11 +124,14 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		AActor* TargetActor = TargetASC->GetAvatarActor();
 		if (UAuraAbilitySystemLibrary::AreOpposingFactions(this, TargetActor))
 		{
+			DamageEffectParams.TargetASC = TargetASC;
+			
 			ProjectileImpactEffects();
 			if (HasAuthority())
 			{
-				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
-			
+				// TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+				UAuraAbilitySystemLibrary::ApplyAbilityEffect(DamageEffectParams);
+				
 				Destroy();
 			}
 		}

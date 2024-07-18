@@ -51,6 +51,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocatio
 
 	// Set up the GE Context to pass along data
 	// For now just adding data just for demo purpose, no reason yet
+	/*
 	const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
 	FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
 	EffectContextHandle.SetAbility(this);
@@ -78,6 +79,8 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocatio
 
 	// Set the GE Spec Handle for the Projectile
 	Projectile->DamageEffectSpecHandle = SpecHandle;
+	*/
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
 	// Add faction tag to the projectile
 	FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
