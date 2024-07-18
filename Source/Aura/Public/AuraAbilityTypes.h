@@ -1,7 +1,63 @@
 ﻿#pragma once
 
 #include "GameplayEffectTypes.h"
+#include "ScalableFloat.h"
 #include "AuraAbilityTypes.generated.h"
+
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
+struct FAbilityDebuffStruct
+{
+	GENERATED_BODY()
+
+	FAbilityDebuffStruct() = default;
+	FAbilityDebuffStruct(const FScalableFloat& DebuffChance, const FScalableFloat& DebuffLevel,
+						 const TSubclassOf<UGameplayEffect>& DebuffGameplayEffect)
+		: DebuffChance(DebuffChance),
+		  DebuffLevel(DebuffLevel),
+		  DebuffGameplayEffect(DebuffGameplayEffect)
+	{
+	}
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat DebuffChance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat DebuffLevel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> DebuffGameplayEffect;
+};
+
+USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FDamageEffectParams() {}
+
+	UPROPERTY()
+	TObjectPtr<UObject> WorldContextObject = nullptr;
+
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> SourceASC;
+	
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> TargetASC;
+	
+	UPROPERTY()
+	float AbilityLevel = 1.f;
+	
+	UPROPERTY()
+	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	
+	UPROPERTY()
+	TArray<FAbilityDebuffStruct> AbilityDebuffEffects;
+};
 
 USTRUCT(BlueprintType)
 struct FAuraGameplayEffectContext : public FGameplayEffectContext
@@ -9,7 +65,7 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 	GENERATED_BODY()
 
 public:
-	/* Needed Code for sub classes */
+	/* Needed Code for subclasses */
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override
 	{

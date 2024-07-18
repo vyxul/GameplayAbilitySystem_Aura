@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
 #include "PropertyPathHelpers.h"
@@ -234,4 +235,50 @@ bool UAuraAbilitySystemLibrary::AreOpposingFactions(AActor* FirstActor, AActor* 
 	const bool SecondIsPlayer = SecondActor->ActorHasTag(FName("Player"));
 
 	return (FirstIsPlayer != SecondIsPlayer);
+}
+
+TArray<FGameplayEffectContextHandle> UAuraAbilitySystemLibrary::ApplyDamageEffect(FDamageEffectParams DamageEffectParams)
+{
+	TArray<FGameplayEffectContextHandle> EffectContextHandles;
+	const AActor* SourceAvatar = DamageEffectParams.SourceASC->GetAvatarActor();
+
+	// Damage Effect
+	FGameplayEffectContextHandle DamageContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
+	DamageContextHandle.AddSourceObject(SourceAvatar);
+	FGameplayEffectSpecHandle DamageSpecHandle =
+		DamageEffectParams.SourceASC->MakeOutgoingSpec(
+			DamageEffectParams.DamageGameplayEffectClass,
+			DamageEffectParams.AbilityLevel,
+			DamageContextHandle);
+
+	for (auto& Pair : DamageEffectParams.DamageTypes)
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+			DamageSpecHandle,
+			Pair.Key,
+			Pair.Value.GetValueAtLevel(DamageEffectParams.AbilityLevel));
+	
+	DamageEffectParams.SourceASC->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data, DamageEffectParams.TargetASC);
+
+	EffectContextHandles.Add(DamageContextHandle);
+	
+	// Debuff Effects
+	float RandomFloat = FMath::FRandRange(0.f, 100.f);
+	for (FAbilityDebuffStruct& Debuff : DamageEffectParams.AbilityDebuffEffects)
+	{
+		if (RandomFloat >= Debuff.DebuffChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
+		{
+			FGameplayEffectContextHandle DebuffContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
+			DebuffContextHandle.AddSourceObject(SourceAvatar);
+			FGameplayEffectSpecHandle DebuffSpecHandle =
+				DamageEffectParams.SourceASC->MakeOutgoingSpec(
+					Debuff.DebuffGameplayEffect,
+					Debuff.DebuffLevel.GetValueAtLevel(DamageEffectParams.AbilityLevel),
+					DebuffContextHandle);
+			DamageEffectParams.SourceASC->ApplyGameplayEffectSpecToTarget(*DebuffSpecHandle.Data, DamageEffectParams.TargetASC);
+			
+			EffectContextHandles.Add(DebuffContextHandle);
+		}
+	}
+	
+	return EffectContextHandles;
 }
