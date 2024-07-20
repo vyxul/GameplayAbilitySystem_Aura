@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+struct FGameplayEffectContext;
 struct FDamageEffectParams;
 struct FGameplayEffectContextHandle;
 class UAbilityInfo;
@@ -69,5 +70,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
 	static bool AreOpposingFactions(AActor* FirstActor, AActor* SecondActor);
 
-	static TArray<FGameplayEffectContextHandle> ApplyAbilityEffect(FDamageEffectParams DamageEffectParams);
+	static FGameplayEffectContextHandle ApplyAbilityEffect(FDamageEffectParams DamageEffectParams);
+
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static float GetScalableFloatValueAtLevel(FScalableFloat ScalableFloat, float Level);
 };

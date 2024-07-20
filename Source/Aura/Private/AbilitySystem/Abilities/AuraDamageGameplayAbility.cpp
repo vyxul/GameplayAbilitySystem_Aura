@@ -61,7 +61,7 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageTypes = DamageTypes;
-	Params.AbilityDebuffEffects = AbilityDebuffEffects;
+	Params.AbilityStatusEffects = AbilityStatusEffects;
 	
 	return Params;
 }

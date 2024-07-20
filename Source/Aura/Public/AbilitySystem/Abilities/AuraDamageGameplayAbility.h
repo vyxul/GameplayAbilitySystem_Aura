@@ -7,8 +7,8 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraDamageGameplayAbility.generated.h"
 
+struct FAbilityStatusEffectStruct;
 struct FDamageEffectParams;
-struct FAbilityDebuffStruct;
 /**
  * 
  */
@@ -35,7 +35,7 @@ protected:
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TArray<FAbilityDebuffStruct> AbilityDebuffEffects;
+	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
 
 	UFUNCTION(BlueprintCallable)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;

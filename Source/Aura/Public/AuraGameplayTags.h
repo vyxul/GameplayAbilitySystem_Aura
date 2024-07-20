@@ -71,21 +71,21 @@ public:
 
 	/* Debuffs */
 	// Meta
-	FGameplayTag Debuff_Meta_Chance;
-	FGameplayTag Debuff_Meta_Damage;
-	FGameplayTag Debuff_Meta_Frequency;
-	FGameplayTag Debuff_Meta_Duration;
+	FGameplayTag StatusEffect_Debuff_Meta_Chance;
+	FGameplayTag StatusEffect_Debuff_Meta_Damage;
+	FGameplayTag StatusEffect_Debuff_Meta_Frequency;
+	FGameplayTag StatusEffect_Debuff_Meta_Duration;
 	// Effects
 	// Fire
-	FGameplayTag Debuff_Fire;
-	FGameplayTag Debuff_Fire_Burn;
+	FGameplayTag StatusEffect_Debuff_Fire;
+	FGameplayTag StatusEffect_Debuff_Fire_Burn;
 	// Lightning
-	FGameplayTag Debuff_Lightning;
-	FGameplayTag Debuff_Lightning_Stun;
+	FGameplayTag StatusEffect_Debuff_Lightning;
+	FGameplayTag StatusEffect_Debuff_Lightning_Stun;
 	// Arcane
-	FGameplayTag Debuff_Arcane;
+	FGameplayTag StatusEffect_Debuff_Arcane;
 	// Physical
-	FGameplayTag Debuff_Physical;
+	FGameplayTag StatusEffect_Debuff_Physical;
 	
 	/* Used for Applying to Target */
 	FGameplayTag Effects_HitReact;

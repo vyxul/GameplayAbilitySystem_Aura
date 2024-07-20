@@ -130,6 +130,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			if (HasAuthority())
 			{
 				// TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+				// TODO: Do something with the returned Effect Context Handle?
 				UAuraAbilitySystemLibrary::ApplyAbilityEffect(DamageEffectParams);
 				
 				Destroy();

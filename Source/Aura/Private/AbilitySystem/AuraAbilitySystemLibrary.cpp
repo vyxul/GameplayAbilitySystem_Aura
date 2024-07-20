@@ -113,6 +113,13 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 		ASC->GiveAbility(AbilitySpec);
 	}
 
+	// Give and Activate the passive common abilities
+	for (TSubclassOf<UGameplayAbility> AbilityClass : ClassInfo->CommonPassiveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		ASC->GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+
 	// Give the class specific abilities
 	for (const auto AbilityClass : ClassInfo->GetClassDefaultInfo(CharacterClass).ClassAbilities)
 	{
@@ -237,10 +244,10 @@ bool UAuraAbilitySystemLibrary::AreOpposingFactions(AActor* FirstActor, AActor* 
 	return (FirstIsPlayer != SecondIsPlayer);
 }
 
-TArray<FGameplayEffectContextHandle> UAuraAbilitySystemLibrary::ApplyAbilityEffect(FDamageEffectParams DamageEffectParams)
+FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyAbilityEffect(FDamageEffectParams DamageEffectParams)
 {
-	TArray<FGameplayEffectContextHandle> EffectContextHandles;
-	const AActor* SourceAvatar = DamageEffectParams.SourceASC->GetAvatarActor();
+	AActor* SourceAvatar = DamageEffectParams.SourceASC->GetAvatarActor();
+	AActor* TargetAvatar = DamageEffectParams.TargetASC->GetAvatarActor();
 
 	// Damage Effect
 	FGameplayEffectContextHandle DamageContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
@@ -258,32 +265,50 @@ TArray<FGameplayEffectContextHandle> UAuraAbilitySystemLibrary::ApplyAbilityEffe
 			Pair.Value.GetValueAtLevel(DamageEffectParams.AbilityLevel));
 	
 	DamageEffectParams.SourceASC->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data, DamageEffectParams.TargetASC);
-
-	EffectContextHandles.Add(DamageContextHandle);
 	
-	// Debuff Effects
+	// Status Effects
 	float RandomFloat = FMath::FRandRange(0.f, 100.f);
-	for (FAbilityDebuffStruct& Debuff : DamageEffectParams.AbilityDebuffEffects)
+	for (FAbilityStatusEffectStruct& StatusEffect : DamageEffectParams.AbilityStatusEffects)
 	{
-		if (Debuff.DebuffGameplayEffect == nullptr ||
-			Debuff.DebuffChance == FScalableFloat() ||
-			Debuff.DebuffLevel == FScalableFloat())
+		if (StatusEffect.StatusEffectTag == FGameplayTag::EmptyTag ||
+			StatusEffect.StatusEffectChance == FScalableFloat() ||
+			StatusEffect.StatusEffectLevel == FScalableFloat())
 			continue;
 		
-		if (RandomFloat <= Debuff.DebuffChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
+		if (RandomFloat <= StatusEffect.StatusEffectChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
 		{
-			FGameplayEffectContextHandle DebuffContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
-			DebuffContextHandle.AddSourceObject(SourceAvatar);
-			FGameplayEffectSpecHandle DebuffSpecHandle =
-				DamageEffectParams.SourceASC->MakeOutgoingSpec(
-					Debuff.DebuffGameplayEffect,
-					Debuff.DebuffLevel.GetValueAtLevel(DamageEffectParams.AbilityLevel),
-					DebuffContextHandle);
-			DamageEffectParams.SourceASC->ApplyGameplayEffectSpecToTarget(*DebuffSpecHandle.Data, DamageEffectParams.TargetASC);
+			float StatusEffectLevel = StatusEffect.StatusEffectLevel.GetValueAtLevel(DamageEffectParams.AbilityLevel);
 			
-			EffectContextHandles.Add(DebuffContextHandle);
+			// send a gameplay event tag like UAuraAttributeSet::SendXPEvent
+			// have GA_ListenForStatusEffects handle applying the status effect
+			// that GA will have needed info for the status effect
+			// pass in SourceAvatar, StatusEffectlevel, and StatusEffectTag with the payload
+			// not sure if need to get some reference to the status effect, worry about it later
+			// if need it, can make this function return array of EffectContextHandles and store them maybe
+			
+			FGameplayEventData Payload = FGameplayEventData();
+			Payload.EventTag = StatusEffect.StatusEffectTag;
+			Payload.Instigator = SourceAvatar;
+			Payload.Target = TargetAvatar;
+			Payload.EventMagnitude = StatusEffectLevel;
+			// dont know if need this
+			Payload.ContextHandle = DamageContextHandle;
+			Payload.OptionalObject = DamageEffectParams.SourceASC;
+			Payload.OptionalObject2 = DamageEffectParams.TargetASC;
+
+			/*
+			 * Encountering problems when having GA_ListenForStatusEffects being called on the target to apply to itself, causes
+			 * instigator and effect causer to be target instead of the actual instigator / effect causer
+			 * Try having that ability on all still but it applies the gameplay spec on target instead
+			 */
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceAvatar, StatusEffect.StatusEffectTag, Payload);
 		}
 	}
 	
-	return EffectContextHandles;
+	return DamageContextHandle;
+}
+
+float UAuraAbilitySystemLibrary::GetScalableFloatValueAtLevel(FScalableFloat ScalableFloat, float Level)
+{
+	return ScalableFloat.GetValueAtLevel(Level);
 }

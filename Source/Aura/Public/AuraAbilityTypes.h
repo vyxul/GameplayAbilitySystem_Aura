@@ -7,27 +7,49 @@
 class UGameplayEffect;
 
 USTRUCT(BlueprintType)
-struct FAbilityDebuffStruct
+struct FDamageTagScalableFloat
+{
+	GENERATED_BODY()
+	
+	FDamageTagScalableFloat() = default;
+
+	FDamageTagScalableFloat(const FGameplayTag& DamageTag, const FScalableFloat& DamageScalableFloat)
+		: DamageTag(DamageTag),
+		  DamageScalableFloat(DamageScalableFloat)
+	{
+	}
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FGameplayTag DamageTag;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FScalableFloat DamageScalableFloat;
+};
+
+USTRUCT(BlueprintType)
+struct FStatusEffectInfoArray
 {
 	GENERATED_BODY()
 
-	FAbilityDebuffStruct() = default;
-	FAbilityDebuffStruct(const FScalableFloat& DebuffChance, const FScalableFloat& DebuffLevel,
-						 const TSubclassOf<UGameplayEffect>& DebuffGameplayEffect)
-		: DebuffChance(DebuffChance),
-		  DebuffLevel(DebuffLevel),
-		  DebuffGameplayEffect(DebuffGameplayEffect)
-	{
-	}
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TArray<FDamageTagScalableFloat> StatusEffectInfo;
+};
+
+USTRUCT(BlueprintType)
+struct FAbilityStatusEffectStruct
+{
+	GENERATED_BODY()
+
+	FAbilityStatusEffectStruct() = default;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FScalableFloat DebuffChance;
+	FScalableFloat StatusEffectChance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FScalableFloat DebuffLevel;
+	FScalableFloat StatusEffectLevel;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> DebuffGameplayEffect;
+	FGameplayTag StatusEffectTag;
 };
 
 USTRUCT(BlueprintType)
@@ -56,7 +78,7 @@ struct FDamageEffectParams
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
 	
 	UPROPERTY()
-	TArray<FAbilityDebuffStruct> AbilityDebuffEffects;
+	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
 };
 
 USTRUCT(BlueprintType)
