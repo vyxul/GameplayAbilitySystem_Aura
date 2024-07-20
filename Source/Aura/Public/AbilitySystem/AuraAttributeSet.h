@@ -259,6 +259,9 @@ private:
 	void ShowFloatingText(const FEffectProperties& EffectProperties, float Damage) const;
 	void SendXPEvent(const FEffectProperties& EffectProperties);
 
+	void HandleIncomingDamage(const FEffectProperties& EffectProperties);
+	void HandleIncomingXP(const FEffectProperties& EffectProperties);
+
 	bool bTopOffHealth = false;
 	bool bTopOffMana = false;
 };

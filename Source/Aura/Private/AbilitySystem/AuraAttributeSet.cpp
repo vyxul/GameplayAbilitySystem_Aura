@@ -137,87 +137,11 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f);
-
-		if (LocalIncomingDamage > 0)
-		{
-			const float NewHealth = GetHealth() - LocalIncomingDamage;
-			SetHealth(FMath::Clamp(NewHealth, 0, GetMaxHealth()));
-			UE_LOG(LogAura, Display, TEXT("UAuraAttributeSet::PostGameplayEffectExecute(): Changed Health on %s, Health: %f"), *EffectProperties.TargetAvatarActor->GetName(), GetHealth());
-
-			const bool bFatal = NewHealth <= 0;
-
-			if (bFatal)
-			{
-				ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor);
-				if (CombatInterface)
-				{
-					CombatInterface->Die();
-				}
-				SendXPEvent(EffectProperties);
-			}
-			else
-			{
-				FGameplayTagContainer TagContainer;
-				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-				EffectProperties.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-			}
-
-			ShowFloatingText(EffectProperties, LocalIncomingDamage);
-		}
+		HandleIncomingDamage(EffectProperties);
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
-		const float LocalIncomingXP = GetIncomingXP();
-		SetIncomingXP(0.f);
-		
-		// UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP)
-		
-		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
-		ACharacter* SourceCharacter = EffectProperties.SourceCharacter;
-		if (SourceCharacter->Implements<UPlayerInterface>() && SourceCharacter->Implements<UCombatInterface>())
-		{
-			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(SourceCharacter);
-			const int32 CurrentXP = IPlayerInterface::Execute_GetXP(SourceCharacter);
-
-			UDataTable* LevelUpInfo = IPlayerInterface::Execute_GetLevelUpInfo(SourceCharacter);
-			const int32 LevelAfterAddingXP = ULevelUpInfo::FindLevelForXP(LevelUpInfo, (CurrentXP + LocalIncomingXP));
-
-			const int32 NumLevelUps = LevelAfterAddingXP - CurrentLevel;
-			
-			if (NumLevelUps >= 1)
-			{
-				// 1. Add to Player Level
-				IPlayerInterface::Execute_AddToPlayerLevel(SourceCharacter, NumLevelUps);
-				
-				// 2. Add to Attribute and Spell Point
-				int32 AttributePointsReward = 0;
-				int32 SpellPointsReward = 0;
-
-				for (int LevelPassed = CurrentLevel; LevelPassed < LevelAfterAddingXP; LevelPassed++)
-				{
-					int32 AttributePointsGainedThisLevel = IPlayerInterface::Execute_GetAttributePointsReward(SourceCharacter, LevelPassed);
-					int32 SpellPointsGainedThisLevel = IPlayerInterface::Execute_GetSpellPointsReward(SourceCharacter, LevelPassed);
-
-					AttributePointsReward += AttributePointsGainedThisLevel;
-					SpellPointsReward += SpellPointsGainedThisLevel;
-				}
-
-				IPlayerInterface::Execute_AddToAttributePoints(SourceCharacter, AttributePointsReward);
-				IPlayerInterface::Execute_AddToSpellPoints(SourceCharacter, SpellPointsReward);
-
-				// 3. Fill up Health and Mana
-				bTopOffHealth = true;
-				bTopOffMana = true;
-				Cast<IPlayerInterface>(SourceCharacter)->GetNeedRefreshAttributesDelegate()->Broadcast();
-				
-				// 4. Visual FX
-				IPlayerInterface::Execute_LevelUp(SourceCharacter);
-			}
-			
-			IPlayerInterface::Execute_AddToXP(SourceCharacter, LocalIncomingXP);
-		}
+		HandleIncomingXP(EffectProperties);
 	}
 }
 
@@ -277,6 +201,97 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& EffectProperties)
 		Payload.EventMagnitude = XPReward;
 		
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(EffectProperties.SourceCharacter, GameplayTags.Attributes_Meta_IncomingXP, Payload);
+	}
+}
+
+void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProperties)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0.f);
+
+	if (LocalIncomingDamage > 0)
+	{
+		const float NewHealth = GetHealth() - LocalIncomingDamage;
+		SetHealth(FMath::Clamp(NewHealth, 0, GetMaxHealth()));
+		UE_LOG(LogAura, Display, TEXT("UAuraAttributeSet::PostGameplayEffectExecute(): Changed Health on %s, Health: %f"), *EffectProperties.TargetAvatarActor->GetName(), GetHealth());
+
+		const bool bFatal = NewHealth <= 0;
+
+		if (bFatal)
+		{
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(EffectProperties.TargetAvatarActor);
+			if (CombatInterface)
+			{
+				CombatInterface->Die();
+			}
+			SendXPEvent(EffectProperties);
+			
+			// TODO: Remove all active GE after death
+			// FGameplayEffectQuery GameplayEffectQuery;
+			// GameplayEffectQuery.OwningTagQuery
+			// GetOwningAbilitySystemComponent()->RemoveActiveEffects(GameplayEffectQuery);
+		}
+		else
+		{
+			FGameplayTagContainer TagContainer;
+			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+			EffectProperties.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		}
+
+		ShowFloatingText(EffectProperties, LocalIncomingDamage);
+	}
+}
+
+void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& EffectProperties)
+{
+	const float LocalIncomingXP = GetIncomingXP();
+	SetIncomingXP(0.f);
+	
+	// UE_LOG(LogAura, Log, TEXT("Incoming XP: %f"), LocalIncomingXP)
+	
+	// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
+	ACharacter* SourceCharacter = EffectProperties.SourceCharacter;
+	if (SourceCharacter->Implements<UPlayerInterface>() && SourceCharacter->Implements<UCombatInterface>())
+	{
+		const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(SourceCharacter);
+		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(SourceCharacter);
+
+		UDataTable* LevelUpInfo = IPlayerInterface::Execute_GetLevelUpInfo(SourceCharacter);
+		const int32 LevelAfterAddingXP = ULevelUpInfo::FindLevelForXP(LevelUpInfo, (CurrentXP + LocalIncomingXP));
+
+		const int32 NumLevelUps = LevelAfterAddingXP - CurrentLevel;
+		
+		if (NumLevelUps >= 1)
+		{
+			// 1. Add to Player Level
+			IPlayerInterface::Execute_AddToPlayerLevel(SourceCharacter, NumLevelUps);
+			
+			// 2. Add to Attribute and Spell Point
+			int32 AttributePointsReward = 0;
+			int32 SpellPointsReward = 0;
+
+			for (int LevelPassed = CurrentLevel; LevelPassed < LevelAfterAddingXP; LevelPassed++)
+			{
+				int32 AttributePointsGainedThisLevel = IPlayerInterface::Execute_GetAttributePointsReward(SourceCharacter, LevelPassed);
+				int32 SpellPointsGainedThisLevel = IPlayerInterface::Execute_GetSpellPointsReward(SourceCharacter, LevelPassed);
+
+				AttributePointsReward += AttributePointsGainedThisLevel;
+				SpellPointsReward += SpellPointsGainedThisLevel;
+			}
+
+			IPlayerInterface::Execute_AddToAttributePoints(SourceCharacter, AttributePointsReward);
+			IPlayerInterface::Execute_AddToSpellPoints(SourceCharacter, SpellPointsReward);
+
+			// 3. Fill up Health and Mana
+			bTopOffHealth = true;
+			bTopOffMana = true;
+			Cast<IPlayerInterface>(SourceCharacter)->GetNeedRefreshAttributesDelegate()->Broadcast();
+			
+			// 4. Visual FX
+			IPlayerInterface::Execute_LevelUp(SourceCharacter);
+		}
+		
+		IPlayerInterface::Execute_AddToXP(SourceCharacter, LocalIncomingXP);
 	}
 }
 
