@@ -82,6 +82,9 @@ struct FDamageEffectParams
 
 	UPROPERTY()
 	float DeathImpulseMagnitude = 0.f;
+
+	UPROPERTY()
+	FVector DeathImpulseDirection = FVector::Zero();
 };
 
 USTRUCT(BlueprintType)
@@ -117,9 +120,11 @@ public:
 	// Getters
 	bool IsBlockedHit () const	{ return bIsBlockedHit;	}
 	bool IsCriticalHit() const	{ return bIsCriticalHit; }
+	FVector GetDeathImpulse() const { return DeathImpulse; }
 	// Setters
 	void SetIsBlockedHit (bool bInIsBlockedHit)  { bIsBlockedHit  = bInIsBlockedHit;  }
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
+	void SetDeathImpulse(const FVector& InDeathImpulse) { DeathImpulse = InDeathImpulse; }
 	
 protected:
 	UPROPERTY()
@@ -127,6 +132,9 @@ protected:
 	
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	FVector DeathImpulse = FVector::Zero();
 };
 
 template<>
