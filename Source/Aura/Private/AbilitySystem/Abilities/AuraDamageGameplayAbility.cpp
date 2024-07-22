@@ -38,19 +38,6 @@ float UAuraDamageGameplayAbility::GetDamageAtLevel(int32 Level, FGameplayTag Dam
 	return 0;
 }
 
-FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const
-{
-	if (TaggedMontages.Num() > 0)
-	{
-		bMontageFound = true;
-		const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
-		return TaggedMontages[Selection];
-	}
-
-	bMontageFound = false;
-	return FTaggedMontage();
-}
-
 FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
 	FDamageEffectParams Params;
@@ -62,6 +49,20 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageTypes = DamageTypes;
 	Params.AbilityStatusEffects = AbilityStatusEffects;
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude.GetValueAtLevel(GetAbilityLevel());
 	
 	return Params;
+}
+
+FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const
+{
+	if (TaggedMontages.Num() > 0)
+	{
+		bMontageFound = true;
+		const int32 Selection = FMath::RandRange(0, TaggedMontages.Num() - 1);
+		return TaggedMontages[Selection];
+	}
+
+	bMontageFound = false;
+	return FTaggedMontage();
 }

@@ -23,6 +23,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetDamageAtLevel(int32 Level, FGameplayTag DamageTypeTag);
+
+	UFUNCTION(BlueprintCallable)
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 	
 protected:	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -31,12 +34,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category= "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
 
+	UPROPERTY(EditDefaultsOnly, Category= "Damage")
+	FScalableFloat DeathImpulseMagnitude;
+
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
-
-	UFUNCTION(BlueprintCallable)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 };

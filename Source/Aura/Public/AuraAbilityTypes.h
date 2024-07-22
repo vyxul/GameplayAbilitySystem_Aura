@@ -79,6 +79,9 @@ struct FDamageEffectParams
 	
 	UPROPERTY()
 	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
+
+	UPROPERTY()
+	float DeathImpulseMagnitude = 0.f;
 };
 
 USTRUCT(BlueprintType)
