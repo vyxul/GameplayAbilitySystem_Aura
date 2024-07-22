@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/Effects/StatusEffects/StatusEffectNiagaraComponent.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
 #include "Aura/Public/AuraGameplayTags.h"
@@ -31,6 +32,11 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// Set up StatusEffect Niagara Components
+	BurnDebuffComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("BurnDebuffComponent");
+	BurnDebuffComponent->SetupAttachment(GetRootComponent());
+	BurnDebuffComponent->StatusEffectTag = FAuraGameplayTags::Get().StatusEffect_Debuff_Fire_Burn;
 }
 
 UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
@@ -124,6 +130,16 @@ void AAuraCharacterBase::SetMinionCount_Implementation(const int32 Amount)
 	MinionCount = Amount;
 }
 
+FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnAscRegistered;
+}
+
+FOnDeath& AAuraCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeath;
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 {
 	/* Handle Collision and Weight Settings */
@@ -149,6 +165,8 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 
 	// Death State
 	bDead = true;
+
+	OnDeath.Broadcast(this);
 }
 
 // Called when the game starts or when spawned

@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UStatusEffectNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -44,7 +45,12 @@ public:
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual void SetMinionCount_Implementation(const int32 Amount) override;
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override;
+	virtual FOnDeath& GetOnDeathDelegate() override;
 	/* end ICombatInterface */
+
+	FOnASCRegistered OnAscRegistered;
+	FOnDeath OnDeath;
 	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
@@ -112,6 +118,9 @@ protected:
 	/* Minions */
 	
 	int32 MinionCount = 0;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UStatusEffectNiagaraComponent> BurnDebuffComponent;
 	
 private:
 	UPROPERTY(EditAnywhere, Category= "Abilties")
