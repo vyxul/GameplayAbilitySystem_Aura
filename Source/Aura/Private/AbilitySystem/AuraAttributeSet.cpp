@@ -243,6 +243,11 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& EffectProp
 			FGameplayTagContainer TagContainer;
 			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
 			EffectProperties.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			
+			/* Knockback */
+			const FVector Knockback = UAuraAbilitySystemLibrary::GetKnockback(EffectProperties.EffectContextHandle);
+			if (!Knockback.IsNearlyZero(10.f))
+				EffectProperties.TargetCharacter->LaunchCharacter(Knockback, true, true);
 		}
 
 		ShowFloatingText(EffectProperties, LocalIncomingDamage);

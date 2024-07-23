@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraDamageGameplayAbility.generated.h"
@@ -24,7 +25,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetDamageAtLevel(int32 Level, FGameplayTag DamageTypeTag);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintPure)
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 	
 protected:	
@@ -42,4 +43,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FKnockbackStruct KnockbackInfo;
 };

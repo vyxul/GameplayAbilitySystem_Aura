@@ -35,10 +35,13 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 
 		if (!DeathImpulse.IsZero())
 			RepBits |= 1 << 9;
+
+		if (!Knockback.IsZero())
+			RepBits |= 1 << 10;
 	}
 
 	// Pass in the number of bits being used to serialize
-	Ar.SerializeBits(&RepBits, 10);
+	Ar.SerializeBits(&RepBits, 11);
 
 	// Save the data that is currently available based off of the previous save code segment
 	if (RepBits & (1 << 0))
@@ -81,6 +84,9 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 
 	if (RepBits & (1 << 9))
 		DeathImpulse.NetSerialize(Ar, Map, bOutSuccess);
+	
+	if (RepBits & (1 << 10))
+		Knockback.NetSerialize(Ar, Map, bOutSuccess);
 
 	// Deal with loading
 	if (Ar.IsLoading())

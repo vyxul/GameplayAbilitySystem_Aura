@@ -195,6 +195,15 @@ FVector UAuraAbilitySystemLibrary::GetDeathImpulse(const FGameplayEffectContextH
 	return FVector::Zero();
 }
 
+FVector UAuraAbilitySystemLibrary::GetKnockback(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	if (AuraEffectContext)
+		return AuraEffectContext->GetKnockback();
+
+	return FVector::Zero();
+}
+
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
 {
 	FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get());
@@ -215,6 +224,14 @@ void UAuraAbilitySystemLibrary::SetDeathImpulse(FGameplayEffectContextHandle& Ef
 	FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get());
 	if (AuraEffectContext)
 		AuraEffectContext->SetDeathImpulse(InDeathImpulse);
+}
+
+void UAuraAbilitySystemLibrary::SetKnockback(FGameplayEffectContextHandle& EffectContextHandle,
+	const FVector& InKnockback)
+{
+	FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	if (AuraEffectContext)
+		AuraEffectContext->SetKnockback(InKnockback);
 }
 
 void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldContextObject,
@@ -268,9 +285,18 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyAbilityEffect(FDama
 
 	// Damage Effect
 	FGameplayEffectContextHandle DamageContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
+	
 	DamageContextHandle.AddSourceObject(SourceAvatar);
 	const FVector DeathImpulse = DamageEffectParams.DeathImpulseDirection * DamageEffectParams.DeathImpulseMagnitude;
 	SetDeathImpulse(DamageContextHandle, DeathImpulse);
+
+	float KnockbackRandomFloat = FMath::FRandRange(0.f, 100.f);
+	if (KnockbackRandomFloat <= DamageEffectParams.KnockbackChance)
+	{
+		const FVector Knockback = DamageEffectParams.KnockbackDirection * DamageEffectParams.KnockbackMagnitude;
+		SetKnockback(DamageContextHandle, Knockback);
+	}
+	
 	FGameplayEffectSpecHandle DamageSpecHandle =
 		DamageEffectParams.SourceASC->MakeOutgoingSpec(
 			DamageEffectParams.DamageGameplayEffectClass,

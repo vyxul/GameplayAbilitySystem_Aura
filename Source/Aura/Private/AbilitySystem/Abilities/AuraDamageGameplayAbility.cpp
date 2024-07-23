@@ -40,6 +40,7 @@ float UAuraDamageGameplayAbility::GetDamageAtLevel(int32 Level, FGameplayTag Dam
 
 FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
+	float AbilityLevel = GetAbilityLevel();
 	FDamageEffectParams Params;
 	
 	Params.WorldContextObject = GetAvatarActorFromActorInfo();
@@ -49,7 +50,18 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageTypes = DamageTypes;
 	Params.AbilityStatusEffects = AbilityStatusEffects;
-	Params.DeathImpulseMagnitude = DeathImpulseMagnitude.GetValueAtLevel(GetAbilityLevel());
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude.GetValueAtLevel(AbilityLevel);
+	Params.KnockbackChance = KnockbackInfo.KnockbackChance.GetValueAtLevel(AbilityLevel);
+	Params.KnockbackMagnitude = KnockbackInfo.KnockbackMagnitude.GetValueAtLevel(AbilityLevel);
+
+	if (IsValid(TargetActor))
+	{
+		FRotator Rotation = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
+		Rotation.Pitch = 45.f;
+		const FVector ToTarget = Rotation.Vector();
+		Params.DeathImpulseDirection = ToTarget;
+		Params.KnockbackDirection = ToTarget;
+	}
 	
 	return Params;
 }

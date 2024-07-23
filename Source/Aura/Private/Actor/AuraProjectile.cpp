@@ -131,7 +131,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 			{
 				// TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 				// TODO: Do something with the returned Effect Context Handle?
-				DamageEffectParams.DeathImpulseDirection = GetActorForwardVector();
+				FVector ProjectileForwardVector = GetActorForwardVector();
+				DamageEffectParams.DeathImpulseDirection = ProjectileForwardVector;
+				DamageEffectParams.KnockbackDirection = ProjectileForwardVector.RotateAngleAxis(45.f, GetActorRightVector());
 				UAuraAbilitySystemLibrary::ApplyAbilityEffect(DamageEffectParams);
 				
 				Destroy();

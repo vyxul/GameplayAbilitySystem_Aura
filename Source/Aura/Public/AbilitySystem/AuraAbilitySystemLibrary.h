@@ -63,6 +63,9 @@ public:
 	UFUNCTION(BlueprintPure, Category= "AuraAbilitySystemLibrary | GameplayEffects")
 	static FVector GetDeathImpulse(const FGameplayEffectContextHandle& EffectContextHandle);
 
+	UFUNCTION(BlueprintPure, Category= "AuraAbilitySystemLibrary | GameplayEffects")
+	static FVector GetKnockback(const FGameplayEffectContextHandle& EffectContextHandle);
+
 	/* Setters */
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | GameplayEffects")
 	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit);
@@ -72,6 +75,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | GameplayEffects")
 	static void SetDeathImpulse(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector& InDeathImpulse);
+
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | GameplayEffects")
+	static void SetKnockback(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector& InKnockback);
 	// -END AuraEffectContextHandle Functions
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")

@@ -7,6 +7,26 @@
 class UGameplayEffect;
 
 USTRUCT(BlueprintType)
+struct FKnockbackStruct
+{
+	GENERATED_BODY()
+
+	FKnockbackStruct() = default;
+
+	FKnockbackStruct(const FScalableFloat& KnockbackChance, const FScalableFloat& KnockbackPower)
+		: KnockbackChance(KnockbackChance),
+		  KnockbackMagnitude(KnockbackPower)
+	{
+	}
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FScalableFloat KnockbackChance;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FScalableFloat KnockbackMagnitude;
+};
+
+USTRUCT(BlueprintType)
 struct FDamageTagScalableFloat
 {
 	GENERATED_BODY()
@@ -59,32 +79,41 @@ struct FDamageEffectParams
 
 	FDamageEffectParams() {}
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UObject> WorldContextObject = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass = nullptr;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> SourceASC;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UAbilitySystemComponent> TargetASC;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float AbilityLevel = 1.f;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
 	
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	float DeathImpulseMagnitude = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FVector DeathImpulseDirection = FVector::Zero();
+
+	UPROPERTY(BlueprintReadWrite)
+	float KnockbackChance = 0.f;
+	
+	UPROPERTY(BlueprintReadWrite)
+	float KnockbackMagnitude = 0.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	FVector KnockbackDirection = FVector::Zero();
 };
 
 USTRUCT(BlueprintType)
@@ -121,10 +150,12 @@ public:
 	bool IsBlockedHit () const	{ return bIsBlockedHit;	}
 	bool IsCriticalHit() const	{ return bIsCriticalHit; }
 	FVector GetDeathImpulse() const { return DeathImpulse; }
+	FVector GetKnockback() const { return Knockback; }
 	// Setters
 	void SetIsBlockedHit (bool bInIsBlockedHit)  { bIsBlockedHit  = bInIsBlockedHit;  }
 	void SetIsCriticalHit(bool bInIsCriticalHit) { bIsCriticalHit = bInIsCriticalHit; }
 	void SetDeathImpulse(const FVector& InDeathImpulse) { DeathImpulse = InDeathImpulse; }
+	void SetKnockback(const FVector& InKnockback) { Knockback = InKnockback; }
 	
 protected:
 	UPROPERTY()
@@ -135,6 +166,9 @@ protected:
 
 	UPROPERTY()
 	FVector DeathImpulse = FVector::Zero();
+
+	UPROPERTY()
+	FVector Knockback = FVector::Zero();
 };
 
 template<>
