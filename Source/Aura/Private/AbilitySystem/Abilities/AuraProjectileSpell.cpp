@@ -6,9 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Actor/AuraProjectile.h"
-#include "Interaction/CombatInterface.h"
-#include "Aura/Public/AuraGameplayTags.h"
-#include "Character/AuraCharacterBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -89,4 +87,135 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocatio
 	// Spawn projectile
 	Projectile->FinishSpawning(SpawnTransform);
 	
+}
+
+void UAuraProjectileSpell::SpawnMultipleProjectiles(const FVector& ProjectileSpawnLocation,
+	const FVector& ProjectileTargetLocation, bool bOverridePitch, float PitchOverride, bool bHomingProjectiles,
+	AActor* HomingTarget)
+{
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	if (!bIsServer)
+		return;
+
+	// using FRotator so that can we adjust pitch if needed,
+	// otherwise, could just use normalize functions on FVectors to get directions
+	FRotator RotationToTarget = (ProjectileTargetLocation - ProjectileSpawnLocation).Rotation();
+	const float TargetDistance = (ProjectileTargetLocation - ProjectileSpawnLocation).Length();
+
+	if (bOverridePitch)
+		RotationToTarget.Pitch = PitchOverride;
+
+	const FVector TargetVectorDirection = RotationToTarget.Vector();
+	const FVectorSpread FanVectorSpread = GetFanSpread(TargetVectorDirection, ProjectileSpread, NumProjectiles);
+	
+	float DebugArrowDuration = 5;
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	
+	// Main Target vector
+	UKismetSystemLibrary::DrawDebugArrow(
+		AvatarActor,
+		ProjectileSpawnLocation,
+		ProjectileSpawnLocation + (FanVectorSpread.TargetVectorDirection * TargetDistance),
+		5,
+		FLinearColor::White,
+		DebugArrowDuration,
+		2);
+
+	// Edge vectors
+	UKismetSystemLibrary::DrawDebugArrow(
+		AvatarActor,
+		ProjectileSpawnLocation,
+		ProjectileSpawnLocation + (FanVectorSpread.LeftEdgeVectorDirection * TargetDistance),
+		5,
+		FLinearColor::Blue,
+		DebugArrowDuration,
+		2);
+	UKismetSystemLibrary::DrawDebugArrow(
+		AvatarActor,
+		ProjectileSpawnLocation,
+		ProjectileSpawnLocation + (FanVectorSpread.RightEdgeVectorDirection * TargetDistance),
+		5,
+		FLinearColor::Yellow,
+		DebugArrowDuration,
+		2);
+
+	// Projectile Vectors
+	for (FVector ProjectileVector : FanVectorSpread.VectorDirectionGroup)
+	{
+		UKismetSystemLibrary::DrawDebugArrow(
+			AvatarActor,
+			ProjectileSpawnLocation,
+			ProjectileSpawnLocation + (ProjectileVector * (TargetDistance / 2)),
+			5,
+			FLinearColor::Green,
+			DebugArrowDuration,
+			2
+			);
+	}
+	
+	/*
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(ProjectileSpawnLocation);
+	SpawnTransform.SetRotation(Rotation.Quaternion());
+
+	// Get the projectile ready
+	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+		ProjectileClass,
+		SpawnTransform,
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetOwningActorFromActorInfo()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+	// Set Damage Effect Params for projectile
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+
+	// Add faction tag to the projectile
+	FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
+	Projectile->Tags.Add(FactionTag);
+
+	// Spawn projectile
+	Projectile->FinishSpawning(SpawnTransform);
+	*/
+}
+
+FVectorSpread UAuraProjectileSpell::GetFanSpread(const FVector& TargetVectorDirection, const float& AngleSpread,
+	const int32& ProjectileCount)
+{
+	// Error case
+	if (ProjectileCount <= 0)
+		return FVectorSpread();
+	
+	FVectorSpread FanVectorSpread;
+	FanVectorSpread.TargetVectorDirection = TargetVectorDirection;
+	FanVectorSpread.AngleSpread = AngleSpread;
+
+	const FVector LeftEdgeVectorDirection = TargetVectorDirection.RotateAngleAxis(-AngleSpread / 2, FVector::UpVector);
+	const FVector RightEdgeVectorDirection = TargetVectorDirection.RotateAngleAxis(AngleSpread / 2, FVector::UpVector);
+	FanVectorSpread.LeftEdgeVectorDirection = LeftEdgeVectorDirection;
+	FanVectorSpread.RightEdgeVectorDirection = RightEdgeVectorDirection;
+
+	FanVectorSpread.ProjectileCount = ProjectileCount;
+
+	// Only 1 projectile, just go straight to target
+	if (ProjectileCount == 1)
+		FanVectorSpread.VectorDirectionGroup.Add(TargetVectorDirection);
+
+	// Go from left to right for projectiles
+	else
+	{
+		const float DeltaAngle = AngleSpread / (ProjectileCount - 1);
+		for (int Projectile = 0; Projectile < ProjectileCount; Projectile++)
+		{
+			const FVector ProjectileVectorDirection = LeftEdgeVectorDirection.RotateAngleAxis(DeltaAngle * Projectile, FVector::UpVector);
+			FanVectorSpread.VectorDirectionGroup.Add(ProjectileVectorDirection);
+		}
+	}
+	
+	return FanVectorSpread;
+}
+
+FVectorSpread UAuraProjectileSpell::GetShotgunSpread(const FVector& TargetVectorDirection, const float& AngleSpread,
+	const int32& ProjectileCount)
+{
+	return GetFanSpread(TargetVectorDirection, AngleSpread, ProjectileCount);
 }

@@ -7,6 +7,46 @@
 class UGameplayEffect;
 
 USTRUCT(BlueprintType)
+struct FVectorSpread
+{
+	GENERATED_BODY()
+	
+	FVectorSpread() = default;
+
+	FVectorSpread(const FVector& TargetVectorDirection, float AngleSpread, const FVector& LeftEdgeVectorDirection,
+		const FVector& RightEdgeVectorDirection, int32 ProjectileCount, const TArray<FVector>& VectorDirectionGroup)
+		: TargetVectorDirection(TargetVectorDirection),
+		  AngleSpread(AngleSpread),
+		  LeftEdgeVectorDirection(LeftEdgeVectorDirection),
+		  RightEdgeVectorDirection(RightEdgeVectorDirection),
+		  ProjectileCount(ProjectileCount),
+		  VectorDirectionGroup(VectorDirectionGroup)
+	{
+	}
+
+	/* Meta Info about vector spread */
+	// Main vector to base spread off of
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FVector TargetVectorDirection;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float AngleSpread;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FVector LeftEdgeVectorDirection;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	FVector RightEdgeVectorDirection;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	int32 ProjectileCount;
+
+	/* Actual Info about the projectiles */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TArray<FVector> VectorDirectionGroup;
+};
+
+USTRUCT(BlueprintType)
 struct FKnockbackStruct
 {
 	GENERATED_BODY()
