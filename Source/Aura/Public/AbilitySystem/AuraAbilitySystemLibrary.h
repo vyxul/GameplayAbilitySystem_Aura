@@ -91,4 +91,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
 	static float GetScalableFloatValueAtLevel(FScalableFloat ScalableFloat, float Level);
+
+	// Made custom version in AuraProjectileSpell.h called GetFanSpread() and GetShotgunSpread() using FVectorSpread struct.
+	// Making this just in case if being used elsewhere
+	UFUNCTION(BlueprintPure, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static TArray<FRotator> EvenlySpacedRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 NumRotators);
+
+	// Made custom version in AuraProjectileSpell.h called GetFanSpread() and GetShotgunSpread() using FVectorSpread struct.
+	// Making this just in case if being used elsewhere
+	UFUNCTION(BlueprintPure, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 NumVectors);
 };

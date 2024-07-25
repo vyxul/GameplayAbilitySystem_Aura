@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Actor/AuraProjectile.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -151,31 +152,29 @@ void UAuraProjectileSpell::SpawnMultipleProjectiles(const FVector& ProjectileSpa
 			DebugArrowDuration,
 			2
 			);
+		
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(ProjectileSpawnLocation);
+		SpawnTransform.SetRotation(ProjectileVector.ToOrientationQuat());
+
+		// Get the projectile ready
+		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+			ProjectileClass,
+			SpawnTransform,
+			GetOwningActorFromActorInfo(),
+			Cast<APawn>(GetOwningActorFromActorInfo()),
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		// Set Damage Effect Params for projectile
+		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+
+		// Add faction tag to the projectile
+		FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
+		Projectile->Tags.Add(FactionTag);
+
+		// Spawn projectile
+		Projectile->FinishSpawning(SpawnTransform);
 	}
-	
-	/*
-	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(ProjectileSpawnLocation);
-	SpawnTransform.SetRotation(Rotation.Quaternion());
-
-	// Get the projectile ready
-	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
-		ProjectileClass,
-		SpawnTransform,
-		GetOwningActorFromActorInfo(),
-		Cast<APawn>(GetOwningActorFromActorInfo()),
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-
-	// Set Damage Effect Params for projectile
-	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
-
-	// Add faction tag to the projectile
-	FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
-	Projectile->Tags.Add(FactionTag);
-
-	// Spawn projectile
-	Projectile->FinishSpawning(SpawnTransform);
-	*/
 }
 
 FVectorSpread UAuraProjectileSpell::GetFanSpread(const FVector& TargetVectorDirection, const float& AngleSpread,
