@@ -27,19 +27,19 @@ struct FVectorSpread
 	/* Meta Info about vector spread */
 	// Main vector to base spread off of
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FVector TargetVectorDirection;
+	FVector TargetVectorDirection = FVector();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	float AngleSpread;
+	float AngleSpread = 0.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FVector LeftEdgeVectorDirection;
+	FVector LeftEdgeVectorDirection = FVector();
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	FVector RightEdgeVectorDirection;
+	FVector RightEdgeVectorDirection = FVector();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	int32 ProjectileCount;
+	int32 ProjectileCount = 0;
 
 	/* Actual Info about the projectiles */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

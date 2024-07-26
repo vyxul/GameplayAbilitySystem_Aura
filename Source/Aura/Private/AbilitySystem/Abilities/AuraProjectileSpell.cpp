@@ -5,7 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Actor/AuraProjectile.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -91,8 +91,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileSpawnLocatio
 }
 
 void UAuraProjectileSpell::SpawnMultipleProjectiles(const FVector& ProjectileSpawnLocation,
-	const FVector& ProjectileTargetLocation, bool bOverridePitch, float PitchOverride, bool bHomingProjectiles,
-	AActor* HomingTarget)
+	const FVector& ProjectileTargetLocation, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer)
@@ -171,6 +170,23 @@ void UAuraProjectileSpell::SpawnMultipleProjectiles(const FVector& ProjectileSpa
 		// Add faction tag to the projectile
 		FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
 		Projectile->Tags.Add(FactionTag);
+
+		if (ProjectileType == EProjectileType::Homing)
+		{
+			if (HomingTarget && HomingTarget->Implements<UCombatInterface>())
+			{
+				Projectile->ProjectileMovement->HomingTargetComponent = HomingTarget->GetRootComponent();
+			}
+			else
+			{
+				Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+				Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+				Projectile->ProjectileMovement->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+			}
+
+			Projectile->ProjectileMovement->HomingAccelerationMagnitude = FMath::FRandRange(HomingAccelerationMin, HomingAccelerationMax);
+			Projectile->ProjectileMovement->bIsHomingProjectile = true;
+		}
 
 		// Spawn projectile
 		Projectile->FinishSpawning(SpawnTransform);
