@@ -8,13 +8,11 @@
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/Aura.h"
-#include "Character/AuraCharacterBase.h"
 #include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Net/UnrealNetwork.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -144,10 +142,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 void AAuraProjectile::Destroyed()
 {
-	/*
-	if (!bHit && !HasAuthority())
-	*/
-	//ProjectileImpactEffects();
+	ProjectileImpactEffects();
 	
 	Super::Destroyed();
 }
@@ -159,5 +154,10 @@ void AAuraProjectile::ProjectileImpactEffects_Implementation()
 		bHit = true;
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	}
+	if (LoopingSoundComponent)
+	{
+		LoopingSoundComponent->Stop();
+		LoopingSoundComponent->DestroyComponent();
 	}
 }
