@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/Abilities/AuraBeamAbility.h"
 
+#include "GameFramework/Character.h"
+
 void UAuraBeamAbility::StoreMouseDataInfo(const FHitResult& HitResult)
 {
 	if (HitResult.bBlockingHit)
@@ -16,8 +18,11 @@ void UAuraBeamAbility::StoreMouseDataInfo(const FHitResult& HitResult)
 	}
 }
 
-void UAuraBeamAbility::StoreOwnerPlayerController()
+void UAuraBeamAbility::StoreOwnerVariables()
 {
 	if (CurrentActorInfo)
+	{
 		OwnerPlayerController = CurrentActorInfo->PlayerController.Get();
+		OwnerCharacter = Cast<ACharacter>(CurrentActorInfo->AvatarActor);
+	}
 }
