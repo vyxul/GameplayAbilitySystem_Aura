@@ -108,6 +108,9 @@ void AAuraPlayerController::SetupInputComponent()
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+		return;
+	
 	bAutoRunning = false;
 	
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
@@ -129,6 +132,21 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 */
 void AAuraPlayerController::CursorTrace()
 {
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		if (LastActor)
+			LastActor->UnHighlightActor();
+
+		if (CurrentActor)
+			CurrentActor->UnHighlightActor();
+
+		LastActor = nullptr;
+		CurrentActor = nullptr;
+		
+		return;
+	}
+
+		
 	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
 	// if no hit, return
 	if (!CursorHit.bBlockingHit)
@@ -149,6 +167,9 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+		return;
+	
 	// If input was LMB
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -162,6 +183,9 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased))
+		return;
+	
 	// If input was anything besides LMB
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
@@ -197,7 +221,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
         				}
         			}
 
-        			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+        			if (GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+        				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
         		}
         
         		FollowTime = 0.f;
@@ -207,6 +232,9 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHeld))
+		return;
+	
 	// If input was anything besides LMB
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{

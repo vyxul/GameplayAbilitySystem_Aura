@@ -124,4 +124,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_2, Montage.Attack.2, "Attack 2")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_3, Montage.Attack.3, "Attack 3")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Montage_Attack_4, Montage.Attack.4, "Attack 4")
+
+	/* Player Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_InputPressed,  Player.Block.InputPressed,  "Block Input Pressed callback for input")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_InputHeld,     Player.Block.InputHeld,     "Block Input Held callback for input")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_InputReleased, Player.Block.InputReleased, "Block Input Released callback for input")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_CursorTrace,   Player.Block.CursorTrace,   "Block tracing under the cursor")
 }
