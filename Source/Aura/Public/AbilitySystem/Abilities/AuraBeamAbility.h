@@ -23,6 +23,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void TraceFirstTarget(const FVector& BeamStartLocation, const FVector& BeamTargetLocation, const float TraceRadius = 10.f);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, float Radius = 850.f);
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, Category= "Beam")
@@ -36,4 +39,7 @@ protected:
 	
 	UPROPERTY(BlueprintReadWrite, Category= "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(BlueprintReadWrite, Category= "Beam")
+	int32 MaxSecondaryTargets = 5;
 };

@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Abilities/AuraBeamAbility.h"
 
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -44,7 +45,7 @@ void UAuraBeamAbility::TraceFirstTarget(const FVector& BeamStartLocation, const 
 		TraceTypeQuery1,
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		HitResult,
 		true);
 
@@ -53,4 +54,28 @@ void UAuraBeamAbility::TraceFirstTarget(const FVector& BeamStartLocation, const 
 		MouseHitLocation = HitResult.ImpactPoint;
 		MouseHitActor = HitResult.GetActor();
 	}
+}
+
+void UAuraBeamAbility::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, float Radius)
+{
+	TArray<AActor*> OverlappingActors;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(GetAvatarActorFromActorInfo());
+	ActorsToIgnore.Add(MouseHitActor);
+	
+	UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(
+		GetAvatarActorFromActorInfo(),
+		OverlappingActors,
+		ActorsToIgnore,
+		Radius,
+		MouseHitActor->GetActorLocation());
+
+	TArray<AActor*> SecondaryTargets;
+	UAuraAbilitySystemLibrary::GetClosestTargets(
+		MaxSecondaryTargets,
+		OverlappingActors,
+		SecondaryTargets,
+		MouseHitActor->GetActorLocation());
+
+	OutAdditionalTargets = SecondaryTargets;
 }

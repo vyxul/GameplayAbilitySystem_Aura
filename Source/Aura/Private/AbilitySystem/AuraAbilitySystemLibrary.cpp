@@ -270,6 +270,56 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 	}
 }
 
+void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray<AActor*>& Targets,
+	TArray<AActor*>& OutClosestTargets, const FVector& Origin)
+{
+	if (Targets.Num() <= MaxTargets)
+	{
+		OutClosestTargets = Targets;
+		return;
+	}
+
+	TArray<AActor*> TargetsToCheck = Targets;
+	int32 NumTargetsFound = 0;
+
+	/* Basic way O(N^2) */
+	while (NumTargetsFound < MaxTargets)
+	{
+		AActor* ClosestActor;
+		double ClosestDistance = TNumericLimits<double>::Max();
+		
+		for (AActor* PotentialTarget : TargetsToCheck)
+		{
+			const double Distance = (PotentialTarget->GetActorLocation() - Origin).Length();
+			if (Distance < ClosestDistance)
+			{
+				ClosestActor = PotentialTarget;
+				ClosestDistance = Distance;
+			}
+		}
+
+		OutClosestTargets.AddUnique(ClosestActor);
+		TargetsToCheck.Remove(ClosestActor);
+		NumTargetsFound++;
+	}
+
+	/* Using built-in sort function, likely to be a O(N*logN) algorithm */
+	/*
+	TargetsToCheck.Sort(
+		[Origin](AActor& A, AActor& B)
+		{
+			float DistanceAToOrigin = FVector::Distance(A.GetActorLocation(), Origin);
+			float DistanceBToOrigin = FVector::Distance(B.GetActorLocation(), Origin);
+			return DistanceAToOrigin < DistanceBToOrigin;
+		});
+
+	for (AActor* PotentialTarget : TargetsToCheck)
+	{
+		OutClosestTargets.Add(PotentialTarget);
+	}
+	*/
+}
+
 bool UAuraAbilitySystemLibrary::AreOpposingFactions(AActor* FirstActor, AActor* SecondActor)
 {
 	const bool FirstIsPlayer = FirstActor->ActorHasTag(FName("Player"));
