@@ -20,6 +20,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StoreOwnerVariables();
+
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(const FVector& BeamStartLocation, const FVector& BeamTargetLocation, const float TraceRadius = 10.f);
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, Category= "Beam")
