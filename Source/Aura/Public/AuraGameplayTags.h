@@ -111,6 +111,7 @@ public:
 
 	/* Cooldown Tags */
 	FGameplayTag Cooldown_Fire_FireBolt;
+	FGameplayTag Cooldown_Lightning_Electrocute;
 	
 	/* Combat Socket Tags */
 	FGameplayTag Combat_Socket_Weapon;

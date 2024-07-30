@@ -112,6 +112,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	/* Cooldown Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Fire_FireBolt, Cooldown.Fire.FireBolt, "FireBolt Cooldown Tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Lightning_Electrocute, Cooldown.Lightning.Electrocute, "Electrocute Cooldown Tag")
 	
 	/* Combat Socket Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Combat_Socket_Weapon,    Combat.Socket.Weapon,    "Weapon")
