@@ -32,10 +32,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	UPROPERTY(EditDefaultsOnly, Category= "Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
 	TMap<FGameplayTag, FScalableFloat> DamageTypes;
 
-	UPROPERTY(EditDefaultsOnly, Category= "Damage")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
 	FScalableFloat DeathImpulseMagnitude;
 
 	UFUNCTION(BlueprintPure)
