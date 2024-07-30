@@ -56,7 +56,7 @@ void UAuraBeamAbility::TraceFirstTarget(const FVector& BeamStartLocation, const 
 	}
 }
 
-void UAuraBeamAbility::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, float Radius)
+void UAuraBeamAbility::StoreSecondaryTargets(TArray<AActor*>& OutSecondaryTargets, float Radius)
 {
 	TArray<AActor*> OverlappingActors;
 	TArray<AActor*> ActorsToIgnore;
@@ -77,5 +77,5 @@ void UAuraBeamAbility::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarg
 		SecondaryTargets,
 		MouseHitActor->GetActorLocation());
 
-	OutAdditionalTargets = SecondaryTargets;
+	OutSecondaryTargets = SecondaryTargets;
 }

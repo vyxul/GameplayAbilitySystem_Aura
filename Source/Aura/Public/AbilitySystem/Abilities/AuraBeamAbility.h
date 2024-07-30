@@ -25,7 +25,7 @@ public:
 	void TraceFirstTarget(const FVector& BeamStartLocation, const FVector& BeamTargetLocation, const float TraceRadius = 10.f);
 
 	UFUNCTION(BlueprintCallable)
-	void StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTargets, float Radius = 850.f);
+	void StoreSecondaryTargets(TArray<AActor*>& OutSecondaryTargets, float Radius = 850.f);
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, Category= "Beam")
