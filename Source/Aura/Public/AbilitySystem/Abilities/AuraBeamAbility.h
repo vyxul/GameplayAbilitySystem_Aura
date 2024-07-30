@@ -26,6 +26,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void StoreSecondaryTargets(TArray<AActor*>& OutSecondaryTargets, float Radius = 850.f);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SecondaryTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveOnDeathNotifies(AActor* Target);
 	
 protected:
 	UPROPERTY(BlueprintReadWrite, Category= "Beam")

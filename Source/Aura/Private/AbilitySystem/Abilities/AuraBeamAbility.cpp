@@ -54,6 +54,10 @@ void UAuraBeamAbility::TraceFirstTarget(const FVector& BeamStartLocation, const 
 		MouseHitLocation = HitResult.ImpactPoint;
 		MouseHitActor = HitResult.GetActor();
 	}
+
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(MouseHitActor))
+		if (!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this, &UAuraBeamAbility::PrimaryTargetDied))
+			CombatInterface->GetOnDeathDelegate().AddUniqueDynamic(this, &UAuraBeamAbility::PrimaryTargetDied);
 }
 
 void UAuraBeamAbility::StoreSecondaryTargets(TArray<AActor*>& OutSecondaryTargets, float Radius)
@@ -77,5 +81,24 @@ void UAuraBeamAbility::StoreSecondaryTargets(TArray<AActor*>& OutSecondaryTarget
 		SecondaryTargets,
 		MouseHitActor->GetActorLocation());
 
+	for (AActor* SecondaryTarget : SecondaryTargets)
+	{
+		if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(SecondaryTarget))
+			if (!CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this, &UAuraBeamAbility::SecondaryTargetDied))
+				CombatInterface->GetOnDeathDelegate().AddUniqueDynamic(this, &UAuraBeamAbility::SecondaryTargetDied);
+	}
+	
 	OutSecondaryTargets = SecondaryTargets;
+}
+
+void UAuraBeamAbility::RemoveOnDeathNotifies(AActor* Target)
+{
+	if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Target))
+	{
+		if (CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this, &UAuraBeamAbility::PrimaryTargetDied))
+			CombatInterface->GetOnDeathDelegate().RemoveDynamic(this, &UAuraBeamAbility::PrimaryTargetDied);
+		
+		if (CombatInterface->GetOnDeathDelegate().IsAlreadyBound(this, &UAuraBeamAbility::SecondaryTargetDied))
+			CombatInterface->GetOnDeathDelegate().RemoveDynamic(this, &UAuraBeamAbility::SecondaryTargetDied);
+	}
 }
