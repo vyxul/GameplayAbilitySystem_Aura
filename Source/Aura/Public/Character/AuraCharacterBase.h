@@ -49,6 +49,8 @@ public:
 	virtual void SetMinionCount_Implementation(const int32 Amount) override;
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	virtual FOnDeath& GetOnDeathDelegate() override;
+	virtual void SetBeingShocked_Implementation(bool InBeingShocked) override;
+	virtual bool IsBeingShocked_Implementation() override;
 	/* end ICombatInterface */
 
 	FOnASCRegistered OnAscRegistered;
@@ -67,6 +69,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Combat")
 	float BaseWalkSpeed = 600.f;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category= "Combat")
+	bool bBeingShocked = false;
 	
 protected:
 	// Called when the game starts or when spawned
