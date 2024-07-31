@@ -25,6 +25,8 @@ public:
 	// Sets default values for this character's properties
 	AAuraCharacterBase();
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	/* IAbilitySystemInterface */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	/* end IAbilitySystemInterface */
@@ -57,6 +59,14 @@ public:
 
 	UPROPERTY(EditAnywhere, Category= "Combat")
 	TArray<FTaggedMontage> AttackMontages;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category= "Combat")
+	bool bIsStunned = false;
+
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Combat")
+	float BaseWalkSpeed = 600.f;
 	
 protected:
 	// Called when the game starts or when spawned

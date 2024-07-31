@@ -108,8 +108,15 @@ void AAuraPlayerController::SetupInputComponent()
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
-	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
-		return;
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	if (GetASC())
+	{
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputPressed))
+			return;
+
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.StatusEffect_Debuff_Lightning_Stun))
+			return;
+	}
 	
 	bAutoRunning = false;
 	
@@ -132,18 +139,25 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 */
 void AAuraPlayerController::CursorTrace()
 {
-	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	if (GetASC())
 	{
-		if (LastActor)
-			LastActor->UnHighlightActor();
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_CursorTrace))
+		{
+			if (LastActor)
+				LastActor->UnHighlightActor();
 
-		if (CurrentActor)
-			CurrentActor->UnHighlightActor();
+			if (CurrentActor)
+				CurrentActor->UnHighlightActor();
 
-		LastActor = nullptr;
-		CurrentActor = nullptr;
+			LastActor = nullptr;
+			CurrentActor = nullptr;
+			
+			return;
+		}
 		
-		return;
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.StatusEffect_Debuff_Lightning_Stun))
+			return;
 	}
 
 		
@@ -167,11 +181,18 @@ void AAuraPlayerController::CursorTrace()
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
-		return;
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	if (GetASC())
+	{
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputPressed))
+			return;
+
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.StatusEffect_Debuff_Lightning_Stun))
+			return;
+	}
 	
 	// If input was LMB
-	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	if (InputTag.MatchesTagExact(GameplayTags.InputTag_LMB))
 	{
 		bTargeting = CurrentActor ? true : false;
 		bAutoRunning = false;
@@ -183,11 +204,18 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased))
-		return;
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	if (GetASC())
+	{
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputReleased))
+			return;
+
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.StatusEffect_Debuff_Lightning_Stun))
+			return;
+	}
 	
 	// If input was anything besides LMB
-	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	if (!InputTag.MatchesTagExact(GameplayTags.InputTag_LMB))
 	{
 		if (GetASC())        
 			GetASC()->AbilityInputTagReleased(InputTag);
@@ -221,7 +249,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
         				}
         			}
 
-        			if (GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+        			if (GetASC() && !GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputPressed))
         				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
         		}
         
@@ -232,11 +260,18 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHeld))
-		return;
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	if (GetASC())
+	{
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputHeld))
+			return;
+
+		if (GetASC()->HasMatchingGameplayTag(GameplayTags.StatusEffect_Debuff_Lightning_Stun))
+			return;
+	}
 	
 	// If input was anything besides LMB
-	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
+	if (!InputTag.MatchesTagExact(GameplayTags.InputTag_LMB))
 	{
 		if (GetASC())        
 			GetASC()->AbilityInputTagHeld(InputTag);
