@@ -16,6 +16,7 @@
 // Sets default values
 AAuraCharacterBase::AAuraCharacterBase()
 {
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -38,7 +39,11 @@ AAuraCharacterBase::AAuraCharacterBase()
 	// Set up StatusEffect Niagara Components
 	BurnDebuffComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("BurnDebuffComponent");
 	BurnDebuffComponent->SetupAttachment(GetRootComponent());
-	BurnDebuffComponent->StatusEffectTag = FAuraGameplayTags::Get().StatusEffect_Debuff_Fire_Burn;
+	BurnDebuffComponent->StatusEffectTag = GameplayTags.StatusEffect_Debuff_Fire_Burn;
+	
+	StunDebuffComponent = CreateDefaultSubobject<UStatusEffectNiagaraComponent>("StunDebuffComponent");
+	StunDebuffComponent->SetupAttachment(GetRootComponent());
+	StunDebuffComponent->StatusEffectTag = GameplayTags.StatusEffect_Debuff_Lightning_Stun;
 }
 
 void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -139,7 +144,7 @@ void AAuraCharacterBase::SetMinionCount_Implementation(const int32 Amount)
 	MinionCount = Amount;
 }
 
-FOnASCRegistered AAuraCharacterBase::GetOnASCRegisteredDelegate()
+FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
 {
 	return OnAscRegistered;
 }
@@ -177,6 +182,9 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	// Death State
 	bDead = true;
 
+	BurnDebuffComponent->Deactivate();
+	StunDebuffComponent->Deactivate();
+	
 	OnDeath.Broadcast(this);
 }
 

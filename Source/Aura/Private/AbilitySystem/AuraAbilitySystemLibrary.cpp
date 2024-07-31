@@ -271,11 +271,16 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 }
 
 void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray<AActor*>& Targets,
-	TArray<AActor*>& OutClosestTargets, const FVector& Origin)
+	TArray<AActor*>& OutClosestTargets, const FVector& Origin, AActor* SourceActor)
 {
 	if (Targets.Num() <= MaxTargets)
 	{
-		OutClosestTargets = Targets;
+		for (AActor* PotentialTarget : Targets)
+		{
+			if (UAuraAbilitySystemLibrary::AreOpposingFactions(SourceActor, PotentialTarget))
+				OutClosestTargets.Add(PotentialTarget);
+		}
+		
 		return;
 	}
 
@@ -283,13 +288,19 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray
 	int32 NumTargetsFound = 0;
 
 	/* Basic way O(N^2) */
-	while (NumTargetsFound < MaxTargets)
+	while (NumTargetsFound < MaxTargets && TargetsToCheck.Num() > 0)
 	{
 		AActor* ClosestActor;
 		double ClosestDistance = TNumericLimits<double>::Max();
 		
 		for (AActor* PotentialTarget : TargetsToCheck)
 		{
+			if (!UAuraAbilitySystemLibrary::AreOpposingFactions(SourceActor, PotentialTarget))
+			{
+				TargetsToCheck.Remove(PotentialTarget);
+				continue;
+			}
+				
 			const double Distance = (PotentialTarget->GetActorLocation() - Origin).Length();
 			if (Distance < ClosestDistance)
 			{

@@ -79,7 +79,8 @@ void UAuraBeamAbility::StoreSecondaryTargets(TArray<AActor*>& OutSecondaryTarget
 		MaxSecondaryTargets,
 		OverlappingActors,
 		SecondaryTargets,
-		MouseHitActor->GetActorLocation());
+		MouseHitActor->GetActorLocation(),
+		GetAvatarActorFromActorInfo());
 
 	for (AActor* SecondaryTarget : SecondaryTargets)
 	{
