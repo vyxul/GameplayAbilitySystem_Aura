@@ -49,8 +49,12 @@ public:
 	
 	/* Returns ability spec that has matching ability tag with passed in AbilityTag within the ASC*/
 	FGameplayAbilitySpec* GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
-	FGameplayTag GetInputTagFromSpec(const FGameplayTag& AbilityTag);
+	FGameplayTag GetInputTagFromAbilityTag(const FGameplayTag& AbilityTag);
 	FGameplayTag GetStatusFromAbilityTag(const FGameplayTag& AbilityTag);
+	bool SlotIsEmpty(const FGameplayTag& SlotTag);
+	static bool AbilityHasSlot(const FGameplayAbilitySpec& AbilitySpec, const FGameplayTag& SlotTag);
+	static bool AbilityHasAnySlot(const FGameplayAbilitySpec& AbilitySpec);
+	bool IsPassiveAbility(const FGameplayAbilitySpec& AbilitySpec) const;
 
 	static bool AbilityHasInputTag(FGameplayAbilitySpec* AbilitySpec, const FGameplayTag& InputTag);
 	FGameplayAbilitySpec* GetSpecForInputTag(const FGameplayTag& InputTag);
