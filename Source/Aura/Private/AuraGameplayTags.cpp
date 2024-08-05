@@ -99,6 +99,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire_FireBolt, Abilities.Fire.FireBolt, "FireBolt Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Lightning_Electrocute, Abilities.Lightning.Electrocute, "Electrocute Ability Tag")
 
+	/* Passive Ability Tags */
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Passive_HaloOfProtection, Abilities.Passive.HaloOfProtection, "Halo of Protection")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Passive_LifeSiphon, Abilities.Passive.LifeSiphon, "Life Siphon")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Passive_ManaSiphon, Abilities.Passive.ManaSiphon, "Mana Siphon")
+
 	/* Ability Status */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Locked, Abilities.Status.Locked, "Locked Abilities")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Status_Eligible, Abilities.Status.Eligible, "Eligible Abilities")
