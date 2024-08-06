@@ -439,7 +439,10 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 		StatusTag = AuraGameplayTags.Abilities_Status_Equipped;
 		
 		if (IsPassiveAbility(*AbilitySpec) && bAbilityUnlocked)
+		{
 			TryActivateAbility(AbilitySpec->Handle);
+			MulticastActivatePassiveEffect(AbilityTag, true);
+		}
 		
 		MarkAbilitySpecDirty(*AbilitySpec);
 		ClientEquipAbility(AbilityTag, StatusTag, NewInputTag, OldInputTag);
@@ -451,7 +454,10 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 			FGameplayTag OtherStatusTag = GetStatusFromSpec(*OtherAbilitySpec);
 			
 			if (IsPassiveAbility(*OtherAbilitySpec) && OtherStatusTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Unlocked))
+			{
 				DeactivatePassiveAbility.Broadcast(OtherAbilityTag);
+				MulticastActivatePassiveEffect(OtherAbilityTag, false);
+			}
 				
 			MarkAbilitySpecDirty(*OtherAbilitySpec);
 			ClientEquipAbility(OtherAbilityTag, OtherStatusTag, OldInputTag, FGameplayTag());
@@ -493,6 +499,12 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FAuraAbility
 	OutDescription = UAuraGameplayAbility::GetLockedDescription(AuraAbilityInfo.LevelRequirement);
 	OutNextLevelDescription = FString();
 	return false;
+}
+
+void UAuraAbilitySystemComponent::MulticastActivatePassiveEffect_Implementation(const FGameplayTag& AbilityTag,
+	bool bActivate)
+{
+	ActivatePassiveEffect.Broadcast(AbilityTag, bActivate);
 }
 
 void UAuraAbilitySystemComponent::OnRep_ActivateAbilities()
