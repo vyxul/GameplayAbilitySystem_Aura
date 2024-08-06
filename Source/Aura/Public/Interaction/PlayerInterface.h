@@ -62,6 +62,16 @@ public:
 	
 	virtual FOnExternalGameplayModifierDependencyChange* GetNeedRefreshAttributesDelegate();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void HideMagicCircle();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetMaterial(UMaterialInterface* DecalMaterial);
+	
+
 private:
 	FOnExternalGameplayModifierDependencyChange NeedRefreshAttributesDelegate;
 };

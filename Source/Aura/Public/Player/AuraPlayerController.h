@@ -34,10 +34,13 @@ public:
 	void ShowDamageNumber(ACharacter* TargetCharacter, float DamageAmount, bool bBlockedHit, bool bCriticalHit);
 
 	UFUNCTION(BlueprintCallable)
-	void ShowMagicCircle();
+	void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
 
 	UFUNCTION(BlueprintCallable)
 	void HideMagicCircle();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMaterial(UMaterialInterface* DecalMaterial);
 
 protected:
 	virtual void BeginPlay() override;

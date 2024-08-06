@@ -16,10 +16,10 @@ public:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	TObjectPtr<UDecalComponent> MagicCircleDecal;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
-	TObjectPtr<UDecalComponent> MagicCircleDecal;
 };

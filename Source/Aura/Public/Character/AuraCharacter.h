@@ -43,6 +43,9 @@ public:
 	virtual int32 GetSpellPoints_Implementation() const override;
 	virtual void LevelUp_Implementation() override;
 	virtual FOnExternalGameplayModifierDependencyChange* GetNeedRefreshAttributesDelegate() override;
+	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial) override;
+	virtual void HideMagicCircle_Implementation() override;
+	virtual void SetMaterial_Implementation(UMaterialInterface* DecalMaterial) override;
 	/* End Player Interface */
 
 protected:

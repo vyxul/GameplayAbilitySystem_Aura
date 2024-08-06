@@ -174,6 +174,30 @@ FOnExternalGameplayModifierDependencyChange* AAuraCharacter::GetNeedRefreshAttri
 	return IPlayerInterface::GetNeedRefreshAttributesDelegate();
 }
 
+void AAuraCharacter::ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial)
+{
+	if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Controller))
+	{
+		AuraPC->ShowMagicCircle(DecalMaterial);
+	}
+}
+
+void AAuraCharacter::HideMagicCircle_Implementation()
+{
+	if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Controller))
+	{
+		AuraPC->HideMagicCircle();
+	}
+}
+
+void AAuraCharacter::SetMaterial_Implementation(UMaterialInterface* DecalMaterial)
+{
+	if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Controller))
+	{
+		AuraPC->SetMaterial(DecalMaterial);
+	}
+}
+
 void AAuraCharacter::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1);
