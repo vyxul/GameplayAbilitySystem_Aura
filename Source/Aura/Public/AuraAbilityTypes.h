@@ -11,7 +11,14 @@ struct FVectorSpread
 {
 	GENERATED_BODY()
 	
-	FVectorSpread() = default;
+	FVectorSpread()
+	{
+		TargetVectorDirection = FVector();
+		AngleSpread = 0.f;
+		LeftEdgeVectorDirection = FVector();
+		RightEdgeVectorDirection = FVector();
+		ProjectileCount = 0;
+	};
 
 	FVectorSpread(const FVector& TargetVectorDirection, float AngleSpread, const FVector& LeftEdgeVectorDirection,
 		const FVector& RightEdgeVectorDirection, int32 ProjectileCount, const TArray<FVector>& VectorDirectionGroup)
