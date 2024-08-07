@@ -95,8 +95,12 @@ public:
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 	FGameplayTag Abilities_HitReact;
+	FGameplayTag Abilities_Fire;
 	FGameplayTag Abilities_Fire_FireBolt;
+	FGameplayTag Abilities_Lightning;
 	FGameplayTag Abilities_Lightning_Electrocute;
+	FGameplayTag Abilities_Arcane;
+	FGameplayTag Abilities_Arcane_ArcaneShards;
 
 	/* Passive Ability Tags */
 	FGameplayTag Abilities_Passive_HaloOfProtection;
@@ -117,6 +121,7 @@ public:
 	/* Cooldown Tags */
 	FGameplayTag Cooldown_Fire_FireBolt;
 	FGameplayTag Cooldown_Lightning_Electrocute;
+	FGameplayTag Cooldown_Arcane_ArcaneShards;
 	
 	/* Combat Socket Tags */
 	FGameplayTag Combat_Socket_Weapon;
