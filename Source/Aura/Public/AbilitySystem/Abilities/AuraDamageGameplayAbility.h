@@ -41,9 +41,21 @@ protected:
 	UFUNCTION(BlueprintPure)
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages, bool& bMontageFound) const;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
 	TArray<FAbilityStatusEffectStruct> AbilityStatusEffects;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
 	FKnockbackStruct KnockbackInfo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
+	bool bIsRadialDamage = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
+	float RadialDamageInnerRadius = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
+	float RadialDamageOuterRadius = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Damage")
+	FVector RadialDamageOrigin = FVector::Zero();
 };

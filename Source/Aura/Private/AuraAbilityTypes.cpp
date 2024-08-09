@@ -38,10 +38,24 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 
 		if (!Knockback.IsZero())
 			RepBits |= 1 << 10;
+
+		if (bIsRadialDamage)
+		{
+			RepBits |= 1 << 11;
+
+			if (RadialDamageInnerRadius > 0)
+				RepBits |= 1 << 12;
+
+			if (RadialDamageOuterRadius > 0)
+				RepBits |= 1 << 13;
+
+			if (!RadialDamageOrigin.IsZero())
+				RepBits |= 1 << 14;
+		}
 	}
 
 	// Pass in the number of bits being used to serialize
-	Ar.SerializeBits(&RepBits, 11);
+	Ar.SerializeBits(&RepBits, 15);
 
 	// Save the data that is currently available based off of the previous save code segment
 	if (RepBits & (1 << 0))
@@ -87,6 +101,20 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 	
 	if (RepBits & (1 << 10))
 		Knockback.NetSerialize(Ar, Map, bOutSuccess);
+
+	if (RepBits & (1 << 11))
+	{
+		Ar << bIsRadialDamage;
+
+		if (RepBits & (1 << 12))
+			Ar << RadialDamageInnerRadius;
+
+		if (RepBits & (1 << 13))
+			Ar << RadialDamageOuterRadius;
+
+		if (RepBits & (1 << 14))
+			RadialDamageOrigin.NetSerialize(Ar, Map, bOutSuccess);
+	}
 
 	// Deal with loading
 	if (Ar.IsLoading())
