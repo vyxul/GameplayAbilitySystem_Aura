@@ -33,13 +33,13 @@ FStringFormatNamedArguments UAuraGameplayAbility::GetAbilityDescriptionFormatter
 	if (UAuraDamageGameplayAbility* AuraDGA = Cast<UAuraDamageGameplayAbility>(GameplayAbility))
 	{
 		NamesToValues.Add("ArcaneDmg",
-			FStringFormatArg(FString::SanitizeFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Arcane))));
+			FStringFormatArg(FString::SanitizeFloat(FMath::RoundToFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Arcane)))));
 		NamesToValues.Add("FireDmg",
-			FStringFormatArg(FString::SanitizeFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Fire))));
+			FStringFormatArg(FString::SanitizeFloat(FMath::RoundToFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Fire)))));
 		NamesToValues.Add("LightningDmg",
-			FStringFormatArg(FString::SanitizeFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Lightning))));
+			FStringFormatArg(FString::SanitizeFloat(FMath::RoundToFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Lightning)))));
 		NamesToValues.Add("PhysicalDmg",
-			FStringFormatArg(FString::SanitizeFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Physical))));
+			FStringFormatArg(FString::SanitizeFloat(FMath::RoundToFloat(AuraDGA->GetDamageAtLevel(Level,AuraGameplayTags.Damage_Physical)))));
 	}
 	
 	
