@@ -26,7 +26,15 @@ public:
 	float GetDamageAtLevel(int32 Level, FGameplayTag DamageTypeTag);
 
 	UFUNCTION(BlueprintPure)
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FVector InRadialDamageOrigin = FVector::ZeroVector) const;
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(
+		AActor* TargetActor = nullptr,
+		FVector InRadialDamageOrigin = FVector::ZeroVector,
+		bool bOverrideKnockbackDirection = false,
+		FVector KnockbackDirectionOverride = FVector::ZeroVector,
+		bool bOverrideKnockbackMagnitude = false,
+		float KnockbackMagnitudeOverride = 0.f,
+		bool bOverridePitch = false,
+		float PitchOverride = 0.f) const;
 	
 protected:	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

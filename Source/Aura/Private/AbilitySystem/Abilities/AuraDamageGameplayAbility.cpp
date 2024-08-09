@@ -38,7 +38,9 @@ float UAuraDamageGameplayAbility::GetDamageAtLevel(int32 Level, FGameplayTag Dam
 	return 0;
 }
 
-FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor, FVector InRadialDamageOrigin) const
+FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor,
+	FVector InRadialDamageOrigin, bool bOverrideKnockbackDirection, FVector KnockbackDirectionOverride,
+	bool bOverrideKnockbackMagnitude, float KnockbackMagnitudeOverride, bool bOverridePitch, float PitchOverride) const
 {
 	float AbilityLevel = GetAbilityLevel();
 	FDamageEffectParams Params;
@@ -50,14 +52,18 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.AbilityLevel = GetAbilityLevel();
 	Params.DamageTypes = DamageTypes;
 	Params.AbilityStatusEffects = AbilityStatusEffects;
-	Params.DeathImpulseMagnitude = DeathImpulseMagnitude.GetValueAtLevel(AbilityLevel);
+	Params.DeathImpulseMagnitude = bOverrideKnockbackMagnitude ?
+		KnockbackMagnitudeOverride : DeathImpulseMagnitude.GetValueAtLevel(AbilityLevel);
 	Params.KnockbackChance = KnockbackInfo.KnockbackChance.GetValueAtLevel(AbilityLevel);
-	Params.KnockbackMagnitude = KnockbackInfo.KnockbackMagnitude.GetValueAtLevel(AbilityLevel);
+	Params.KnockbackMagnitude = bOverrideKnockbackMagnitude ?
+		KnockbackMagnitudeOverride : KnockbackInfo.KnockbackMagnitude.GetValueAtLevel(AbilityLevel);
 
 	if (IsValid(TargetActor))
 	{
-		FRotator Rotation = (TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
-		Rotation.Pitch = 45.f;
+		FRotator Rotation = bOverrideKnockbackDirection ?
+			KnockbackDirectionOverride.Rotation() :
+			(TargetActor->GetActorLocation() - GetAvatarActorFromActorInfo()->GetActorLocation()).Rotation();
+		Rotation.Pitch = bOverridePitch ? PitchOverride : 45.f;
 		const FVector ToTarget = Rotation.Vector();
 		Params.DeathImpulseDirection = ToTarget;
 		Params.KnockbackDirection = ToTarget;
