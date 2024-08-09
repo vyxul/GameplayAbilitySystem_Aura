@@ -10,6 +10,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 // this struct is only for this cpp file so no need for prefix or keyword to expose to other classes
 struct AuraDamageStatics
@@ -127,7 +128,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluateParameters.TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 	/* End Boilerplate Code */
 
-	/* Get Damage Set by Caller Magnitude */
+	/* Damage Type Tag Value */
+	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
 	for (const auto& Pair : FAuraGameplayTags::Get().DamageTypesToResistances)
 	{
@@ -148,6 +150,45 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		Resistance = FMath::Clamp(Resistance, 0.f, 100.f);
 
 		DamageTypeValue *= (100.f - Resistance) / 100.f;
+
+		// Reduce by distance if Radial Damage
+		bool bIsRadialDamage = UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle);
+		if (bIsRadialDamage)
+		{
+			float RadialDamageInnerRadius = UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle);
+			float RadialDamageOuterRadius = UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle);
+			FVector RadialDamageOrigin = UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle);
+
+			// 1. Override TakeDamage in AuraCharacterBase.
+			// 2. Create delegate OnDamageDelegate, broadcast damage received in TakeDamage
+			// 3. Bind lambda to OnDamageDelegate on the victim here
+			// 4. Call UGameplayStatics::ApplyRadialDamageWithFalloff to cause damage (this will result in TakeDamage
+			//    being called in the victim, which will then broadcast OnDamageDelegate
+			// 5. In lambda, set DamageTypeValue to the damage received from the broadcast
+			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
+			{
+				CombatInterface->GetOnDamageSignature().AddLambda(
+					[&](const float DamageAmount)
+					{
+						DamageTypeValue = DamageAmount;
+					});
+
+				UGameplayStatics::ApplyRadialDamageWithFalloff(
+					TargetAvatar,
+					DamageTypeValue,
+					0,
+					RadialDamageOrigin,
+					RadialDamageInnerRadius,
+					RadialDamageOuterRadius,
+					1.f,
+					UDamageType::StaticClass(),
+					TArray<AActor*>(),
+					SourceAvatar,
+					nullptr);
+			}
+		}
+
+		// Add Damage Type Value to Total Damage Dealt
 		Damage += DamageTypeValue;
 	}
 	

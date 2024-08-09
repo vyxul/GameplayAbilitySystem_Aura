@@ -50,12 +50,14 @@ public:
 	virtual void SetMinionCount_Implementation(const int32 Amount) override;
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 	virtual FOnDeath& GetOnDeathDelegate() override;
+	virtual FOnDamageSignature& GetOnDamageSignature() override;
 	virtual void SetBeingShocked_Implementation(bool InBeingShocked) override;
 	virtual bool IsBeingShocked_Implementation() override;
 	/* end ICombatInterface */
 
 	FOnASCRegistered OnAscRegistered;
 	FOnDeath OnDeath;
+	FOnDamageSignature OnDamageDelegate;
 	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
@@ -73,6 +75,8 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category= "Combat")
 	bool bBeingShocked = false;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
 protected:
 	// Called when the game starts or when spawned
