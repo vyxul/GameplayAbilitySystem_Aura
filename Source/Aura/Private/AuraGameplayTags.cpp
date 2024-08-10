@@ -98,6 +98,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_HitReact, Abilities.HitReact, "HitReact Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire, Abilities.Fire, "Fire Abilities Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire_FireBolt, Abilities.Fire.FireBolt, "FireBolt Ability Tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Fire_FireBlast, Abilities.Fire.FireBlast, "FireBlast Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Lightning, Abilities.Lightning, "Lightning Abilities Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Lightning_Electrocute, Abilities.Lightning.Electrocute, "Electrocute Ability Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Abilities_Arcane, Abilities.Arcane, "Arcane Abilities Tag")
@@ -121,6 +122,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 	/* Cooldown Tags */
 	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Fire_FireBolt, Cooldown.Fire.FireBolt, "FireBolt Cooldown Tag")
+	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Fire_FireBlast, Cooldown.Fire.FireBlast, "FireBlast Cooldown Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Lightning_Electrocute, Cooldown.Lightning.Electrocute, "Electrocute Cooldown Tag")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Cooldown_Arcane_ArcaneShards, Cooldown.Arcane.ArcaneShards, "Arcane Shards Cooldown Tag")
 	
