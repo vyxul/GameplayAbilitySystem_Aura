@@ -34,6 +34,12 @@ public:
 	UPROPERTY()
 	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
 
+	UFUNCTION(BlueprintCallable)
+	void SetDestroyOnOverlap(bool bInput);
+
+	UFUNCTION(BlueprintCallable)
+	void SetTravelBackToOrigin(bool bInput);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -45,6 +51,12 @@ protected:
 	/* Technical Members */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> Sphere;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool bDestroyOnOverlap = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	bool bTravelBackToOrigin = false;
 
 private:
 	bool bHit = false;

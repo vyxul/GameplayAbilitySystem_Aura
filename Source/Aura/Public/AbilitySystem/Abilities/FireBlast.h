@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 #include "FireBlast.generated.h"
 
+class AAuraProjectile;
 /**
  * 
  */
@@ -13,5 +14,11 @@ UCLASS()
 class AURA_API UFireBlast : public UAuraDamageGameplayAbility
 {
 	GENERATED_BODY()
-	
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<AAuraProjectile> ProjectileClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TArray<AAuraProjectile*> Projectiles;
 };

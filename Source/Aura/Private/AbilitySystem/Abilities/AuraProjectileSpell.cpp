@@ -193,8 +193,12 @@ void UAuraProjectileSpell::SpawnMultipleProjectiles(const FVector& ProjectileSpa
 	}
 }
 
+void UAuraProjectileSpell::SpawnReturningProjectile()
+{
+}
+
 FVectorSpread UAuraProjectileSpell::GetFanSpread(const FVector& TargetVectorDirection, const float& AngleSpread,
-	const int32& ProjectileCount)
+                                                 const int32& ProjectileCount)
 {
 	// Error case
 	if (ProjectileCount <= 0)

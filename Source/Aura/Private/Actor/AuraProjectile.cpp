@@ -33,6 +33,17 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovement->MaxSpeed = 550.f;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 }
+
+void AAuraProjectile::SetDestroyOnOverlap(bool bInput)
+{
+	bDestroyOnOverlap = bInput;
+}
+
+void AAuraProjectile::SetTravelBackToOrigin(bool bInput)
+{
+	bTravelBackToOrigin = bInput;
+}
+
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -78,7 +89,8 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		if (ActorCollisionObjectType == ECC_WorldStatic || ActorCollisionObjectType == ECC_WorldDynamic)
 		{
 			ProjectileImpactEffects();
-			Destroy();
+			if (bDestroyOnOverlap)
+				Destroy();
 		}
 	}
 
@@ -92,7 +104,8 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		if (ActorCollisionObjectType == ECC_WorldStatic || ActorCollisionObjectType == ECC_WorldDynamic)
 		{
 			ProjectileImpactEffects();
-			Destroy();
+			if (bDestroyOnOverlap)
+				Destroy();
 		}
 	}
 	
@@ -134,6 +147,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 				DamageEffectParams.KnockbackDirection = ProjectileForwardVector.RotateAngleAxis(45.f, GetActorRightVector());
 				UAuraAbilitySystemLibrary::ApplyAbilityEffect(DamageEffectParams);
 				
+				if (bDestroyOnOverlap)
 				Destroy();
 			}
 		}

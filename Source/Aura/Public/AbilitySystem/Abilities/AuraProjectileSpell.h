@@ -32,6 +32,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category= "Projectile")
 	void SpawnMultipleProjectiles(const FVector& ProjectileSpawnLocation, const FVector& ProjectileTargetLocation, bool bOverridePitch = false, float PitchOverride = 0.f, AActor* HomingTarget = nullptr);
+
+	UFUNCTION(BlueprintCallable, Category= "Projectile")
+	void SpawnReturningProjectile();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
