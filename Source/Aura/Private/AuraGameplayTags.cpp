@@ -143,4 +143,7 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_InputHeld,     Player.Block.InputHeld,     "Block Input Held callback for input")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_InputReleased, Player.Block.InputReleased, "Block Input Released callback for input")
 	DEFINE_NATIVE_GAMEPLAY_TAG(Player_Block_CursorTrace,   Player.Block.CursorTrace,   "Block tracing under the cursor")
+
+	/* Gameplay Cues */
+	DEFINE_NATIVE_GAMEPLAY_TAG(GameplayCue_FireBlast_Explosion, GameplayCue.FireBlast.Explosion, "FireBlast Explosion GameplayCue")
 }

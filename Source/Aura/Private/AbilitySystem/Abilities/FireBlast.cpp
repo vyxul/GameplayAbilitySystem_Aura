@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/Abilities/FireBlast.h"
 
+#include "AuraGameplayTags.h"
+#include "GameplayCueManager.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Actor/AuraProjectile.h"
 
@@ -38,4 +40,11 @@ TArray<AAuraProjectile*> UFireBlast::SpawnFireballs()
 	}
 	
 	return TArray<AAuraProjectile*>();
+}
+
+void UFireBlast::ExecuteExplosionGameplayCue() const
+{
+	FGameplayCueParameters CueParameters;
+	CueParameters.Location = GetAvatarActorFromActorInfo()->GetActorLocation();
+	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(GetAvatarActorFromActorInfo(), FAuraGameplayTags::Get().GameplayCue_FireBlast_Explosion, CueParameters);
 }

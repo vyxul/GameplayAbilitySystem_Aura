@@ -17,6 +17,9 @@ class AURA_API UFireBlast : public UAuraDamageGameplayAbility
 
 	UFUNCTION(BlueprintCallable, Category= "Projectile")
 	TArray<AAuraProjectile*> SpawnFireballs();
+
+	UFUNCTION(BlueprintCallable)
+	void ExecuteExplosionGameplayCue() const;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
