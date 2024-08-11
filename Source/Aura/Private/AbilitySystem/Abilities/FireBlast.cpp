@@ -28,6 +28,7 @@ TArray<AAuraProjectile*> UFireBlast::SpawnFireballs()
 
 		Fireball->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 		Fireball->ReturnToActor = GetAvatarActorFromActorInfo();
+		Fireball->SetOwner(GetAvatarActorFromActorInfo());
 		
 		FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
 		Fireball->Tags.Add(FactionTag);

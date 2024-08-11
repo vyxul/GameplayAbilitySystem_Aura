@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+struct FGameplayTag;
 struct FGameplayEffectContext;
 struct FDamageEffectParams;
 struct FGameplayEffectContextHandle;
@@ -99,6 +100,24 @@ public:
 	static void SetRadialDamageOrigin(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FVector& InRadialDamageOrigin);
 	/* END  AuraEffectContextHandle Functions */
 
+	/* Damage Effect Params */
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static FGameplayEffectContextHandle ApplyAbilityEffect(FDamageEffectParams DamageEffectParams);
+	
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static void SetDamageTypesParams(UPARAM(ref) FDamageEffectParams& DamageEffectParams, TMap<FGameplayTag, FScalableFloat> DamageTypes);
+
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static void SetRadialParams(UPARAM(ref) FDamageEffectParams& DamageEffectParams, bool bIsRadial, float InnerRadius, float OuterRadius, FVector Origin);
+	
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static void SetKnockbackParams(UPARAM(ref) FDamageEffectParams& DamageEffectParams, float KnockbackChance, float KnockbackMagnitude, FVector KnockbackDirection);
+	
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
+	static void SetDeathImpulseParams(UPARAM(ref) FDamageEffectParams& DamageEffectParams, float DeathImpulseMagnitude, FVector DeathImpulseDirection);
+
+	/* END Damage Effect Params */
+
 	/* Generic */
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics", meta = (DisplayName = "Get XP for Class and Level"))
 	static int32 GetXPForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);
@@ -117,9 +136,6 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
 	static bool AreOpposingFactions(AActor* FirstActor, AActor* SecondActor);
-
-	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
-	static FGameplayEffectContextHandle ApplyAbilityEffect(FDamageEffectParams DamageEffectParams);
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
 	static float GetScalableFloatValueAtLevel(FScalableFloat ScalableFloat, float Level);

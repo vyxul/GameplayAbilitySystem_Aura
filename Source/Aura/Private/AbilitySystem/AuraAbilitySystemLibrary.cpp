@@ -266,6 +266,126 @@ void UAuraAbilitySystemLibrary::SetRadialDamageOrigin(FGameplayEffectContextHand
 		AuraEffectContext->SetRadialDamageOrigin(InRadialDamageOrigin);
 }
 
+FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyAbilityEffect(FDamageEffectParams DamageEffectParams)
+{
+	AActor* SourceAvatar = DamageEffectParams.SourceASC->GetAvatarActor();
+	AActor* TargetAvatar = DamageEffectParams.TargetASC->GetAvatarActor();
+
+	/* Primary Damage Effect */
+	FGameplayEffectContextHandle DamageContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
+	
+	DamageContextHandle.AddSourceObject(SourceAvatar);
+
+	// Death Impulse
+	const FVector DeathImpulse = DamageEffectParams.DeathImpulseDirection * DamageEffectParams.DeathImpulseMagnitude;
+	SetDeathImpulse(DamageContextHandle, DeathImpulse);
+
+	// Knockback
+	float KnockbackRandomFloat = FMath::FRandRange(0.f, 100.f);
+	if (KnockbackRandomFloat <= DamageEffectParams.KnockbackChance)
+	{
+		const FVector Knockback = DamageEffectParams.KnockbackDirection * DamageEffectParams.KnockbackMagnitude;
+		SetKnockback(DamageContextHandle, Knockback);
+	}
+
+	// Radial Damage
+	if (DamageEffectParams.bIsRadialDamage)
+	{
+		SetIsRadialDamage(DamageContextHandle, DamageEffectParams.bIsRadialDamage);
+		SetRadialDamageInnerRadius(DamageContextHandle, DamageEffectParams.RadialDamageInnerRadius);
+		SetRadialDamageOuterRadius(DamageContextHandle, DamageEffectParams.RadialDamageOuterRadius);
+		SetRadialDamageOrigin(DamageContextHandle, DamageEffectParams.RadialDamageOrigin);
+	}
+
+	// Effect Spec Handle
+	FGameplayEffectSpecHandle DamageSpecHandle =
+		DamageEffectParams.SourceASC->MakeOutgoingSpec(
+			DamageEffectParams.DamageGameplayEffectClass,
+			DamageEffectParams.AbilityLevel,
+			DamageContextHandle);
+
+	// Damage Type Tags
+	for (auto& Pair : DamageEffectParams.DamageTypes)
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+			DamageSpecHandle,
+			Pair.Key,
+			Pair.Value.GetValueAtLevel(DamageEffectParams.AbilityLevel));
+	
+	DamageEffectParams.SourceASC->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data, DamageEffectParams.TargetASC);
+	/* END Primary Damage Effect */
+	
+	// Status Effects
+	float RandomFloat = FMath::FRandRange(0.f, 100.f);
+	for (FAbilityStatusEffectStruct& StatusEffect : DamageEffectParams.AbilityStatusEffects)
+	{
+		if (StatusEffect.StatusEffectTag == FGameplayTag::EmptyTag ||
+			StatusEffect.StatusEffectChance == FScalableFloat() ||
+			StatusEffect.StatusEffectLevel == FScalableFloat())
+			continue;
+		
+		if (RandomFloat <= StatusEffect.StatusEffectChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
+		{
+			float StatusEffectLevel = StatusEffect.StatusEffectLevel.GetValueAtLevel(DamageEffectParams.AbilityLevel);
+			
+			// send a gameplay event tag like UAuraAttributeSet::SendXPEvent
+			// have GA_ListenForStatusEffects handle applying the status effect
+			// that GA will have needed info for the status effect
+			// pass in SourceAvatar, StatusEffectlevel, and StatusEffectTag with the payload
+			// not sure if need to get some reference to the status effect, worry about it later
+			// if need it, can make this function return array of EffectContextHandles and store them maybe
+			
+			FGameplayEventData Payload = FGameplayEventData();
+			Payload.EventTag = StatusEffect.StatusEffectTag;
+			Payload.Instigator = SourceAvatar;
+			Payload.Target = TargetAvatar;
+			Payload.EventMagnitude = StatusEffectLevel;
+			// dont know if need this
+			Payload.ContextHandle = DamageContextHandle;
+			Payload.OptionalObject = DamageEffectParams.SourceASC;
+			Payload.OptionalObject2 = DamageEffectParams.TargetASC;
+
+			/*
+			 * Encountering problems when having GA_ListenForStatusEffects being called on the target to apply to itself, causes
+			 * instigator and effect causer to be target instead of the actual instigator / effect causer
+			 * Try having that ability on all still but it applies the gameplay spec on target instead
+			 */
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceAvatar, StatusEffect.StatusEffectTag, Payload);
+		}
+	}
+	
+	return DamageContextHandle;
+}
+
+void UAuraAbilitySystemLibrary::SetDamageTypesParams(FDamageEffectParams& DamageEffectParams,
+	TMap<FGameplayTag, FScalableFloat> DamageTypes)
+{
+	DamageEffectParams.DamageTypes = DamageTypes;
+}
+
+void UAuraAbilitySystemLibrary::SetRadialParams(FDamageEffectParams& DamageEffectParams, bool bIsRadial,
+                                                float InnerRadius, float OuterRadius, FVector Origin)
+{
+	DamageEffectParams.bIsRadialDamage = bIsRadial;
+	DamageEffectParams.RadialDamageInnerRadius = InnerRadius;
+	DamageEffectParams.RadialDamageOuterRadius = OuterRadius;
+	DamageEffectParams.RadialDamageOrigin = Origin;
+}
+
+void UAuraAbilitySystemLibrary::SetKnockbackParams(FDamageEffectParams& DamageEffectParams, float KnockbackChance,
+	float KnockbackMagnitude, FVector KnockbackDirection)
+{
+	DamageEffectParams.KnockbackChance = KnockbackChance;
+	DamageEffectParams.KnockbackMagnitude = KnockbackMagnitude;
+	DamageEffectParams.KnockbackDirection = KnockbackDirection;
+}
+
+void UAuraAbilitySystemLibrary::SetDeathImpulseParams(FDamageEffectParams& DamageEffectParams,
+	float DeathImpulseMagnitude, FVector DeathImpulseDirection)
+{
+	DamageEffectParams.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	DamageEffectParams.DeathImpulseDirection = DeathImpulseDirection;
+}
+
 int32 UAuraAbilitySystemLibrary::GetXPForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
@@ -405,96 +525,6 @@ bool UAuraAbilitySystemLibrary::AreOpposingFactions(AActor* FirstActor, AActor* 
 	const bool SecondIsPlayer = SecondActor->ActorHasTag(FName("Player"));
 
 	return (FirstIsPlayer != SecondIsPlayer);
-}
-
-FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyAbilityEffect(FDamageEffectParams DamageEffectParams)
-{
-	AActor* SourceAvatar = DamageEffectParams.SourceASC->GetAvatarActor();
-	AActor* TargetAvatar = DamageEffectParams.TargetASC->GetAvatarActor();
-
-	/* Primary Damage Effect */
-	FGameplayEffectContextHandle DamageContextHandle = DamageEffectParams.SourceASC->MakeEffectContext();
-	
-	DamageContextHandle.AddSourceObject(SourceAvatar);
-
-	// Death Impulse
-	const FVector DeathImpulse = DamageEffectParams.DeathImpulseDirection * DamageEffectParams.DeathImpulseMagnitude;
-	SetDeathImpulse(DamageContextHandle, DeathImpulse);
-
-	// Knockback
-	float KnockbackRandomFloat = FMath::FRandRange(0.f, 100.f);
-	if (KnockbackRandomFloat <= DamageEffectParams.KnockbackChance)
-	{
-		const FVector Knockback = DamageEffectParams.KnockbackDirection * DamageEffectParams.KnockbackMagnitude;
-		SetKnockback(DamageContextHandle, Knockback);
-	}
-
-	// Radial Damage
-	if (DamageEffectParams.bIsRadialDamage)
-	{
-		SetIsRadialDamage(DamageContextHandle, DamageEffectParams.bIsRadialDamage);
-		SetRadialDamageInnerRadius(DamageContextHandle, DamageEffectParams.RadialDamageInnerRadius);
-		SetRadialDamageOuterRadius(DamageContextHandle, DamageEffectParams.RadialDamageOuterRadius);
-		SetRadialDamageOrigin(DamageContextHandle, DamageEffectParams.RadialDamageOrigin);
-	}
-
-	// Effect Spec Handle
-	FGameplayEffectSpecHandle DamageSpecHandle =
-		DamageEffectParams.SourceASC->MakeOutgoingSpec(
-			DamageEffectParams.DamageGameplayEffectClass,
-			DamageEffectParams.AbilityLevel,
-			DamageContextHandle);
-
-	// Damage Type Tags
-	for (auto& Pair : DamageEffectParams.DamageTypes)
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
-			DamageSpecHandle,
-			Pair.Key,
-			Pair.Value.GetValueAtLevel(DamageEffectParams.AbilityLevel));
-	
-	DamageEffectParams.SourceASC->ApplyGameplayEffectSpecToTarget(*DamageSpecHandle.Data, DamageEffectParams.TargetASC);
-	/* END Primary Damage Effect */
-	
-	// Status Effects
-	float RandomFloat = FMath::FRandRange(0.f, 100.f);
-	for (FAbilityStatusEffectStruct& StatusEffect : DamageEffectParams.AbilityStatusEffects)
-	{
-		if (StatusEffect.StatusEffectTag == FGameplayTag::EmptyTag ||
-			StatusEffect.StatusEffectChance == FScalableFloat() ||
-			StatusEffect.StatusEffectLevel == FScalableFloat())
-			continue;
-		
-		if (RandomFloat <= StatusEffect.StatusEffectChance.GetValueAtLevel(DamageEffectParams.AbilityLevel))
-		{
-			float StatusEffectLevel = StatusEffect.StatusEffectLevel.GetValueAtLevel(DamageEffectParams.AbilityLevel);
-			
-			// send a gameplay event tag like UAuraAttributeSet::SendXPEvent
-			// have GA_ListenForStatusEffects handle applying the status effect
-			// that GA will have needed info for the status effect
-			// pass in SourceAvatar, StatusEffectlevel, and StatusEffectTag with the payload
-			// not sure if need to get some reference to the status effect, worry about it later
-			// if need it, can make this function return array of EffectContextHandles and store them maybe
-			
-			FGameplayEventData Payload = FGameplayEventData();
-			Payload.EventTag = StatusEffect.StatusEffectTag;
-			Payload.Instigator = SourceAvatar;
-			Payload.Target = TargetAvatar;
-			Payload.EventMagnitude = StatusEffectLevel;
-			// dont know if need this
-			Payload.ContextHandle = DamageContextHandle;
-			Payload.OptionalObject = DamageEffectParams.SourceASC;
-			Payload.OptionalObject2 = DamageEffectParams.TargetASC;
-
-			/*
-			 * Encountering problems when having GA_ListenForStatusEffects being called on the target to apply to itself, causes
-			 * instigator and effect causer to be target instead of the actual instigator / effect causer
-			 * Try having that ability on all still but it applies the gameplay spec on target instead
-			 */
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceAvatar, StatusEffect.StatusEffectTag, Payload);
-		}
-	}
-	
-	return DamageContextHandle;
 }
 
 float UAuraAbilitySystemLibrary::GetScalableFloatValueAtLevel(FScalableFloat ScalableFloat, float Level)
