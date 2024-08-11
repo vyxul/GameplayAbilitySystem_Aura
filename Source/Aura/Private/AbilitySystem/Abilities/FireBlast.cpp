@@ -27,6 +27,10 @@ TArray<AAuraProjectile*> UFireBlast::SpawnFireballs()
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		Fireball->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
+		Fireball->ReturnToActor = GetAvatarActorFromActorInfo();
+		
+		FName FactionTag = GetAvatarActorFromActorInfo()->ActorHasTag(FName("Player")) ? FName("Player") : FName("Enemy");
+		Fireball->Tags.Add(FactionTag);
 
 		Fireballs.Add(Fireball);
 		Fireball->FinishSpawning(SpawnTransform);

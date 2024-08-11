@@ -40,6 +40,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetTravelBackToOrigin(bool bInput);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartOutgoingTimeline();
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<AActor> ReturnToActor;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -58,6 +64,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	bool bTravelBackToOrigin = false;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bUsesTimeline = false;
+
 private:
 	bool bHit = false;
 
@@ -71,7 +80,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> LoopingSound;
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void ProjectileImpactEffects();
 
 	UPROPERTY(EditAnywhere)
@@ -79,4 +88,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
+
+	UPROPERTY()
+	TArray<AActor*> ActorsAlreadyHit;
 };

@@ -63,6 +63,9 @@ void AAuraProjectile::BeginPlay()
 			EAttachLocation::KeepRelativeOffset,
 			true);
 	}
+
+	if (bUsesTimeline)
+		StartOutgoingTimeline();
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -80,6 +83,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	*/
 
 	if (DamageEffectParams.SourceASC->GetAvatarActor() == OtherActor)
+		return;
+
+	if (ActorsAlreadyHit.Contains(OtherActor))
 		return;
 
 	// If collides with basic mesh
@@ -148,7 +154,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 				UAuraAbilitySystemLibrary::ApplyAbilityEffect(DamageEffectParams);
 				
 				if (bDestroyOnOverlap)
-				Destroy();
+					Destroy();
+
+				ActorsAlreadyHit.AddUnique(OtherActor);
 			}
 		}
 	}
@@ -165,11 +173,12 @@ void AAuraProjectile::ProjectileImpactEffects_Implementation()
 {
 	if (!bHit)
 	{
-		bHit = true;
+		if (bDestroyOnOverlap)
+			bHit = true;
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 	}
-	if (LoopingSoundComponent)
+	if (LoopingSoundComponent && bDestroyOnOverlap)
 	{
 		LoopingSoundComponent->Stop();
 		LoopingSoundComponent->DestroyComponent();
