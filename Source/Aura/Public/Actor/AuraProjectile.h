@@ -46,6 +46,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<AActor> ReturnToActor;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> ActorsAlreadyHit;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -88,7 +91,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> ImpactSound;
-
-	UPROPERTY()
-	TArray<AActor*> ActorsAlreadyHit;
 };
