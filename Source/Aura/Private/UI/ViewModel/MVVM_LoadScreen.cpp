@@ -13,9 +13,9 @@ void UMVVM_LoadScreen::InitializeLoadSlots()
 	LoadSlot_1 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 	LoadSlot_2 = NewObject<UMVVM_LoadSlot>(this, LoadSlotViewModelClass);
 
-	LoadSlot_0->LoadSlotName = FString("LoadSlot_0");
-	LoadSlot_1->LoadSlotName = FString("LoadSlot_1");
-	LoadSlot_2->LoadSlotName = FString("LoadSlot_2");
+	LoadSlot_0->SetLoadSlotName("LoadSlot_0");
+	LoadSlot_1->SetLoadSlotName("LoadSlot_1");
+	LoadSlot_2->SetLoadSlotName("LoadSlot_2");
 	
 	LoadSlots.Add(0, LoadSlot_0);
 	LoadSlots.Add(1, LoadSlot_1);
@@ -42,4 +42,5 @@ void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnteredNa
 
 	LoadSlots[Slot]->PlayerName = EnteredName;
 	AuraGameModeBase->SaveSlotData(LoadSlots[Slot], Slot);
+	LoadSlots[Slot]->InitializeSlot();
 }
