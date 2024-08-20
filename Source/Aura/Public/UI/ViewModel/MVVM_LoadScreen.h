@@ -40,6 +40,9 @@ public:
 
 	void LoadData();
 
+	UFUNCTION(BlueprintCallable)
+	void DeleteSlot();
+
 	/** Field Notifies */
 	void SetNumLoadSlots(int32 InNumLoadSlots);
 
@@ -60,4 +63,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess="true"))
 	int32 NumLoadSlots;
+
+	UPROPERTY()
+	TObjectPtr<UMVVM_LoadSlot> SelectedSlot;
 };
