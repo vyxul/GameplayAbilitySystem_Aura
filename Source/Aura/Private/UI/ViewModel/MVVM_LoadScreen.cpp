@@ -94,6 +94,13 @@ void UMVVM_LoadScreen::DeleteSlot()
 	}
 }
 
+void UMVVM_LoadScreen::PlayButtonPressed()
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (IsValid(SelectedSlot))
+		AuraGameMode->TravelToMap(SelectedSlot);
+}
+
 void UMVVM_LoadScreen::SetNumLoadSlots(int32 InNumLoadSlots)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(NumLoadSlots, InNumLoadSlots);

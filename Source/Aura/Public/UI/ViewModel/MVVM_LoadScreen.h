@@ -43,6 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DeleteSlot();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayButtonPressed();
+	
 	/** Field Notifies */
 	void SetNumLoadSlots(int32 InNumLoadSlots);
 
