@@ -33,6 +33,9 @@ public:
 	UPROPERTY()
 	int32 SlotIndex;
 
+	UPROPERTY()
+	FName PlayerStartTag;
+
 	/** Field Notifies */
 	void SetLoadSlotName(FString InLoadSlotName);
 	void SetPlayerName(FString InPlayerName);
