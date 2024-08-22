@@ -9,6 +9,7 @@
 #include "AuraPlayerState.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedSignature, int32);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FPlayerLevelChangedSignature, int32, bool);
 
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -31,7 +32,7 @@ public:
 	TObjectPtr<UDataTable> LevelUpInfo;
 
 	/* Delegates */
-	FPlayerStatsChangedSignature OnPlayerLevelChanged;
+	FPlayerLevelChangedSignature OnPlayerLevelChanged;
 	FPlayerStatsChangedSignature OnPlayerXPChanged;
 	FPlayerStatsChangedSignature OnPlayerAttributePointsChanged;
 	FPlayerStatsChangedSignature OnPlayerSpellPointsChanged;
@@ -109,8 +110,10 @@ private:
 	UFUNCTION()
 	void OnRep_SpellPoints(int32 OldSpellPoints);
 
+	bool bJustLeveledUp = false;
+
 	// Helper function to broadcast delegate in multiple areas
-	void BroadcastPlayerLevel();
+	void BroadcastPlayerLevel(bool bLevelUp);
 	void BroadcastPlayerXP();
 	void BroadcastAttributePoints();
 	void BroadcastSpellPoints();

@@ -40,6 +40,7 @@ struct FWidgetControllerParams
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedWCSignature, int32, Value);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayerLevelChangedWCSignature, int32, Value, bool, bLevelUp);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerStatsChangedFloatWCSignature, float, Value);
 
 /* Ability Info Delegate */

@@ -6,9 +6,11 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AuraAbilityTypes.h"
+#include "AuraGameplayTags.h"
 #include "PropertyPathHelpers.h"
 #include "Aura/AuraLogChannels.h"
 #include "Game/AuraGameModeBase.h"
+#include "Game/AuraSaveGame.h"
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
@@ -96,6 +98,48 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	
 	// Apply Vital Attributes
 	FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->VitalAttributes, Level, EffectContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
+}
+
+void UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(const UObject* WorldContextObject,
+	UAbilitySystemComponent* ASC, UAuraSaveGame* SaveGame)
+{
+	// Get Class Info
+	UCharacterClassInfo* ClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (ClassInfo == nullptr)
+		return;
+
+	/* Get Primary Attribute Stats */
+	float Strength = SaveGame->Strength;
+	float Intelligence = SaveGame->Intelligence;
+	float Resilience = SaveGame->Resilience;
+	float Vigor = SaveGame->Vigor;
+
+	/* Setting up SpecHandle */
+	FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
+	EffectContextHandle.AddSourceObject(ASC->GetAvatarActor());
+	FGameplayEffectSpecHandle EffectSpecHandle = ASC->MakeOutgoingSpec(
+		ClassInfo->PrimaryAttributes_SetByCaller,
+		1.f,
+		EffectContextHandle
+		);
+	
+	/* Setting Tag Values */
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Attributes_Primary_Strength, Strength);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Attributes_Primary_Intelligence, Intelligence);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Attributes_Primary_Resilience, Resilience);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(EffectSpecHandle, GameplayTags.Attributes_Primary_Vigor, Vigor);
+
+	/* Apply Primary Attributes GE */
+	ASC->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data);
+
+	// Apply Secondary Attributes
+	FGameplayEffectSpecHandle SecondaryAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->SecondaryAttributes_Infinite, 1.f, EffectContextHandle);
+	ASC->ApplyGameplayEffectSpecToSelf(*SecondaryAttributesSpecHandle.Data.Get());
+	
+	// Apply Vital Attributes
+	FGameplayEffectSpecHandle VitalAttributesSpecHandle = ASC->MakeOutgoingSpec(ClassInfo->VitalAttributes, 1.f, EffectContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributesSpecHandle.Data.Get());
 }
 

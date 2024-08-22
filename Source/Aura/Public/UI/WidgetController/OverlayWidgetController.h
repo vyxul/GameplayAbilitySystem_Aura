@@ -54,7 +54,7 @@ public:
 
 	/* Player State Delegate Properties */
 	UPROPERTY(BlueprintAssignable, Category= "Player Level")
-	FPlayerStatsChangedWCSignature OnPlayerLevelChanged;
+	FPlayerLevelChangedWCSignature OnPlayerLevelChanged;
 	
 	UPROPERTY(BlueprintAssignable, Category= "Player XP")
 	FPlayerStatsChangedWCSignature OnPlayerXPChanged;

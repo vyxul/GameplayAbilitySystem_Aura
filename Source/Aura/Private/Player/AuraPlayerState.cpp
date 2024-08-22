@@ -43,13 +43,15 @@ int32 AAuraPlayerState::GetPlayerLevel() const
 void AAuraPlayerState::SetLevel(int32 InLevel)
 {
 	Level = InLevel;
-	BroadcastPlayerLevel();
+	bJustLeveledUp = false;
+	BroadcastPlayerLevel(bJustLeveledUp);
 }
 
 void AAuraPlayerState::AddToLevel(int32 InLevel)
 {
 	Level += InLevel;
-	BroadcastPlayerLevel();
+	bJustLeveledUp = true;
+	BroadcastPlayerLevel(bJustLeveledUp);
 }
 
 // XP
@@ -109,7 +111,7 @@ void AAuraPlayerState::AddToSpellPoints(int32 InSpellPoints)
 /* OnRep_Notify Functions */
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
-	BroadcastPlayerLevel();
+	BroadcastPlayerLevel(bJustLeveledUp);
 }
 
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
@@ -128,9 +130,10 @@ void AAuraPlayerState::OnRep_SpellPoints(int32 OldSpellPoints)
 }
 
 /* Broadcast Helper functions */
-void AAuraPlayerState::BroadcastPlayerLevel()
+void AAuraPlayerState::BroadcastPlayerLevel(bool bLevelUp)
 {
-	OnPlayerLevelChanged.Broadcast(Level);
+	OnPlayerLevelChanged.Broadcast(Level, bLevelUp);
+	bJustLeveledUp = false;
 }
 
 void AAuraPlayerState::BroadcastPlayerXP()

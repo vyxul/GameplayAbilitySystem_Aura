@@ -9,6 +9,7 @@
 #include "AuraGameplayTags.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Camera/CameraComponent.h"
@@ -53,9 +54,6 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	InitAbilityActorInfo();
 
 	LoadProgress();
-
-	// TODO: Load in Abilities from disk
-	AddCharacterAbilities();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -259,14 +257,7 @@ void AAuraCharacter::LoadProgress()
 	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
 	if (AuraPlayerState == nullptr)
 		return;
-
-	/* Player */
-	AuraPlayerState->SetLevel(SaveData->PlayerLevel);
-	AuraPlayerState->SetXP(SaveData->XP);
-	AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
-	AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
-
-	/* Attributes */
+	
 	if (SaveData->bFirstTimeLoadIn)
 	{
 		InitializeDefaultAttributes();
@@ -274,7 +265,18 @@ void AAuraCharacter::LoadProgress()
 	}
 	else
 	{
+		/* Player */
+		AuraPlayerState->SetLevel(SaveData->PlayerLevel);
+		AuraPlayerState->SetXP(SaveData->XP);
+		AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
+		AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
 		
+		/* Attributes */
+		
+		UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveData);
+
+		// TODO: Load in Abilities from disk
+		// AddCharacterAbilities();
 	}
 }
 

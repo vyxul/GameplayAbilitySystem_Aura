@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class UAuraSaveGame;
 struct FGameplayTag;
 struct FGameplayEffectContext;
 struct FDamageEffectParams;
@@ -43,6 +44,9 @@ public:
 	/* Ability System Component */
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
+
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults")
+	static void InitializeDefaultAttributesFromSaveData(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, UAuraSaveGame* SaveGame);
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
