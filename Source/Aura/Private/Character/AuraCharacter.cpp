@@ -12,6 +12,9 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "Camera/CameraComponent.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
@@ -195,6 +198,20 @@ void AAuraCharacter::SetMaterial_Implementation(UMaterialInterface* DecalMateria
 	if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(Controller))
 	{
 		AuraPC->SetMaterial(DecalMaterial);
+	}
+}
+
+void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (AuraGameMode)
+	{
+		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSavedData();
+		if (SaveData == nullptr)
+			return;
+
+		SaveData->PlayerStartTag = CheckpointTag;
+		AuraGameMode->SaveInGameProgressData(SaveData);
 	}
 }
 

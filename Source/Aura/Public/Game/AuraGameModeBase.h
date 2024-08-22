@@ -34,6 +34,10 @@ public:
 
 	void TravelToMap(UMVVM_LoadSlot* Slot);
 
+	ULoadScreenSaveGame* RetrieveInGameSavedData();
+
+	void SaveInGameProgressData(ULoadScreenSaveGame* SaveObject);
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
 

@@ -71,7 +71,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void SetMaterial(UMaterialInterface* DecalMaterial);
 	
-
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SaveProgress(const FName& CheckpointTag);
+	
 private:
 	FOnExternalGameplayModifierDependencyChange NeedRefreshAttributesDelegate;
 };
