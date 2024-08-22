@@ -9,6 +9,7 @@
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
 #include "Aura/AuraLogChannels.h"
+#include "Game/AuraSaveGame.h"
 #include "Interaction/PlayerInterface.h"
 
 void UAuraAbilitySystemComponent::AbilityActorInfoSet()
@@ -38,11 +39,41 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 
 void UAuraAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartUpPassiveAbilities)
 {
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
 	for (const TSubclassOf<UGameplayAbility> AbilityClass : StartUpPassiveAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		AbilitySpec.DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Equipped);
 		GiveAbilityAndActivateOnce(AbilitySpec);
 	}
+}
+
+void UAuraAbilitySystemComponent::AddCharacterAbilitiesFromSaveData(UAuraSaveGame* SaveData)
+{
+	for (const FSavedAbility& SavedAbility : SaveData->SavedAbilities)
+	{
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+		
+		const TSubclassOf<UGameplayAbility> AbilityClass = SavedAbility.GameplayAbility;
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, SavedAbility.AbilityLevel);
+		AbilitySpec.DynamicAbilityTags.AddTag(SavedAbility.AbilitySlot);
+		AbilitySpec.DynamicAbilityTags.AddTag(SavedAbility.AbilityStatus);
+		
+		if (SavedAbility.AbilityType == GameplayTags.Abilities_Type_Offensive)
+			GiveAbility(AbilitySpec);
+		
+		else if (SavedAbility.AbilityType == GameplayTags.Abilities_Type_Passive)
+		{
+			if (SavedAbility.AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Equipped))
+				GiveAbilityAndActivateOnce(AbilitySpec);
+
+			else
+				GiveAbility(AbilitySpec);
+		}
+	}
+
+	bStartupAbilitiesGiven = true;
+	AbilitiesGivenDelegate.Broadcast();
 }
 
 void UAuraAbilitySystemComponent::AbilityInputTagPressed(const FGameplayTag& InputTag)
@@ -406,7 +437,6 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 				AbilitySpec->DynamicAbilityTags.AddTag(InputTag);
 				AbilitySpec->DynamicAbilityTags.RemoveTag(AuraGameplayTags.Abilities_Status_Unlocked);
 				AbilitySpec->DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Equipped);
-
 				
 				OtherAbilitySpec->DynamicAbilityTags.RemoveTag(InputTag);
 				OtherAbilitySpec->DynamicAbilityTags.AddTag(AuraGameplayTags.Abilities_Status_Unlocked);

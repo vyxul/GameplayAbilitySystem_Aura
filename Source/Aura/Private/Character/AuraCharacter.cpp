@@ -238,6 +238,8 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 	
 	/* Abilities */
 	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	SaveData->SavedAbilities.Empty();
+	
 	FForEachAbility SaveAbilityDelegate;
 	SaveAbilityDelegate.BindLambda(
 	[this, AuraASC, &SaveData](const FGameplayAbilitySpec& AbilitySpec)
@@ -255,7 +257,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 		SavedAbility.AbilityType = AbilityInfo.AbilityType;
 		SavedAbility.AbilityLevel = AbilitySpec.Level;
 
-		SaveData->SavedAbilities.Add(SavedAbility);
+		SaveData->SavedAbilities.AddUnique(SavedAbility);
 	});
 	AuraASC->ForEachAbility(SaveAbilityDelegate);
 	
@@ -298,11 +300,13 @@ void AAuraCharacter::LoadProgress()
 		AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
 		
 		/* Attributes */
-		
 		UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveData);
 
-		// TODO: Load in Abilities from disk
-		// AddCharacterAbilities();
+		/* Abilities */
+		UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+		if (AuraASC)
+			AuraASC->AddCharacterAbilitiesFromSaveData(SaveData);
+		
 	}
 }
 
