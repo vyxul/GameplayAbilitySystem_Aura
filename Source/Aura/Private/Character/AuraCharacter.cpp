@@ -14,7 +14,7 @@
 #include "Camera/CameraComponent.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/AuraGameModeBase.h"
-#include "Game/LoadScreenSaveGame.h"
+#include "Game/AuraSaveGame.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerController.h"
@@ -204,15 +204,34 @@ void AAuraCharacter::SetMaterial_Implementation(UMaterialInterface* DecalMateria
 void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (AuraGameMode)
-	{
-		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSavedData();
-		if (SaveData == nullptr)
-			return;
+	if (AuraGameMode == nullptr)
+		return;
+	
+	UAuraSaveGame* SaveData = AuraGameMode->RetrieveInGameSavedData();
+	if (SaveData == nullptr)
+		return;
 
-		SaveData->PlayerStartTag = CheckpointTag;
-		AuraGameMode->SaveInGameProgressData(SaveData);
-	}
+	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
+	if (AuraPlayerState == nullptr)
+		return;
+
+	SaveData->PlayerStartTag = CheckpointTag;
+
+	/* Player */
+	SaveData->PlayerLevel = AuraPlayerState->GetPlayerLevel();
+	SaveData->XP = AuraPlayerState->GetXP();
+	SaveData->AttributePoints = AuraPlayerState->GetAttributePoints();
+	SaveData->SpellPoints = AuraPlayerState->GetSpellPoints();
+
+	/* Attributes */
+	SaveData->Strength = UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(GetAttributeSet());
+	SaveData->Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(GetAttributeSet());
+	SaveData->Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(GetAttributeSet());
+	SaveData->Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(GetAttributeSet());
+	
+	
+	AuraGameMode->SaveInGameProgressData(SaveData);
+	
 }
 
 void AAuraCharacter::InitializeDefaultAttributes() const
