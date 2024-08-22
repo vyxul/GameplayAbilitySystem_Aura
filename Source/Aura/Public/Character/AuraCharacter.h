@@ -66,6 +66,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "FX | SFX")
 	TObjectPtr<USoundBase> LevelUpSound;
+
+	void LoadProgress();
 	
 private:
 	UPROPERTY(VisibleAnywhere)
