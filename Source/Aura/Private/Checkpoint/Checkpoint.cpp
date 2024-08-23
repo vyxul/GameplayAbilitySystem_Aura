@@ -17,6 +17,8 @@ ACheckpoint::ACheckpoint(const FObjectInitializer& ObjectInitializer)
 	CheckpointMesh->SetupAttachment(GetRootComponent());
 	CheckpointMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	CheckpointMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
+	CheckpointMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+	CheckpointMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
 	CheckpointMesh->SetCustomDepthStencilValue(CustomDepthStencilOverride);
 	CheckpointMesh->MarkRenderStateDirty();
@@ -72,8 +74,9 @@ void ACheckpoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
+
+	if (bBindOverlapCallback)
+		Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckpoint::OnSphereOverlap);
 }
 
 void ACheckpoint::HandleGlowEffects()
