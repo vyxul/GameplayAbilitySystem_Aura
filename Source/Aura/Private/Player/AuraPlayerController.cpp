@@ -289,29 +289,29 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	if (TargetingStatus != ETargetingStatus::TargetingEnemy && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
-        		if (FollowTime <= ShortPressThreshold && ControlledPawn)
+        if (FollowTime <= ShortPressThreshold && ControlledPawn)
+        {
+        	if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+        	{
+        		Spline->ClearSplinePoints();
+        		for (const FVector& PointLoc : NavPath->PathPoints)
         		{
-        			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
-        			{
-        				Spline->ClearSplinePoints();
-        				for (const FVector& PointLoc : NavPath->PathPoints)
-        				{
-        					Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
-        				}
-
-        				if (NavPath->PathPoints.Num() > 0)
-        				{
-        					CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
-        					bAutoRunning = true;
-        				}
-        			}
-
-        			if (GetASC() && !GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputPressed))
-        				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+        			Spline->AddSplinePoint(PointLoc, ESplineCoordinateSpace::World);
         		}
+
+        		if (NavPath->PathPoints.Num() > 0)
+        		{
+        			CachedDestination = NavPath->PathPoints[NavPath->PathPoints.Num() - 1];
+        			bAutoRunning = true;
+        		}
+        	}
+
+        	if (GetASC() && !GetASC()->HasMatchingGameplayTag(GameplayTags.Player_Block_InputPressed))
+        		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+        }
         
-        		FollowTime = 0.f;
-        		TargetingStatus = ETargetingStatus::NotTargeting;
+        FollowTime = 0.f;
+        TargetingStatus = ETargetingStatus::NotTargeting;
 	}
 }
 
@@ -356,7 +356,9 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		{
 			const FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
 			ControlledPawn->AddMovementInput(WorldDirection);
+			bAutoRunning = false;
 		}
+
 	}
 	
 }
