@@ -38,6 +38,8 @@ public:
 
 	void SaveInGameProgressData(UAuraSaveGame* SaveObject);
 
+	void SaveWorldState(UWorld* World);
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
 

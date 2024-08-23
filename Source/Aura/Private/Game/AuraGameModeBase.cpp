@@ -3,10 +3,13 @@
 
 #include "Game/AuraGameModeBase.h"
 
+#include "EngineUtils.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/AuraSaveGame.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
@@ -71,6 +74,54 @@ void AAuraGameModeBase::SaveInGameProgressData(UAuraSaveGame* SaveObject)
 	AuraGameInstance->PlayerStartTag = SaveObject->PlayerStartTag;
 	
 	UGameplayStatics::SaveGameToSlot(SaveObject, InGameLoadSlotName, InGameLoadSlotIndex);
+}
+
+void AAuraGameModeBase::SaveWorldState(UWorld* World)
+{
+	FString WorldName = World->GetMapName();
+	WorldName.RemoveFromEnd(World->StreamingLevelsPrefix);
+
+	UAuraGameInstance* AuraGI = Cast<UAuraGameInstance>(GetGameInstance());
+	check(AuraGI);
+
+	if (UAuraSaveGame* SaveGame = GetSaveSlotData(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
+	{
+		if (!SaveGame->HasMap(WorldName))
+		{
+			FSavedMap NewSavedMap;
+			NewSavedMap.MapAssetName = WorldName;
+			SaveGame->SavedMaps.Add(NewSavedMap);
+		}
+
+		FSavedMap SavedMap = SaveGame->GetSavedMapWithMapName(WorldName);
+		SavedMap.SavedActors.Empty();
+		for (FActorIterator Iterator(World); Iterator; ++Iterator)
+		{
+			AActor* Actor = *Iterator;
+
+			if (!IsValid(Actor) || !Actor->Implements<USaveInterface>())
+				continue;
+
+			FSavedActor SavedActor;
+			SavedActor.ActorName = Actor->GetFName();
+			SavedActor.Transform = Actor->GetTransform();
+
+			FMemoryWriter MemoryWriter(SavedActor.Bytes);
+			FObjectAndNameAsStringProxyArchive Archive(MemoryWriter, true);
+			Archive.ArIsSaveGame = true;
+
+			Actor->Serialize(Archive);
+			SavedMap.SavedActors.AddUnique(SavedActor);
+		}
+
+		for (FSavedMap& MapToReplace : SaveGame->SavedMaps)
+		{
+			if (MapToReplace.MapAssetName == WorldName)
+				MapToReplace = SavedMap;
+		}
+
+		UGameplayStatics::SaveGameToSlot(SaveGame, AuraGI->LoadSlotName, AuraGI->LoadSlotIndex);
+	}
 }
 
 AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
