@@ -16,7 +16,7 @@ class AURA_API UAuraGameInstance : public UGameInstance
 
 public:
 	UPROPERTY()
-	FString LoadSlotName = FString();
+	FString LoadSlotName = FString("LoadSlot_0");
 
 	UPROPERTY()
 	int32 LoadSlotIndex = 0;

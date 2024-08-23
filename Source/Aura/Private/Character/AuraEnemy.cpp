@@ -55,7 +55,7 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), true);
 }
 
-void AAuraEnemy::HighlightActor()
+void AAuraEnemy::HighlightActor_Implementation()
 {
 	// highlight enemy mesh
 	GetMesh()->SetRenderCustomDepth(true);
@@ -66,7 +66,7 @@ void AAuraEnemy::HighlightActor()
 	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
-void AAuraEnemy::UnHighlightActor()
+void AAuraEnemy::UnHighlightActor_Implementation()
 {
 	// unhighlight enemy mesh
 	GetMesh()->SetRenderCustomDepth(false);

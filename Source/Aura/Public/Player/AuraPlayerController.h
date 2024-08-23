@@ -18,6 +18,13 @@ struct FInputActionValue;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
 
+enum class ETargetingStatus : uint8
+{
+	TargetingEnemy,
+	TargetingNonEnemy,
+	NotTargeting
+};
+
 /**
  * 
  */
@@ -63,9 +70,11 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	
 	void CursorTrace();
-	TObjectPtr<IHighlightInterface> LastActor;
-	TObjectPtr<IHighlightInterface> CurrentActor;
+	TObjectPtr<AActor> LastActor;
+	TObjectPtr<AActor> CurrentActor;
 	FHitResult CursorHit;
+	static void HighlightActor(AActor* InActor);
+	static void UnHighlightActor(AActor* InActor);
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
@@ -83,7 +92,7 @@ private:
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
 	bool bAutoRunning = false;
-	bool bTargeting = false;
+	ETargetingStatus TargetingStatus = ETargetingStatus::NotTargeting;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunningAcceptanceRadius = 50.f;
