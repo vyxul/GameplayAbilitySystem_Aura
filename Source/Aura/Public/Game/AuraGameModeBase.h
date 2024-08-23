@@ -42,7 +42,7 @@ public:
 	void LoadWorldState(UWorld* World) const;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<USaveGame> LoadScreenSaveGameClass;
+	TSubclassOf<USaveGame> AuraSaveGameClass;
 
 	UPROPERTY(EditDefaultsOnly)
 	FString DefaultMapName;
