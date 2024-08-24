@@ -38,7 +38,7 @@ public:
 
 	void SaveInGameProgressData(UAuraSaveGame* SaveObject);
 
-	void SaveWorldState(UWorld* World) const;
+	void SaveWorldState(UWorld* World, const FString& DestinationMapAssetName = FString()) const;
 	void LoadWorldState(UWorld* World) const;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -52,6 +52,8 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TMap<FString, TSoftObjectPtr<UWorld>> Maps;
+
+	FString GetMapNameFromMapAssetName(const FString& MapAssetName) const;
 
 	UPROPERTY(EditDefaultsOnly)
 	FName DefaultPlayerStartTag;
