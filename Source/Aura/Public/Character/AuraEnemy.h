@@ -62,7 +62,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category= "Combat")
 	TObjectPtr<AActor> CombatTarget;
-
+	
+	int32 GetCharacterLevel() const;
+	void SetCharacterLevel(const int32 InLevel);
+	ECharacterClass GetCharacterClass() const;
+	void SetCharacterClass(const ECharacterClass InCharacterClass);
+	
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 
 protected:

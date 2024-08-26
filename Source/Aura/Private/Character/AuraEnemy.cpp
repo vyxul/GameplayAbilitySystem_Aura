@@ -112,6 +112,26 @@ AActor* AAuraEnemy::GetCombatTarget_Implementation() const
 	return CombatTarget;
 }
 
+int32 AAuraEnemy::GetCharacterLevel() const
+{
+	return Level;
+}
+
+void AAuraEnemy::SetCharacterLevel(const int32 InLevel)
+{
+	this->Level = InLevel;
+}
+
+ECharacterClass AAuraEnemy::GetCharacterClass() const
+{
+	return CharacterClass;
+}
+
+void AAuraEnemy::SetCharacterClass(const ECharacterClass InCharacterClass)
+{
+	this->CharacterClass = InCharacterClass;
+}
+
 void AAuraEnemy::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	Super::StunTagChanged(CallbackTag, NewCount);

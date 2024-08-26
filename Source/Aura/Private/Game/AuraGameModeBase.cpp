@@ -80,7 +80,7 @@ void AAuraGameModeBase::SaveInGameProgressData(UAuraSaveGame* SaveObject)
 void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& DestinationMapAssetName) const
 {
 	FString WorldName = World->GetMapName();
-	WorldName.RemoveFromEnd(World->StreamingLevelsPrefix);
+	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
 
 	UAuraGameInstance* AuraGI = Cast<UAuraGameInstance>(GetGameInstance());
 	check(AuraGI);
