@@ -133,7 +133,7 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& Destination
 void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 {
 	FString WorldName = World->GetMapName();
-	WorldName.RemoveFromEnd(World->StreamingLevelsPrefix);
+	WorldName.RemoveFromStart(World->StreamingLevelsPrefix);
 
 	UAuraGameInstance* AuraGI = Cast<UAuraGameInstance>(GetGameInstance());
 	check(AuraGI);
