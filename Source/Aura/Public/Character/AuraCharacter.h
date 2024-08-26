@@ -27,7 +27,13 @@ public:
 	/* Combat Interface */
 	virtual int32 GetPlayerLevel_Implementation() override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	/* End Combat Interface */
+
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTime = 5.f;
+
+	FTimerHandle DeathTimer;
 
 	/* Player Interface */
 	virtual void AddToXP_Implementation(int32 InXP) override;

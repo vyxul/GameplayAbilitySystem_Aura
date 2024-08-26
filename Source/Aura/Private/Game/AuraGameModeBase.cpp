@@ -7,6 +7,7 @@
 #include "Aura/AuraLogChannels.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/AuraSaveGame.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/PlayerStart.h"
 #include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -19,13 +20,14 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 		UGameplayStatics::DeleteGameInSlot(LoadSlot->GetLoadSlotName(), SlotIndex);
 	
 	USaveGame* SaveGameObject = UGameplayStatics::CreateSaveGameObject(AuraSaveGameClass);
-	UAuraSaveGame* LoadScreenSaveGame = Cast<UAuraSaveGame>(SaveGameObject);
-	LoadScreenSaveGame->PlayerName = LoadSlot->GetPlayerName();
-	LoadScreenSaveGame->SaveSlotStatus = Taken;
-	LoadScreenSaveGame->MapName = LoadSlot->GetMapName();
-	LoadScreenSaveGame->PlayerStartTag = LoadSlot->PlayerStartTag;
+	UAuraSaveGame* AuraSaveGame = Cast<UAuraSaveGame>(SaveGameObject);
+	AuraSaveGame->PlayerName = LoadSlot->GetPlayerName();
+	AuraSaveGame->SaveSlotStatus = Taken;
+	AuraSaveGame->MapName = LoadSlot->GetMapName();
+	AuraSaveGame->PlayerStartTag = LoadSlot->PlayerStartTag;
+	AuraSaveGame->MapAssetName = LoadSlot->MapAssetName;
 
-	UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlot->GetLoadSlotName(), SlotIndex);
+	UGameplayStatics::SaveGameToSlot(AuraSaveGame, LoadSlot->GetLoadSlotName(), SlotIndex);
 }
 
 UAuraSaveGame* AAuraGameModeBase::GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const
@@ -209,6 +211,15 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	
 	else
 		return nullptr;
+}
+
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	UAuraSaveGame* SaveGame = RetrieveInGameSavedData();
+	if (!IsValid(SaveGame))
+		return;
+
+	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
 }
 
 void AAuraGameModeBase::BeginPlay()
