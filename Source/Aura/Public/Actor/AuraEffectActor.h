@@ -102,6 +102,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
 	TArray<FGameplayEffectStruct> GameplayEffects;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Applied Effects")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Applied Effects")
 	float ActorLevel = 1.f;
 };

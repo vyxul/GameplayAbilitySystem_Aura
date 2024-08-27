@@ -7,6 +7,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class ULootTiers;
 class UAuraSaveGame;
 struct FGameplayTag;
 struct FGameplayEffectContext;
@@ -131,6 +132,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults")
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
+	
+	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | CharacterClassDefaults", meta = (DefaultToSelf = "WorldContextObject"))
+	static ULootTiers* GetLootTiers(const UObject* WorldContextObject);
 
 	UFUNCTION(BlueprintCallable, Category= "AuraAbilitySystemLibrary | Gameplay Mechanics")
 	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float Radius, const FVector& SphereOrigin);
